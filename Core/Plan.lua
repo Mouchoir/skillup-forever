@@ -124,7 +124,9 @@ end
 -- A recipe the game knows is never red: once a trainer has taught it, it is orange until yellow. Where the
 -- bundled orange sits above the skill a trainer teaches the recipe at (a client minimum or a pattern's
 -- requirement the trainer undercuts), the orange comes down to the trainer's, once, as the data loads, so
--- every reader of the thresholds agrees with the learn requirement.
+-- every reader of the thresholds agrees with the learn requirement. Data/ stays as the client ships it: the
+-- client's orange is a crafting colour, not a learn gate, so the trainer's requirement wins where they disagree.
+-- Only the bundled requirement is read here; a lower one saved from a visited trainer does not move the orange.
 if ns.TrainerFees and ns.Thresholds then
 	for recipeID, training in pairs(ns.TrainerFees) do
 		local t = ns.Thresholds[recipeID]
