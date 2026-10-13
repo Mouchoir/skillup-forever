@@ -121,6 +121,19 @@ function ns.TrainingFor(profession, recipeID)
 	return seen and seen[recipeID] or ns.TrainerFees[recipeID]
 end
 
+-- A recipe the game knows is never red: once a trainer has taught it, it is orange until yellow. Where the
+-- bundled orange sits above the skill a trainer teaches the recipe at (a client minimum or a pattern's
+-- requirement the trainer undercuts), the orange comes down to the trainer's, once, as the data loads, so
+-- every reader of the thresholds agrees with the learn requirement.
+if ns.TrainerFees and ns.Thresholds then
+	for recipeID, training in pairs(ns.TrainerFees) do
+		local t = ns.Thresholds[recipeID]
+		if t and training[2] >= 1 and training[2] < t[1] then
+			t[1] = training[2]
+		end
+	end
+end
+
 -- Trainer-taught recipes of this profession not yet learned that could skill up
 -- somewhere between here and the target. Nothing is used before the trainer would
 -- teach it: the thresholds' first value is where a recipe turns orange, not where

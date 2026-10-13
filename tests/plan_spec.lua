@@ -240,6 +240,17 @@ equal(ns.LearnSkill(leatherworking, 12719), 0, "a recipe with no known source ha
 local hood = ns.RecipeBands(leatherworking, 1255109)
 equal(hood[1].color .. " " .. hood[1].from, "orange 100", "the hood's first band starts at the pattern's skill")
 
+-- A known recipe is never red in the game. Where a trainer teaches a recipe below the bundled orange, the
+-- orange comes down to the trainer's skill, so a character who trained it is not shown red or left without it.
+-- Enchant Cloak - Minor Protection: an old formula asks 90, the trainer teaches it at 70.
+equal(ns.Thresholds[7771][1], 70, "Enchant Cloak - Minor Protection is orange from where it is taught")
+equal(ns.Model.Color(ns.Model.Get(7771), 75), "orange", "so trained at 75 it is orange, as the game shows it")
+equal(ns.Model.Chance(ns.Model.Get(7771), 75), 1, "and a sure skill-up, not unknown")
+equal(ns.Thresholds[2662][1], 1, "Copper Chain Pants, the client's 40 under a trainer that teaches it at 1")
+equal(ns.Thresholds[2666][1], 45, "Runed Copper Belt, from the trainer's requirement")
+equal(ns.Thresholds[2667][1], 55, "a recipe no trainer teaches keeps its pattern's requirement")
+equal(ns.Thresholds[3304][1], 1, "a trainer above the orange leaves it: the learn requirement gates that")
+
 -- Why there is nothing to craft.
 costs[LINEN], costs[HEAVY] = nil, nil
 local unpriced = Plan(FirstAid(40), 75)
