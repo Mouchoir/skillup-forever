@@ -21,7 +21,7 @@ later by `retry-refresh.yml`, and one that fails again opens the issue "Data ref
 | Pin | In | Newest upstream |
 | --- | --- | --- |
 | `BUILD` | `gen_thresholds.py` | highest 1.6x build of `wow_classic_beta` on wago.tools (`tools/latest_build.py` prints it) |
-| `TEACH_BUILD` | `gen_trainer.py` | highest 1.1x build of `wow_classic_era` on wago.tools |
+| `TEACH_BUILD` | `gen_thresholds.py` | highest 1.1x build of `wow_classic_era` on wago.tools |
 | `PT_COMMIT` | `gen_vendor.py` | last LibPeriodicTable commit that changed the Tradeskill file's bytes |
 | `CLASSICDB_COMMIT` | `gen_trainer.py` | moved by hand only: a waiver in `AGENTS.md` |
 
@@ -36,12 +36,19 @@ and writes sorted `Data/Thresholds.lua`. Use `--refresh` to download again or
 `--offline` to require cached sources. The header date identifies the selected
 source snapshot, so repeated runs are byte-identical.
 
-That build's `SkillLineAbility` supplies orange, yellow and grey; green is the
-floored midpoint of yellow and grey. `SkillLine` discovers professions and child
+That build's `SkillLineAbility` supplies yellow and grey; green is the floored
+midpoint of yellow and grey. Its `MinSkillLineRank` is the orange only where it is a
+real value inside the range: Forever leaves most at the placeholder 1, and where it
+moved a recipe's yellow and grey from Classic Era's (`TEACH_BUILD`) it often kept
+Classic's minimum, which then sits too high or above yellow (issue #107). Such a row
+takes the same build's pattern or recipe requirement (`ItemSparse`, `ItemEffect`,
+`ItemXItemEffect`) when it is at most yellow; else a stale minimum moves as far as
+its range did; else the row keeps the placeholder 1 and the learn requirement
+(`Core/Plan.lua`'s `LearnSkill`) gates the recipe at runtime. A replaced client value
+is named in the row's comment, and every emitted row is ordered. `SkillLine` discovers professions and child
 lines, `SpellName` supplies comments, and `SpellEffect` excludes gathering abilities.
-Contradictory rows stay in the generated table for auditing and recipe catalogue
-generation. `Model.Get` returns unknown for those rows, including contradictions
-introduced by a live grey threshold, so displays and plans cannot use them.
+`Model.Get` returns unknown for a contradictory row, including one a live grey
+threshold makes, so displays and plans cannot use it.
 
 Coverage prints per skill line, including skipped/duplicate rows and missing
 names. Gathering abilities and test professions are excluded. Shared recipes
@@ -83,7 +90,10 @@ the dump by the column names in its own `CREATE TABLE` (`dump_tables`, which
 `gen_sources.py` shares), and a row whose value count differs fails the run. Its
 rows name teaching spells; Classic Era's `SpellEffect` (LEARN_SPELL) maps them to
 recipe spells, since Forever's client leaves the teaching spells out.
-Specialisation-gated rows are skipped, and fees recorded at a trainer in game win. It also writes `ns.TrainerRanks`: each profession rank a trainer teaches (the
+Specialisation-gated rows are skipped, and fees recorded at a trainer in game win.
+classic-db's required skill is Classic's: where Forever moved a recipe's yellow and grey
+together from Classic Era's, the requirement moves as far (Forever moved its patterns'
+requirements that way for all but a few recipes both clients teach by pattern), never below 1. It also writes `ns.TrainerRanks`: each profession rank a trainer teaches (the
 taught spell's `SKILL` effect gives the skill line and the new cap), with fee,
 required skill and level. Ranks that come from books or quests are absent.
 

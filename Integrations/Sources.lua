@@ -284,6 +284,7 @@ function ns.RecipeSuggestions(profession, base)
 			and learnAt <= base
 			and t[4] > skill
 			and not ns.IsLearned(recipeID)
+			and not ns.IsSkipped(recipeID)
 			and not ns.TrainingFor(profession, recipeID)
 		then
 			local kind, npcID = Kind(source)

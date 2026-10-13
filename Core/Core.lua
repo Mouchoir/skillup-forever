@@ -9,14 +9,17 @@ local DEFAULTS = {
 	showTooltip = true,
 	showCost = true,
 	craftValue = "vendor",
+	valueGathered = false, -- a reagent you gather costs what it would sell for, not nothing
 	sortMode = "blizzard",
 	showTrainer = true,
 	showRouteTab = true,
 	showTracker = true,
 	showGearTab = false,
+	merchantButton = true, -- the merchant window's "Buy tracked reagents" button
 	reagentTooltip = "route",
 	collectModes = {}, -- ["Name-Realm"] = "gather" | "auction": where a reagent you could gather comes from
 	showAllGear = {}, -- ["Name-Realm"] = true: the crafted gear view shows gear this character cannot make yet
+	skippedRecipes = {}, -- ["Name-Realm"] = { [recipeID] = true }: "Not this recipe", left out of every route
 	whatsNew = true,
 	companionHints = true,
 	lastVersion = "", -- the version that last ran; "" before the first
@@ -52,8 +55,9 @@ ns.REAGENT_TOOLTIP_OPTIONS = {
 	{ "full", L["Every recipe that uses it"] },
 }
 ns.TITLE = "SkillUp Forever"
--- The chat line after an update: one sentence for the release being tagged.
-ns.WHATS_NEW = L["Keep Blizzard's tracker methods intact."]
+-- The chat line after an update: one sentence for the release being tagged, the bold lead of one of its
+-- CHANGELOG.md bullets (tests/core_spec.lua holds it to the newest entry).
+ns.WHATS_NEW = L["Recipes start where Forever lets you make them."]
 
 -- Classic difficulty colours, matching the retail recipe list's own palette.
 ns.COLORS = {
@@ -114,6 +118,29 @@ local function LoadDB()
 		end
 		if not valid then
 			loaded[key] = DEFAULTS[key]
+		end
+	end
+	-- Earlier versions saved a trainer row that showed no skill requirement as needing 0, which planned
+	-- learning it at once; the bundled requirement stands in for those.
+	for _, recipes in pairs(loaded.trainer) do
+		if type(recipes) == "table" then
+			for recipeID, seen in pairs(recipes) do
+				if type(seen) ~= "table" or type(seen[2]) ~= "number" or seen[2] <= 0 then
+					recipes[recipeID] = nil
+				end
+			end
+		end
+	end
+	-- Only a recipe ID saved as skipped is kept.
+	for key, recipes in pairs(loaded.skippedRecipes) do
+		if type(recipes) ~= "table" then
+			loaded.skippedRecipes[key] = nil
+		else
+			for recipeID, skipped in pairs(recipes) do
+				if type(recipeID) ~= "number" or skipped ~= true then
+					recipes[recipeID] = nil
+				end
+			end
 		end
 	end
 	-- A mode no longer saved, or a typo, reads as the default gather.
@@ -313,6 +340,46 @@ function ns.SetShowAllGear(show)
 	ns.Changed("settings")
 end
 
+-- "Not this recipe": a recipe this character never wants suggested. The planner leaves it out of every route,
+-- training and sub-craft, and Show again brings it back. Kept per character, like the collect mode.
+---@param recipeID integer
+---@return boolean
+function ns.IsSkipped(recipeID)
+	local skipped = ns.db and ns.db.skippedRecipes[ns.CharacterKey()]
+	return skipped ~= nil and skipped[recipeID] == true
+end
+
+---@param recipeID integer
+---@param skip boolean
+function ns.SetSkipped(recipeID, skip)
+	local key = ns.CharacterKey()
+	local skipped = ns.db.skippedRecipes[key] or {}
+	skipped[recipeID] = skip and true or nil
+	ns.db.skippedRecipes[key] = next(skipped) and skipped or nil
+	ns.Changed("settings")
+end
+
+-- This character's skipped recipes, of one profession when `skillLine` is given, by name.
+---@param skillLine integer?
+---@return {recipeID: integer, name: string}[]
+function ns.SkippedRecipes(skillLine)
+	local list = {}
+	for recipeID in pairs(ns.db.skippedRecipes[ns.CharacterKey()] or {}) do
+		local recipe = ns.RecipeData[recipeID]
+		if not skillLine or (recipe and recipe.skillLine == skillLine) then
+			local name = C_Spell.GetSpellName(recipeID) or string.format(L["recipe %d"], recipeID)
+			list[#list + 1] = { recipeID = recipeID, name = name }
+		end
+	end
+	table.sort(list, function(a, b)
+		if a.name ~= b.name then
+			return a.name < b.name
+		end
+		return a.recipeID < b.recipeID
+	end)
+	return list
+end
+
 -- Recipes this character has been seen to know in the Professions window, for
 -- places (trainer, item tooltips) that can't ask it. C_SpellBook.IsSpellKnown covers
 -- professions not opened yet, and every session while SavedVariables fail to load.
@@ -425,7 +492,7 @@ end
 local function Audit()
 	local ctx = ProfessionsFrame and ProfessionsFrame:IsShown() and ns.SkillContext()
 	if not ctx then
-		ns.Print("open a profession first.")
+		ns.Print(L["open a profession first."])
 		return
 	end
 	local skill = ctx.skill
@@ -473,12 +540,50 @@ local function Audit()
 	end
 end
 
+-- /su skipped: this character's skipped recipes, each with its ID for /su unskip.
+local function ListSkipped()
+	local skipped = ns.SkippedRecipes()
+	if #skipped == 0 then
+		ns.Print(L["no skipped recipes: right-click a step on the route page and choose Not this recipe."])
+		return
+	end
+	ns.Print(string.format(L["Skipped (%d):"], #skipped))
+	for _, recipe in ipairs(skipped) do
+		ns.Print(string.format("%s (%d)", recipe.name, recipe.recipeID))
+	end
+	ns.Print(L["/su unskip <recipe ID> shows one again, /su unskip all every one."])
+end
+
+-- /su unskip <recipe ID> or /su unskip all: Show again, from chat.
+---@param argument string
+local function Unskip(argument)
+	if argument == "all" then
+		for _, recipe in ipairs(ns.SkippedRecipes()) do
+			ns.SetSkipped(recipe.recipeID, false)
+		end
+		ns.Print(L["every skipped recipe is back in the route."])
+		return
+	end
+	local recipeID = tonumber(argument)
+	if not (recipeID and ns.IsSkipped(recipeID)) then
+		ns.Print(L["/su skipped lists the recipes you skipped, with their IDs."])
+		return
+	end
+	ns.SetSkipped(recipeID, false)
+	local name = C_Spell.GetSpellName(recipeID) or string.format(L["recipe %d"], recipeID)
+	ns.Print(string.format(L["Show again: %s"], name))
+end
+
 SLASH_SKILLUPFOREVER1 = "/skillup"
 SLASH_SKILLUPFOREVER2 = "/su"
 SlashCmdList.SKILLUPFOREVER = function(msg)
-	local command = strtrim(msg):lower()
+	local command, argument = strtrim(msg):lower():match("^(%S*)%s*(.-)$")
 	if command == "audit" then
 		Audit()
+	elseif command == "skipped" then
+		ListSkipped()
+	elseif command == "unskip" then
+		Unskip(argument)
 	else
 		ns.OpenSettings()
 	end

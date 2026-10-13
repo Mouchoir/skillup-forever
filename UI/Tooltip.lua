@@ -153,7 +153,11 @@ end
 ---@param price SkillUpPrice
 ---@return string
 function ns.PriceSourceText(price)
-	if price.source == "gather" then
+	if price.worth == "auction" then
+		return string.format(L["you gather it (%s), valued at its AH price"], price.profession)
+	elseif price.worth == "vendor" then
+		return string.format(L["you gather it (%s), valued at its vendor sell price"], price.profession)
+	elseif price.source == "gather" then
 		return string.format(L["you gather it (%s)"], price.profession)
 	elseif price.source == "vendor" then
 		return L["vendor"]
@@ -393,7 +397,8 @@ end
 ---@param key string
 local function OnModifierChanged(_, _, key)
 	if (key == "LSHIFT" or key == "RSHIFT") and ns.db.reagentTooltip == "route" and GameTooltip:IsShown() then
-		local _, _, itemID = GameTooltip:GetItem()
+		-- Read through ns.Readable first, as AddUses does: a secret id errors even on its truth test.
+		local itemID = ns.Readable((select(3, GameTooltip:GetItem())))
 		if itemID and GameTooltip.RefreshData then
 			GameTooltip:RefreshData()
 		end

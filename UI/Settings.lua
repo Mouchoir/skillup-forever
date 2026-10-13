@@ -113,7 +113,7 @@ function ns.RegisterSettings()
 			rows,
 			"showCost",
 			L["Show cost per skill-up"],
-			L["Reagent cost divided by skill-up chance, on recipe rows and in the tooltip. Common vendor reagents are priced from the start and updated at merchants you visit, reagents you gather are free, and auction prices need Auctionator."]
+			L["Reagent cost divided by skill-up chance, on recipe rows and in the tooltip. Common vendor reagents are priced from the start and updated at merchants you visit, reagents you gather are free unless you value them under Prices, and auction prices need Auctionator."]
 		)
 	end)
 
@@ -124,6 +124,13 @@ function ns.RegisterSettings()
 			L["Count what crafts sell for"],
 			ns.CRAFT_VALUE_OPTIONS,
 			L["Subtract what the crafted item sells for from its cost. Auction prices need Auctionator, are after the 5% cut, and may not sell."]
+		)
+
+		Checkbox(
+			rows,
+			"valueGathered",
+			L["Value gathered materials at what they'd sell for"],
+			L["A material your professions gather costs what selling it would bring instead of nothing: its auction price after the 5% cut, or its vendor sell price if that is more. Used for the route and the costs on recipe rows. Auction prices need Auctionator."]
 		)
 	end)
 
@@ -175,6 +182,13 @@ function ns.RegisterSettings()
 			"showGearTab",
 			L["Show the crafted gear tab"],
 			L["A side tab on the Professions window listing the newest crafted item this character can equip in each slot, under the route tab."]
+		)
+
+		Checkbox(
+			rows,
+			"merchantButton",
+			L["Show the buy button at merchants"],
+			L["A button above a merchant's window that buys the reagents your tracked routes still need from that merchant. It asks first, with the total cost."]
 		)
 
 		Checkbox(

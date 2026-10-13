@@ -70,9 +70,16 @@ local function BuildRow(row)
 	row.UpdateTooltip = UpdateTooltip
 	row:SetScript("OnEnter", OnEnter)
 	row:SetScript("OnLeave", GameTooltip_Hide)
-	row:SetScript("OnClick", function()
-		if row.click then
-			row.click()
+	-- A right-click opens the row's menu when it has one; any other click is the row's own.
+	row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	row:SetScript("OnClick", function(_, button)
+		if button == "RightButton" then
+			if row.menu then
+				GameTooltip_Hide()
+				MenuUtil.CreateContextMenu(row, row.menu)
+			end
+		elseif row.click then
+			row.click(row)
 		end
 	end)
 	row.Icon = row:CreateTexture(nil, "ARTWORK")
@@ -117,7 +124,8 @@ local function InitializeRow(row, elementData)
 	row.Detail:SetTextColor((entry.detailColor or GRAY_FONT_COLOR):GetRGB())
 	row.tooltip = entry.tooltip
 	row.click = entry.click
-	row:EnableMouse(entry.tooltip ~= nil or entry.click ~= nil)
+	row.menu = entry.menu
+	row:EnableMouse(entry.tooltip ~= nil or entry.click ~= nil or entry.menu ~= nil)
 end
 
 ---@param heading SkillUpListHeading

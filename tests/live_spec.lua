@@ -185,6 +185,14 @@ equal(subReagents[1].itemID, HIDE, "the hide the reagent is made from")
 equal(subReagents[1].need, sub.crafts[1].crafts * 2, "two a craft of the reagent")
 equal(subReagents[1].source, "vendor", "priced where it is sold")
 
+-- Not this recipe on the sub-craft: the reagent is bought instead of made.
+ns3.SetSkipped(200, true)
+equal(ns3.SubCraft(LEATHER), nil, "a skipped recipe never makes a reagent")
+local bought = ns3.PlanRoute(ns3.PlayerProfessions()[129])
+equal(#bought.crafts[1].subcrafts, 0, "the route buys the reagent instead")
+ns3.SetSkipped(200, false)
+equal(ns3.SubCraft(LEATHER).recipeID, 200, "and makes it again once shown again")
+
 -- A cycle between two recipes is broken, never followed.
 local c4 = Client.load({
 	data = {

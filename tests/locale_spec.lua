@@ -40,10 +40,10 @@ local SINKS = {
 -- A settings option, { value, label }, closes after its label.
 local OPTION = '{%s*"%l+",%s*"([^"\n]*)"%s*}'
 
--- Literals that stay English: /su audit is a data check for bug reports.
+-- Literals that stay English: /su audit's report is a data check for bug reports. Its prompt to open a
+-- profession is for the player, so it is a phrase.
 local ALLOWED = {
 	["Core/Core.lua"] = {
-		["open a profession first."] = true,
 		["%s at %d: %d checked, %d mismatched, %d without data."] = true,
 	},
 }

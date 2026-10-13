@@ -26,7 +26,7 @@ The recipe tooltip draws the thresholds on the game's own bar with your skill ma
 
 - **Recipe rows and tooltips** show skill-up chance, cost and colour thresholds. The start of the difficulty range is optional.
 - **Sorting** orders recipes by difficulty range start, chance or cheapest skill-ups. *Default* restores the game's categories and filters.
-- **Levelling routes** list crafts and trainer visits to your target skill, including fees, tools and stations. Steps allow for unlucky skill-ups. Cheaper crafted reagents become their own steps; a route that stops short names recipes that could extend it. [Route details](docs/route.md#levelling-route).
+- **Levelling routes** list crafts and trainer visits to your target skill, including fees, tools and stations. Steps allow for unlucky skill-ups. Cheaper crafted reagents become their own steps; a route that stops short names recipes that could extend it. Right-click a recipe and choose *Not this recipe* to plan without it. [Route details](docs/route.md#levelling-route).
 - **Shopping lists** count reagents against your bags and bank. *Buy reagents* chooses whether materials your professions gather are free or bought. Track the list beside quests, buy vendor stock and keep an Auctionator list up to date. [Shopping details](docs/route.md#shopping-list).
 - **Trainer annotations** show chance and cost, with a green arrow on the recipe that best extends or cheapens your route.
 - **Reagent tooltips** show what tracked routes need. Hold Shift for every recipe that uses the item and still skills up.
@@ -65,13 +65,15 @@ Open a profession and the numbers are already there.
 | Command | What it does |
 |---|---|
 | `/su`, `/skillup` | Open the settings (also in Settings → AddOns, or from the addon compartment on the minimap) |
+| `/su skipped` | List the recipes you said *Not this recipe* to on this character, with their IDs |
+| `/su unskip <ID>`, `/su unskip all` | Show a skipped recipe, or every one, in the route again |
 | `/su audit` | With a profession open, compare the bundled thresholds with the colours the game shows and print any mismatch |
 
 Settings cover rows and tooltips, what crafts count for, sort order, the route and crafted gear tabs, trainer annotations, reagent tooltips and companion hints.
 
 ## Prices
 
-Each reagent uses the cheapest known vendor or Auctionator price. Common vendor supplies have bundled prices; visiting a vendor records its prices and reputation discounts. Materials your professions gather can count as free until you choose *Buy reagents*.
+Each reagent uses the cheapest known vendor or Auctionator price. Common vendor supplies have bundled prices; visiting a vendor records its prices and reputation discounts. Materials your professions gather can count as free until you choose *Buy reagents*, or, with *Value gathered materials at what they'd sell for* on, cost what selling them would bring.
 
 Auction prices use Auctionator's latest recorded price for reagents and crafted items. SkillUp never scans the auction house itself. Scan with Auctionator to update prices. Missing prices stay unknown and leave affected recipes out of the route.
 

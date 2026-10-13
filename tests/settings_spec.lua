@@ -190,10 +190,11 @@ end
 -- Every subpage's rows, then the index's button to it, in the order the groups appear.
 local groups = {
 	{ "Recipe rows", "checkbox:showRowText checkbox:showSkill checkbox:showTooltip checkbox:showCost" },
-	{ "Prices", "slider:craftValue" },
+	{ "Prices", "slider:craftValue checkbox:valueGathered" },
 	{
 		"Route and trainer",
-		"checkbox:showTracker checkbox:trackerAttached checkbox:showRouteTab checkbox:showGearTab checkbox:showTrainer",
+		"checkbox:showTracker checkbox:trackerAttached checkbox:showRouteTab checkbox:showGearTab"
+			.. " checkbox:merchantButton checkbox:showTrainer",
 	},
 	{ "Tooltips and sorting", "slider:reagentTooltip slider:sortMode" },
 	{ "Addon", "checkbox:companionHints checkbox:whatsNew" },
@@ -226,6 +227,7 @@ assert(
 )
 assert(craftValue.initializer.options.formatter(3) == "Auction" and craftValue.initializer.tooltip:find("5%% cut"))
 assert(Row("sortMode").initializer.options.formatter(1) == "Default")
+assert(Row("valueGathered").initializer.tooltip:find("vendor sell price if that is more"), "gathered value floor")
 assert(Row("showRowText").initializer.tooltip:find("Skill%-up chance"))
 Row("showRowText").initializer.setting.changed()
 assert(refreshed == 1, "a change is reported once")

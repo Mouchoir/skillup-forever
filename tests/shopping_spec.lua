@@ -85,7 +85,7 @@ local function Needed()
 end
 c.bags[SILK] = Needed() - 7
 c.money = 10000
-c.merchant = { { itemID = SILK, price = 100, stackCount = 5 } }
+c.merchant = { { itemID = SILK, name = "Linen Cloth", price = 100, stackCount = 5 } }
 c.Fire("MERCHANT_SHOW")
 local button
 for _, frame in ipairs(c.frames) do
@@ -95,13 +95,49 @@ for _, frame in ipairs(c.frames) do
 end
 equal(button.shown, true, "known merchant stack enables purchasing")
 equal(button.text, "Buy tracked reagents  200c", "purchase price accounts for whole stacks")
--- A click only reaches a button that is enabled.
+-- The button asks first, on a dialog of the addon's own on the merchant's window.
+local function Dialog()
+	for _, frame in ipairs(c.frames) do
+		if frame.parent == c.G.MerchantFrame and frame.Accept then
+			return frame
+		end
+	end
+end
+equal(Dialog(), nil, "nothing asks before a click")
+button.scripts.OnClick()
+local dialog = Dialog()
+equal(dialog.shown, true, "a click asks before buying")
+equal(dialog.Text.text, "Buy 10 Linen Cloth for 200c?", "with what it buys and the total cost")
+equal(#c.purchased, 0, "and buys nothing yet")
+dialog.Cancel.scripts.OnClick()
+equal(dialog.shown, false, "cancel closes it")
+equal(#c.purchased, 0, "having bought nothing")
+-- The need changes while it is open: what it showed is not what a click would buy, so it goes.
+button.scripts.OnClick()
+c.bags[SILK] = c.bags[SILK] + 5
+c.Fire("BAG_UPDATE_DELAYED")
+equal(dialog.shown, false, "a changed cost closes the question")
+dialog.Accept.scripts.OnClick()
+equal(#c.purchased, 0, "and a late accept buys nothing")
+c.bags[SILK] = c.bags[SILK] - 5
+c.Fire("BAG_UPDATE_DELAYED")
+equal(button.text, "Buy tracked reagents  200c", "the full need is back")
+-- The player can do without the button.
+c.SetSetting("merchantButton", false)
+equal(button.shown, false, "the setting hides the button")
+c.SetSetting("merchantButton", true)
+equal(button.shown, true, "and brings it back")
+-- A click only reaches a button that is enabled, and buys once the player accepts.
 local function Click()
 	if button:IsEnabled() then
 		button.scripts.OnClick()
+		if dialog.shown then
+			dialog.Accept.scripts.OnClick()
+		end
 	end
 end
 Click()
+equal(dialog.shown, false, "accepting closes the question")
 equal(c.purchased[1].count, 10, "purchase callback buys complete stacks in units")
 equal(button:IsEnabled(), false, "the button is off while the order is on its way")
 Click()

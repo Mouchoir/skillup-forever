@@ -238,6 +238,10 @@ function Client.load(options)
 	function Methods.GetTextWidth()
 		return 100
 	end
+	-- A font string keeps its text like a frame does.
+	function Methods:CreateFontString()
+		return NewFrame(nil, self)
+	end
 
 	-- What the tracker section's stock template gives it; the shared host lays it out with these.
 	local TrackerModule = {}
@@ -737,6 +741,9 @@ function Client.load(options)
 	end
 	G.TooltipDataProcessor = { AddTooltipPostCall = noop }
 	G.SlashCmdList = {}
+	G.strtrim = function(text)
+		return (text:gsub("^%s+", ""):gsub("%s+$", ""))
+	end
 	G.PlaySound = noop
 	G.SOUNDKIT = {}
 	G.DEFAULT, G.OFF, G.UNKNOWN = "Default", "Off", "Unknown"

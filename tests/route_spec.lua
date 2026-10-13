@@ -159,6 +159,13 @@ page = {
 	end,
 	-- The route page hides the gear page when it takes over; this spec loads the route file alone.
 	HideGear = function() end,
+	-- Recipes this character said Not this recipe to: none until a spec skips one.
+	SkippedRecipes = function()
+		return page.skipped or {}
+	end,
+	SetSkipped = function(recipeID, skip)
+		page.setSkipped = { recipeID, skip }
+	end,
 }
 -- The client-side seams the page reads: a character that gathers, and no vendor named until a spec says so.
 page.CollectMode = function()
@@ -565,7 +572,7 @@ end
 routeTab:Click()
 Drain()
 equal(
-	table.concat(lists[1].messages, " | "):find("Route incomplete: 2 recipes skipped", 1, true) ~= nil,
+	table.concat(lists[1].messages, " | "):find("Route incomplete: 2 recipes left out", 1, true) ~= nil,
 	true,
 	"a route with an unpriced reagent is marked incomplete"
 )
@@ -576,6 +583,60 @@ for _, row in ipairs(lists[2].rows) do
 	end
 end
 equal(listed["Reagent 2589"], "no price", "and the reagent it left out is listed as unpriced")
+
+-- Not this recipe: a right-click on a step offers it, and what the route leaves out by choice is one row
+-- under it, whose menu shows each recipe again.
+---@return table
+local function MenuRoot()
+	local root = { buttons = {} }
+	function root.CreateTitle(_, text)
+		root.title = text
+	end
+	function root.CreateButton(_, text, action)
+		root.buttons[#root.buttons + 1] = { text = text, action = action }
+	end
+	return root
+end
+local skipCraft = { recipeID = 3275, crafts = 5, from = 1, to = 5, color = "green" }
+page.PlanRoute = function(profession)
+	return {
+		profession = profession,
+		target = 100,
+		crafts = { skipCraft },
+		steps = { { craft = skipCraft } },
+		ranks = {},
+		cost = 50,
+		unpriced = 0,
+		unpricedRecipes = {},
+	}
+end
+page.skipped = { { recipeID = 3276, name = "Heavy Linen Bandage" } }
+routeTab:Click()
+Drain()
+local craftRow = lists[1].rows[1]
+local instructions = {}
+pageEnv.GameTooltip_AddInstructionLine = function(_, text)
+	instructions[#instructions + 1] = text
+end
+craftRow.tooltip(Stub())
+equal(instructions[#instructions], "Right-click if you don't want this recipe.", "a step's tooltip says how to skip it")
+local craftMenu = MenuRoot()
+craftRow.menu(nil, craftMenu)
+equal(craftMenu.title, "Spell 3275", "a step's menu is titled with its recipe")
+equal(craftMenu.buttons[1].text, "Not this recipe", "and offers Not this recipe")
+craftMenu.buttons[1].action()
+equal(page.setSkipped[1] == 3275 and page.setSkipped[2], true, "which skips that recipe")
+local skippedRow = lists[1].rows[#lists[1].rows]
+equal(skippedRow.text, "Skipped (1)", "the skipped recipes are one row under the route")
+local skippedMenu = MenuRoot()
+skippedRow.menu(nil, skippedMenu)
+equal(skippedMenu.buttons[1].text, "Show again: Heavy Linen Bandage", "its menu shows each one again")
+skippedMenu.buttons[1].action()
+equal(page.setSkipped[1] == 3276 and page.setSkipped[2], false, "by unskipping it")
+page.skipped = nil
+routeTab:Click()
+Drain()
+equal(lists[1].rows[#lists[1].rows].text ~= "Skipped (1)", true, "nothing skipped, no row")
 
 -- The page names the latest auction source and flags old prices.
 page.Price = function()

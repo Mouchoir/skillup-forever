@@ -207,6 +207,21 @@ equal(API.Navigate(999, 1), false, "an unknown profession doesn't route")
 equal(API.OpenRecipes(165), true, "opens a profession")
 equal(c.opened[1], 8165, "by the ID the client reported")
 equal(API.OpenRecipes(999), false, "not one the character lacks")
+-- A refused request is asked once more only by another ID.
+local OpenTradeSkill = c.G.C_TradeSkillUI.OpenTradeSkill
+c.G.C_TradeSkillUI.OpenTradeSkill = function(id)
+	OpenTradeSkill(id)
+	return false
+end
+c.opened = {}
+equal(API.OpenRecipes(165), false, "a profession the client will not open")
+equal(table.concat(c.opened, " "), "8165 165", "is asked by its own ID, then the skill line")
+c.professions[1].id = 165
+c.opened = {}
+API.OpenRecipes(165)
+equal(table.concat(c.opened, " "), "165", "and once when the client reports the skill line itself")
+c.professions[1].id = 8165
+c.G.C_TradeSkillUI.OpenTradeSkill = OpenTradeSkill
 
 -- Tracking changes the order, so the next call rebuilds.
 local tracked = API.Professions()

@@ -25,7 +25,10 @@ authorization. A preparation-only request ends before tags or uploads.
 3. Prepare release changes on a branch from fresh main. Choose a new version from
    the changes since the last tag. Retain `[Unreleased]` and move shipped notes
    into `## [X.Y.Z] - YYYY-MM-DD` using the UTC release date. Keep the TOC version
-   as `@project-version@`. Run `python3 tools/changelog.py --check X.Y.Z` and
+   as `@project-version@`. Set `ns.WHATS_NEW` in `Core/Core.lua` (the chat line
+   after an update) to the bold lead of one of this version's bullets;
+   `tests/core_spec.lua` fails while it names an older entry. Run
+   `python3 tools/changelog.py --check X.Y.Z` and
    `python3 tools/changelog.py --check`; inspect the extracted version notes.
 
 ## Refresh every presentation surface

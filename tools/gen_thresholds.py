@@ -11,6 +11,9 @@ from forever_tools import wago
 
 USER_AGENT = "SkillUpForever/1.0"
 BUILD = "1.60.1.70338"
+# The Classic Era build Forever's thresholds are compared with: where Forever moved a recipe's yellow and
+# grey but kept Classic's minimum, the minimum is stale. gen_trainer.py reads its teaching spells too.
+TEACH_BUILD = "1.15.9.70003"
 # Date this source snapshot was selected, not the date of each regeneration.
 SOURCE_DATE = "2026-10-13"
 # SpellEffect.Effect codes the generators read.
@@ -83,7 +86,84 @@ def spell_effects(rows):
     return effects
 
 
-def generate(ability_rows, skills, selected, names, effects):
+def ability_values(rows):
+    """[spell] = (orange, yellow, grey) of each spell whose SkillLineAbility rows all agree."""
+    values = defaultdict(set)
+    for row in rows:
+        try:
+            value = (
+                int(row["MinSkillLineRank"]),
+                int(row["TrivialSkillLineRankLow"]),
+                int(row["TrivialSkillLineRankHigh"]),
+            )
+        except (ValueError, TypeError):
+            continue
+        values[int(row["Spell"])].add(value)
+    return {spell: next(iter(seen)) for spell, seen in values.items() if len(seen) == 1}
+
+
+def shift(spell, yellow, grey, classic):
+    """How far Forever moved a recipe's yellow and grey from Classic Era's, when both moved together.
+
+    None when Classic Era has no single row for it or its range changed shape."""
+    before = classic.get(spell)
+    if before is None or yellow - before[1] != grey - before[2]:
+        return None
+    return yellow - before[1]
+
+
+def shifts(ability_rows, classic):
+    """[spell] = how far Forever moved each recipe's range from Classic Era's, for those it moved."""
+    moved = {}
+    for spell, (_, yellow, grey) in ability_values(ability_rows).items():
+        delta = shift(spell, yellow, grey, classic)
+        if delta:
+            moved[spell] = delta
+    return moved
+
+
+def scroll_requirements(ids, item_rows, item_effect_rows, effect_link_rows):
+    """[spell] = (item, skill): the pattern or recipe item that teaches each spell and the skill it asks.
+
+    Its own profession requirement is the skill at which the recipe can first be learned. Where several
+    items teach one spell, the lowest requirement is the earliest any of them can be learned."""
+    taught = {int(row["ID"]): int(row["SpellID"]) for row in item_effect_rows}
+    requirements = {int(row["ID"]): (int(row["RequiredSkill"]), int(row["RequiredSkillRank"])) for row in item_rows}
+    scrolls = {}
+    for row in effect_link_rows:
+        spell = taught.get(int(row["ItemEffectID"]))
+        item = int(row["ItemID"])
+        required = requirements.get(item)
+        if spell not in ids or not required or required[0] == 0 or required[1] <= 0:
+            continue
+        held = scrolls.get(spell)
+        if held is None or required[1] < held[1] or (required[1] == held[1] and item < held[0]):
+            scrolls[spell] = (item, required[1])
+    return scrolls
+
+
+def reconcile(spell, orange, yellow, grey, classic, scroll):
+    """The orange a recipe's row gets, and where it came from.
+
+    The client's MinSkillLineRank is kept when it is a real value inside the range. It is not when it is
+    the placeholder 1, sits above yellow, or is Classic Era's minimum left behind on a range Forever moved.
+    Then the same build's pattern or recipe requirement is the minimum; else a stale minimum moves with
+    its range; else the row keeps the client's placeholder 1 and the learn requirement gates it at runtime.
+    """
+    delta = shift(spell, yellow, grey, classic)
+    stale = bool(delta) and orange > 1 and orange == classic[spell][0]
+    if 1 < orange <= yellow and not stale:
+        return orange, "client"
+    if scroll is not None and 1 <= scroll <= yellow:
+        return scroll, "scroll"
+    if orange > 1 and delta is not None and 1 <= orange + delta <= yellow:
+        return orange + delta, "shifted"
+    return 1, "placeholder" if orange <= 1 else "dropped"
+
+
+def generate(ability_rows, skills, selected, names, effects, classic=None, scrolls=None):
+    classic = classic or {}
+    scrolls = scrolls or {}
     stats = {sid: Counter() for sid in selected}
     candidates = defaultdict(list)
     for row in ability_rows:
@@ -110,32 +190,31 @@ def generate(ability_rows, skills, selected, names, effects):
         if effects.get(spell) == {OPEN_LOCK}:
             counts["skip:gathering ability"] += 1
             continue
-        t = (orange, yellow, (yellow + grey) // 2, grey)
-        candidates[spell].append((sid, t))
+        candidates[spell].append((sid, (orange, yellow, grey)))
 
-    emitted = {}
+    emitted, sources = {}, {}
     for spell, rows in sorted(candidates.items()):
         if len({t for _, t in rows}) != 1:
             for sid, _ in rows:
                 stats[sid]["skip:conflicting recipe rows"] += 1
             continue
+        client, yellow, grey = rows[0][1]
+        scroll = scrolls.get(spell)
+        orange, source = reconcile(spell, client, yellow, grey, classic, scroll and scroll[1])
         seen = set()
-        for sid, thresholds in sorted(rows):
+        for sid, _ in sorted(rows):
             if sid in seen:
                 stats[sid]["skip:duplicate recipe row"] += 1
                 continue
             seen.add(sid)
             stats[sid]["emitted"] += 1
-            if thresholds[0] > thresholds[1]:
-                stats[sid]["inconsistent orange>yellow"] += 1
-                print(
-                    f"WARNING: recipe {spell} ({names.get(spell, 'SpellName unavailable')}): "
-                    f"keeping inconsistent DB2 thresholds {thresholds}",
-                    file=sys.stderr,
-                )
+            if source != "client":
+                stats[sid][f"orange:{source}"] += 1
             if not names.get(spell):
                 stats[sid]["missing spell name"] += 1
-        emitted[spell] = rows[0][1]
+        emitted[spell] = (orange, yellow, (yellow + grey) // 2, grey)
+        if source in ("scroll", "shifted", "dropped") and client > 1:
+            sources[spell] = f"client orange {client}: {source}"
 
     coverage = []
     for sid in sorted(selected):
@@ -146,8 +225,9 @@ def generate(ability_rows, skills, selected, names, effects):
         line = f"{name} ({sid}): {counts['emitted']} emitted / {skipped} skipped"
         if reasons:
             line += f" ({reasons})"
-        if counts["inconsistent orange>yellow"]:
-            line += f"; inconsistent DB2 orange>yellow={counts['inconsistent orange>yellow']} retained"
+        oranges = ", ".join(f"{key[7:]}={value}" for key, value in sorted(counts.items()) if key.startswith("orange:"))
+        if oranges:
+            line += f"; orange {oranges}"
         if not counts["rows"]:
             line += "; no SkillLineAbility rows"
         if sid not in skills:
@@ -156,17 +236,20 @@ def generate(ability_rows, skills, selected, names, effects):
         print(line)
         if counts["missing spell name"]:
             print(f"  Missing SpellName: {counts['missing spell name']} (comments only)")
-    return emitted, coverage
+    return emitted, coverage, sources
 
 
-def render(emitted, coverage, names):
+def render(emitted, coverage, names, sources=None):
     lines = [
         "-- Generated by tools/gen_thresholds.py - do not edit.",
         f"-- Source: wago.tools DB2, wow_classic_beta {BUILD}, {SOURCE_DATE}.",
         f"-- DB2: https://wago.tools/db2/SkillLineAbility/csv?build={BUILD}",
         "-- SkillLine, SpellName, and SpellEffect: same source and build.",
         "-- {orange, yellow, green, grey}; green = floor((yellow + grey) / 2).",
-        "-- All bundled thresholds use this Forever build; contradictory ranges are unavailable at runtime.",
+        "-- Yellow and grey are this Forever build's. Orange is its MinSkillLineRank where that is a real value",
+        "-- inside the range; else the same build's pattern requirement (ItemSparse, ItemEffect); else, for a",
+        f"-- minimum left at Classic Era {TEACH_BUILD}'s on a range Forever moved, that minimum moved as far;",
+        "-- else the client's placeholder 1, and the learn requirement gates the recipe at runtime.",
         f"-- {len(emitted)} unique recipe spell IDs; a shared recipe counts in each profession below.",
     ]
     lines.extend("-- " + line for line in coverage)
@@ -174,7 +257,7 @@ def render(emitted, coverage, names):
     for spell, thresholds in sorted(emitted.items()):
         name = " ".join(names.get(spell, "SpellName unavailable").split())
         values = ", ".join(map(str, thresholds))
-        flag = "; inconsistent orange>yellow" if thresholds[0] > thresholds[1] else ""
+        flag = f"; {sources[spell]}" if sources and spell in sources else ""
         lines.append(f"\t[{spell}] = {{ {values} }}, -- {name}{flag}")
     lines.append("}")
     return "\n".join(lines) + "\n"
@@ -219,10 +302,24 @@ def main():
         ),
         **options,
     )
+    classic_rows = db2(
+        "SkillLineAbility",
+        ("Spell", "MinSkillLineRank", "TrivialSkillLineRankHigh", "TrivialSkillLineRankLow"),
+        build=TEACH_BUILD,
+        **options,
+    )
+    scrolls = scroll_requirements(
+        {int(row["Spell"]) for row in ability_rows},
+        db2("ItemSparse", ("ID", "RequiredSkill", "RequiredSkillRank"), **options),
+        db2("ItemEffect", ("ID", "SpellID"), **options),
+        db2("ItemXItemEffect", ("ItemID", "ItemEffectID"), **options),
+    )
     skills, selected, excluded = professions(skill_rows)
     names = {int(row["ID"]): row["Name_lang"] for row in name_rows}
     effects = spell_effects(effect_rows)
-    emitted, coverage = generate(ability_rows, skills, selected, names, effects)
+    emitted, coverage, sources = generate(
+        ability_rows, skills, selected, names, effects, ability_values(classic_rows), scrolls
+    )
     if not emitted:
         raise ValueError("No usable recipes; leaving existing generated output untouched")
     for sid, name in sorted(excluded.items()):
@@ -230,7 +327,7 @@ def main():
     missing = [str(sid) for sid in sorted(REQUIRED_SKILLS) if sid not in skills]
     print("Missing required skill lines: " + (", ".join(missing) or "none"))
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(render(emitted, coverage, names), encoding="utf-8")
+    OUTPUT.write_text(render(emitted, coverage, names, sources), encoding="utf-8")
     print(f"Wrote {len(emitted)} unique recipe spell IDs to {OUTPUT.relative_to(ROOT)}")
 
 

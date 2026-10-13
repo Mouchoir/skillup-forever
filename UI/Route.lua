@@ -5,6 +5,7 @@ local L = ns.L
 -- How far right of centre the route/reagents split sits.
 local ROUTE_SHARE = 50
 local TRAIN_ICON = "Interface\\Icons\\INV_Misc_Book_11"
+local SKIPPED_ICON = "Interface\\Icons\\INV_Misc_Note_01"
 -- An Auctionator price older than a day is flagged: auction prices move that fast.
 local STALE_AFTER = 24 * 3600
 
@@ -135,6 +136,24 @@ local function AddToolLines(tooltip, recipeID)
 	end
 end
 
+-- "Not this recipe", the way Adventure Guide Forever's "Not this quest" leaves a quest out: a right-click on any
+-- step or suggestion that names a recipe leaves it out of every route on this character.
+---@param recipeID integer
+---@return fun(owner: Region, root: RootMenuDescriptionProxy)
+local function RecipeMenu(recipeID)
+	return function(_, root)
+		root:CreateTitle(RecipeName(recipeID))
+		root:CreateButton(L["Not this recipe"], function()
+			ns.SetSkipped(recipeID, true)
+		end)
+	end
+end
+
+---@param tooltip GameTooltip
+local function AddSkipHint(tooltip)
+	GameTooltip_AddInstructionLine(tooltip, L["Right-click if you don't want this recipe."])
+end
+
 ---@param tooltip GameTooltip
 ---@param profession SkillUpProfession
 ---@param craft SkillUpPlanCraft
@@ -153,6 +172,7 @@ local function CraftTooltip(tooltip, profession, craft)
 	if ns.IsLearned(recipeID) and profession.skillLine == ns.OpenSkillLine() then
 		GameTooltip_AddInstructionLine(tooltip, L["Click to open the recipe."])
 	end
+	AddSkipHint(tooltip)
 end
 
 ---@param tooltip GameTooltip
@@ -164,6 +184,7 @@ local function SubCraftTooltip(tooltip, subcraft)
 	AddToolLines(tooltip, recipeID)
 	GameTooltip_AddBlankLineToTooltip(tooltip)
 	AddReagentLines(tooltip, recipeID, subcraft.crafts)
+	AddSkipHint(tooltip)
 end
 
 ---@param tooltip GameTooltip
@@ -177,6 +198,7 @@ local function TrainTooltip(tooltip, profession, step)
 	AddLine(tooltip, L["First used at"], tostring(step.usedAt))
 	AddBands(tooltip, profession, step.recipeID)
 	ns.AddNearest(tooltip, L["Nearest trainer"], ns.NearestTrainer(profession, step.cap, true))
+	AddSkipHint(tooltip)
 end
 
 ---@param tooltip GameTooltip
@@ -219,6 +241,52 @@ local function RecipeClick(recipeID)
 	end
 end
 
+-- "Show again: <recipe>" for each recipe of this profession the character skipped, on the route page's
+-- Skipped row and the tracker's header menu.
+---@param description RootMenuDescriptionProxy|ElementMenuDescriptionProxy
+---@param skillLine integer
+function ns.AddSkippedMenu(description, skillLine)
+	for _, recipe in ipairs(ns.SkippedRecipes(skillLine)) do
+		description:CreateButton(string.format(L["Show again: %s"], recipe.name), function()
+			ns.SetSkipped(recipe.recipeID, false)
+		end)
+	end
+end
+
+-- One row under the route for what it leaves out by choice, so a skip is never silent: click or right-click
+-- it to bring a recipe back.
+---@param list SkillUpList
+---@param profession SkillUpProfession
+local function RenderSkipped(list, profession)
+	local skipped = ns.SkippedRecipes(profession.skillLine)
+	if #skipped == 0 then
+		return
+	end
+	local title = string.format(L["Skipped (%d)"], #skipped)
+	local function Menu(_, root)
+		root:CreateTitle(title)
+		ns.AddSkippedMenu(root, profession.skillLine)
+	end
+	list:Add({
+		icon = SKIPPED_ICON,
+		text = title,
+		detail = L["Not in this route: you chose Not this recipe."],
+		color = GRAY_FONT_COLOR,
+		tooltip = function(tooltip)
+			GameTooltip_SetTitle(tooltip, title)
+			for _, recipe in ipairs(skipped) do
+				GameTooltip_AddHighlightLine(tooltip, recipe.name)
+			end
+			GameTooltip_AddInstructionLine(tooltip, L["Click to show a recipe again."])
+		end,
+		click = function(row)
+			GameTooltip_Hide()
+			MenuUtil.CreateContextMenu(row, Menu)
+		end,
+		menu = Menu,
+	})
+end
+
 local SUGGESTIONS_SHOWN = 8
 
 ---@param tooltip GameTooltip
@@ -244,6 +312,7 @@ local function SuggestionTooltip(tooltip, profession, suggestion)
 		ns.AddCompanionHint(tooltip)
 	end
 	GameTooltip_AddInstructionLine(tooltip, L["Shift-click to link the scroll."])
+	AddSkipHint(tooltip)
 end
 
 ---@param suggestion SkillUpSuggestion
@@ -295,6 +364,7 @@ local function RenderSuggestions(list, plan)
 				SuggestionTooltip(tooltip, profession, suggestion)
 			end,
 			click = SuggestionClick(suggestion),
+			menu = RecipeMenu(suggestion.recipeID),
 		})
 	end
 end
@@ -321,6 +391,7 @@ local function RenderRoute(list, plan)
 					SubCraftTooltip(tooltip, subcraft)
 				end,
 				click = RecipeClick(subcraft.recipeID),
+				menu = RecipeMenu(subcraft.recipeID),
 			})
 		elseif rank then
 			list:Add({
@@ -348,6 +419,7 @@ local function RenderRoute(list, plan)
 					TrainTooltip(tooltip, profession, training)
 				end,
 				click = TrainerClick(profession, training.cap),
+				menu = RecipeMenu(training.recipeID),
 			})
 		elseif craft then
 			local money = Money(ns.NetCost(craft.recipeID) * craft.crafts)
@@ -362,6 +434,7 @@ local function RenderRoute(list, plan)
 					CraftTooltip(tooltip, profession, craft)
 				end,
 				click = RecipeClick(craft.recipeID),
+				menu = RecipeMenu(craft.recipeID),
 			})
 		end
 	end
@@ -378,9 +451,10 @@ local function RenderRoute(list, plan)
 	end
 	if #plan.crafts > 0 and plan.unpriced > 0 then
 		list:Message(
-			string.format(L["Route incomplete: %d recipes skipped, their reagents not priced yet."], plan.unpriced)
+			string.format(L["Route incomplete: %d recipes left out, their reagents not priced yet."], plan.unpriced)
 		)
 	end
+	RenderSkipped(list, profession)
 end
 
 local SOURCE_TEXT = { gather = L["gather"], vendor = L["vendor"], auction = L["AH"], unknown = L["no price"] }
@@ -403,6 +477,10 @@ local function ReagentTooltip(tooltip, item)
 	end
 	if price.source == "gather" then
 		AddLine(tooltip, L["Source"], ns.PriceSourceText(price))
+		-- Valued at what it would sell for: the cost of crafting with it instead, never a price to buy at.
+		if price.worth then
+			AddLine(tooltip, L["Each"], Money(price.copper))
+		end
 		return
 	end
 	AddLine(tooltip, L["Each"], string.format("%s |cff808080(%s)|r", Money(price.copper), ns.PriceSourceText(price)))
@@ -806,10 +884,14 @@ local function CreateButtons()
 		GameTooltip:SetOwner(self, "ANCHOR_TOP")
 		GameTooltip_SetTitle(GameTooltip, L["Buy reagents at the auction house"])
 		if collect:IsEnabled() then
+			-- luacheck: push no max line length
 			GameTooltip_AddNormalLine(
 				GameTooltip,
-				L["On, a reagent you could gather is priced at a vendor or the auction house; off, gathering it costs nothing."]
+				ns.db.valueGathered
+						and L["On, a reagent you could gather is priced at a vendor or the auction house; off, gathering it costs what it would sell for."]
+					or L["On, a reagent you could gather is priced at a vendor or the auction house; off, gathering it costs nothing."]
 			)
+			-- luacheck: pop
 		else
 			GameTooltip_AddDisabledLine(
 				GameTooltip,

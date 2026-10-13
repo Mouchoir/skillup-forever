@@ -4,6 +4,19 @@ local _, ns = ...
 local Model = {}
 ns.Model = Model
 
+-- A value the client hands over as secret (Forever's restricted reads, as in combat) errors on a truth
+-- test, a comparison or arithmetic, and stays secret wherever it is kept. nil for one, so the caller treats
+-- it as unknown; any other value unchanged.
+---@generic T
+---@param value T
+---@return T?
+function ns.Readable(value)
+	if issecretvalue and issecretvalue(value) then
+		return nil
+	end
+	return value
+end
+
 ---@param recipeID integer
 ---@return number[]?
 function Model.Get(recipeID)

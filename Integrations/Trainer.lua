@@ -115,10 +115,15 @@ local function BuildState(services)
 	-- planned away from it (bundled base fees miss discounts and Forever changes).
 	local seen = ns.db.trainer[skillLine] or {}
 	ns.db.trainer[skillLine] = seen
+	-- A row that shows no skill requirement keeps the bundled one: recording 0 would plan to learn it at once.
 	for index, service in pairs(services) do
 		if service.recipeID then
 			local _, required = GetTrainerServiceSkillReq(index)
-			seen[service.recipeID] = { GetTrainerServiceCost(index), required or 0 }
+			local bundled = ns.TrainerFees[service.recipeID]
+			required = required or (bundled and bundled[2])
+			if required then
+				seen[service.recipeID] = { GetTrainerServiceCost(index), required }
+			end
 		end
 	end
 	NoteRanks(skillLine, services)

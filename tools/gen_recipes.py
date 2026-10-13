@@ -19,6 +19,7 @@ from gen_thresholds import (
     TRANS_DOOR,
     db2,
     professions,
+    scroll_requirements,
 )
 
 OUTPUT = ROOT / "Data" / "Recipes.lua"
@@ -232,21 +233,7 @@ def generate(
         if item in sparse and item in kinds
     }
 
-    # A pattern or recipe item teaches its spell through an item effect, and its own profession
-    # requirement is the skill at which the recipe can first be learned. Where several items teach one
-    # spell, the lowest requirement is the earliest any of them can be learned.
-    taught = {int(row["ID"]): int(row["SpellID"]) for row in item_effect_rows}
-    requirements = {int(row["ID"]): (int(row["RequiredSkill"]), int(row["RequiredSkillRank"])) for row in item_rows}
-    scrolls = {}
-    for row in effect_link_rows:
-        spell = taught.get(int(row["ItemEffectID"]))
-        item = int(row["ItemID"])
-        required = requirements.get(item)
-        if spell not in ids or not required or required[0] == 0 or required[1] <= 0:
-            continue
-        held = scrolls.get(spell)
-        if held is None or required[1] < held[1] or (required[1] == held[1] and item < held[0]):
-            scrolls[spell] = (item, required[1])
+    scrolls = scroll_requirements(ids, item_rows, item_effect_rows, effect_link_rows)
 
     spell_names = {}
     for row in name_rows:

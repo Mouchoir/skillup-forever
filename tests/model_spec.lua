@@ -99,10 +99,19 @@ for _, recipeID in ipairs(samples) do
 end
 near(Model.Chance(Model.Get(9058), 48), 22 / 30, "generated cloak matches mockup")
 
--- Keep raw client rows for catalogue generation, but never use contradictory bands in the model.
-for _, recipeID in ipairs({ 2665, 2674 }) do
-	equal(ns.Thresholds[recipeID][1] > ns.Thresholds[recipeID][2], true, "raw contradiction retained")
-	equal(Model.Get(recipeID), nil, "contradictory recipe is unknown")
+-- Issue #107: the client's minimums for these sit above yellow (Classic's, left on a range Forever moved
+-- 25 down). The generator moves Heavy Sharpening Stone's with its range and drops Coarse Sharpening
+-- Stone's, which still would not fit, for the placeholder: neither shows "?".
+local heavy = Model.Get(2674)
+equal(heavy and table.concat(heavy, "/"), "100/100/107/115", "Heavy Sharpening Stone's minimum moved with it")
+equal(Model.Color(heavy, 110), "green", "and it is craftable at 110")
+local coarse = Model.Get(2665)
+equal(coarse and table.concat(coarse, "/"), "1/40/47/55", "Coarse Sharpening Stone keeps the placeholder")
+-- A pattern's own requirement is Runed Copper Breastplate's; Runed Copper Belt's moves with its range.
+equal(table.concat(Model.Get(2667), "/"), "55/95/115/135", "Runed Copper Breastplate starts where its plans ask")
+equal(Model.Color(Model.Get(2666), 75), "orange", "Runed Copper Belt is orange at 75, as the game says")
+for recipeID, t in pairs(ns.Thresholds) do
+	equal(Model.Get(recipeID) ~= nil, true, "bundled recipe " .. recipeID .. " is ordered: " .. table.concat(t, "/"))
 end
 equal(Model.Get(9985)[1], 1, "Bronze Warhammer uses the Forever requirement")
 ns.LiveRecipes = { [9985] = { thresholds = { 1, 155, 170, 160 } } }
@@ -332,6 +341,7 @@ do
 	local auction = { [4] = 8 }
 	local runtime = {
 		Model = Model,
+		Readable = ns.Readable,
 		RecipeData = {
 			[10] = { reagents = { { itemID = 1, quantity = 2 } }, output = { itemID = 2, quantity = 3 } },
 			[11] = { reagents = { { itemID = 1, quantity = 2 }, { itemID = 4, quantity = 1 } } },

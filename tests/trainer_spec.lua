@@ -18,6 +18,8 @@ local ns = {
 	},
 	RecipeNames = { [COOKING] = { ["Spice Bread"] = BREAD } },
 	TrainerFees = {},
+	RecipeScrolls = {},
+	Catalogue = { Recipe = function() end },
 	TrainerRanks = { [COOKING] = { { 150, 500, 50, 10 } } },
 	WhenStale = function(name, handler)
 		if name == "plans" then
@@ -140,5 +142,14 @@ equal(ns.db.trainerRanks[COOKING], nil, "a row wanting another skill is not the 
 Open({ { "Journeyman Cook", "available", 450, 50 }, { "Mystery Stew", "available", 300, 50 } })
 equal(ns.db.trainerRanks[COOKING], nil, "two rows that could be the rank record neither")
 equal(Journeyman().fee, 500, "so the bundled fee stands")
+
+-- A recipe row that shows no skill requirement is not recorded as needing none.
+ns.db.trainer = {}
+Open({ { "Spice Bread", "available", 40, nil, BREAD } })
+equal(ns.db.trainer[COOKING][BREAD], nil, "an unknown requirement is not saved as 0")
+ns.TrainerFees[BREAD] = { 30, 25 }
+Open({ { "Spice Bread", "available", 40, nil, BREAD } })
+equal(table.concat(ns.db.trainer[COOKING][BREAD], "/"), "40/25", "the fee is kept with the bundled requirement")
+ns.TrainerFees[BREAD] = nil
 
 Client.report("trainer_spec")

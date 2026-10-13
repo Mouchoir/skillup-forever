@@ -12,6 +12,13 @@ A map tab under the Professions window's side tabs opens a SkillUp page. Pick an
 - A step asks for enough crafts to reach its target in nine runs out of ten, worked out from the chance at each skill point on the way, not from the average. An orange recipe is unchanged; a yellow or green one carries its risk in its price, so the route leans on it less.
 - Recipes a trainer teaches are included when they pay for themselves, shown as a *Train* step with its fee. The fee is counted once, and never before the trainer would teach them.
 - Recipes with an unpriced reagent are left out and counted.
+- Recipes you said *Not this recipe* to are left out (see below).
+
+### Not this recipe
+
+Right-click a step, a *Train* step, a sub-craft or a suggested scroll and choose *Not this recipe*, the way Adventure Guide Forever's *Not this quest* leaves a quest out. The route is planned again without it: it is never crafted, trained, made as a sub-craft or suggested, and the next cheapest recipe takes its place. When nothing else reaches the target, the route stops short as it would anyway.
+
+A *Skipped (N)* row under the route counts what you left out of this profession; click or right-click it and choose *Show again* to bring one back. The tracker's header menu has the same list. `/su skipped` prints every skipped recipe with its ID, and `/su unskip <ID>` or `/su unskip all` brings them back. Skips are saved for each character.
 
 ### The steps
 
@@ -61,6 +68,8 @@ Beside the route is every reagent it needs, one row each: a full icon, the name 
 
 *Buy reagents* in the route page chooses where a reagent another of your professions could gather comes from: off, it costs nothing, so the route uses it and the list says *gather*; on, it is bought and priced at a vendor or the auction house like any other reagent. The choice is saved for this character. When the route has nothing your professions gather, the switch is disabled and its tooltip says so.
 
+Gathering is free time, but the materials are not: you could sell them instead. Turn on *Value gathered materials at what they'd sell for* (Settings, Prices) and a gathered material, with *Buy reagents* off, costs what selling it would bring: its Auctionator price after the auction house's 5% cut, or its vendor sell price if that is more. The route then weighs that cost like any other, so it leaves valuable ore for a vendor-reagent recipe when that is cheaper, and the reagent's tooltip says which price it used. A material with neither price stays free.
+
 ### Track
 
 *Track* puts the list in the objective tracker beside your quests, like `12/20 Linen Cloth`, kept up to date as you buy, craft and skill up.
@@ -72,5 +81,5 @@ Opening a profession's own window, or a trainer that teaches it, starts tracking
 
 ### Buying
 
-- **At a vendor:** *Buy tracked reagents* on the merchant window buys what that vendor sells, with the total cost on the button.
+- **At a vendor:** *Buy tracked reagents* on the merchant window buys what that vendor sells, with the total cost on the button. It lists what it will buy and asks before spending anything; turn off *Show the buy button at merchants* to remove it.
 - **At the auction house:** with [Auctionator](https://www.curseforge.com/wow/addons/auctionator) installed and the route set to buy rather than gather, the addon keeps an Auctionator shopping list (`SkillUp: <profession>`) of the auction house reagents still missing, updated as you buy, craft and skill up. The reagent list names that list. An unchanged need leaves it alone, and a need the bags now cover empties it. Auction purchases stay manual, as the game requires. When a price is missing or old and Auctionator's own *scan when the auction house opens* option is off, the page says so and points at it (Auctionator, Basic Options).

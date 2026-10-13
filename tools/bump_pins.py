@@ -47,7 +47,7 @@ def file_commit(repository, path):
 PINS = {
     "BUILD": ("gen_thresholds.py", "Forever", BUILD, lambda _: forever()),
     # Classic Era builds are 1.1x.
-    "TEACH_BUILD": ("gen_trainer.py", "Classic Era", BUILD, lambda _: newest("wow_classic_era", "1.1")),
+    "TEACH_BUILD": ("gen_thresholds.py", "Classic Era", BUILD, lambda _: newest("wow_classic_era", "1.1")),
     "PT_COMMIT": (
         "gen_vendor.py",
         "LibPeriodicTable",

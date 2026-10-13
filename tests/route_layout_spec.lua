@@ -376,6 +376,9 @@ local ns = {
 		return false
 	end,
 	SetTracked = noop,
+	SkippedRecipes = function()
+		return {}
+	end,
 	HasAuctionator = function()
 		return true
 	end,

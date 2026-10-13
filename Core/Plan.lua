@@ -80,6 +80,13 @@ local function RouteTarget(profession)
 	return math.min(saved and saved > profession.base and saved or profession.base + 25, ceiling)
 end
 
+-- A recipe the player said "Not this recipe" to: no route crafts, trains or suggests it.
+---@param recipeID integer
+---@return boolean
+local function Skipped(recipeID)
+	return ns.IsSkipped ~= nil and ns.IsSkipped(recipeID)
+end
+
 -- What the planner works from: the recipes this character knows, for any of its professions, from
 -- the bundled recipe data plus the learned record, so the profession needn't be open. `known` adds
 -- recipes the caller knows are learned. Skills here are effective (base + bonus), as the
@@ -91,7 +98,7 @@ end
 local function Snapshot(profession, target, known)
 	local recipes = {}
 	for recipeID, recipe in pairs(ns.RecipeData) do
-		local thresholds = recipe.skillLine == profession.skillLine and ns.Model.Get(recipeID)
+		local thresholds = recipe.skillLine == profession.skillLine and not Skipped(recipeID) and ns.Model.Get(recipeID)
 		if thresholds and (known and known[recipeID] or ns.IsLearned(recipeID)) then
 			recipes[#recipes + 1] = {
 				recipeID = recipeID,
@@ -125,7 +132,7 @@ local function Trainable(profession, snapshot)
 	local services = {}
 	for recipeID, recipe in pairs(ns.RecipeData) do
 		local training = recipe.skillLine == profession.skillLine and ns.TrainingFor(profession, recipeID)
-		local t = training and not ns.IsLearned(recipeID) and ns.Model.Get(recipeID)
+		local t = training and not ns.IsLearned(recipeID) and not Skipped(recipeID) and ns.Model.Get(recipeID)
 		if training and t then
 			local taught = { math.max(t[1], training[2] + profession.modifier), t[2], t[3], t[4] }
 			if taught[1] <= snapshot.target and t[4] > snapshot.skill then
@@ -403,7 +410,7 @@ function ns.BestTraining(profession, known, offers)
 	local services = {}
 	for _, offer in ipairs(offers) do
 		local thresholds = ns.Model.Get(offer.recipeID)
-		if thresholds and not ns.IsLearned(offer.recipeID) then
+		if thresholds and not ns.IsLearned(offer.recipeID) and not Skipped(offer.recipeID) then
 			services[#services + 1] = {
 				recipeID = offer.recipeID,
 				thresholds = {
@@ -544,7 +551,7 @@ function ns.NextCraft(plan)
 		crafts = ns.Model.CoveredCrafts(thresholds, craft.from + m, profession.max + m, ups)
 	end
 	-- RecipeInfo has no count; this one includes the client's reagent and resource rules.
-	local count = math.min(crafts, C_TradeSkillUI.GetCraftableCount(recipeID))
+	local count = math.min(crafts, ns.Readable(C_TradeSkillUI.GetCraftableCount(recipeID)) or 0)
 	if count > 0 then
 		return {
 			recipeID = recipeID,

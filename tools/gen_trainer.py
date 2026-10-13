@@ -9,7 +9,18 @@ from collections import Counter, defaultdict
 
 from forever_tools import wago
 from gen_recipes import put_unique, threshold_ids
-from gen_thresholds import BUILD, CACHE, LEARN_SPELL, ROOT, SKILL, USER_AGENT, db2
+from gen_thresholds import (
+    BUILD,
+    CACHE,
+    LEARN_SPELL,
+    ROOT,
+    SKILL,
+    TEACH_BUILD,
+    USER_AGENT,
+    ability_values,
+    db2,
+    shifts,
+)
 
 OUTPUT = ROOT / "Data" / "Trainer.lua"
 CLASSICDB_COMMIT = "22b51464f1625f6ef6275771de1f5466c6f5d19e"
@@ -19,9 +30,8 @@ CLASSICDB_URL = (
 CLASSICDB_CACHE = CACHE / f"classicdb-{CLASSICDB_COMMIT[:7]}.sql.gz"
 PROFESSION_SKILLS = {129, 164, 165, 171, 182, 185, 186, 197, 202, 333, 356, 393}
 RANK_SKILL = 75
-# Forever's client leaves out the trainers' teaching spells; Classic Era keeps them,
-# with the same recipe spell IDs.
-TEACH_BUILD = "1.15.9.70003"
+# Forever's client leaves out the trainers' teaching spells; Classic Era (TEACH_BUILD, pinned in
+# gen_thresholds.py) keeps them, with the same recipe spell IDs.
 
 
 def classicdb(refresh=False, offline=False):
@@ -131,14 +141,20 @@ def trainable_rows(trainer):
             )
 
 
-def generate(ids, trainer, effect_rows):
+def generate(ids, trainer, effect_rows, moved=None):
+    """moved: [recipe] = how far Forever moved its yellow and grey from Classic Era's (gen_thresholds.shifts).
+
+    classic-db's required skill is Classic's. Where Forever moved a recipe's range, it moved the skill its
+    pattern asks for by as much (all but a few of the patterns both clients have), so the trainer's moves too.
+    """
+    moved = moved or {}
     teaches, rank_of = spell_maps(effect_rows)
     fees = defaultdict(Counter)
     ranks = defaultdict(Counter)
     for _, spell, cost, skill, required, level in trainable_rows(trainer):
         for taught in teaches.get(spell, ()):
             if taught in ids:
-                fees[taught][(cost, required)] += 1
+                fees[taught][(cost, max(required + moved.get(taught, 0), 1))] += 1
             if rank_of.get(taught, (None,))[0] == skill:
                 ranks[skill][(rank_of[taught][1], cost, required, level)] += 1
     if not fees:
@@ -165,6 +181,8 @@ def render(fees, conflicts, ranks):
         "-- reputation discounts; teaching spell -> recipe via wago.tools SpellEffect (LEARN_SPELL),",
         f"-- wow_classic_era {TEACH_BUILD}; recipes limited to wow_classic_beta {BUILD} thresholds.",
         "-- Specialisation-gated rows are left out. Fees seen at a trainer win.",
+        f"-- A required skill moves as far as Forever {BUILD} moved the recipe's yellow and grey from",
+        f"-- Classic Era {TEACH_BUILD}'s (SkillLineAbility).",
         f"-- recipes={len(fees)}; conflicts resolved to the most common: {conflicts}.",
         "---@type string, SkillUpNamespace",
         "local _, ns = ...",
@@ -202,6 +220,21 @@ def main():
         threshold_ids(),
         dump_tables(classicdb(**options), ("npc_trainer",))["npc_trainer"],
         teach_effects(**options),
+        shifts(
+            db2(
+                "SkillLineAbility",
+                ("Spell", "MinSkillLineRank", "TrivialSkillLineRankHigh", "TrivialSkillLineRankLow"),
+                **options,
+            ),
+            ability_values(
+                db2(
+                    "SkillLineAbility",
+                    ("Spell", "MinSkillLineRank", "TrivialSkillLineRankHigh", "TrivialSkillLineRankLow"),
+                    build=TEACH_BUILD,
+                    **options,
+                )
+            ),
+        ),
     )
     content = render(fees, conflicts, ranks)
     OUTPUT.write_text(content, encoding="utf-8")

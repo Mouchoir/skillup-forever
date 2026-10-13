@@ -17,11 +17,20 @@ function ns.HasAuctionator()
 	return api and api.CreateShoppingList and api.ConvertToSearchString and true or false
 end
 
--- Bags and bank: the client knows bank counts once the bank has been opened.
+-- The last count the client let us read per item, for when it hands over a secret one.
+local lastCounts = {}
+
+-- Bags and bank: the client knows bank counts once the bank has been opened. A secret count would turn every
+-- sum, comparison and cache it reaches secret until a reload, so it reads as the last count seen instead.
 ---@param itemID integer
 ---@return number
 function ns.Have(itemID)
-	return C_Item.GetItemCount(itemID, true)
+	local count = ns.Readable(C_Item.GetItemCount(itemID, true))
+	if count then
+		lastCounts[itemID] = count
+		return count
+	end
+	return lastCounts[itemID] or 0
 end
 
 -- What your other characters on this realm and faction hold (bags, bank, mail),
@@ -238,11 +247,15 @@ local ORDER_TIMEOUT = 3
 
 -- BuyMerchantItem counts units, priced per merchant stack, and takes at most
 -- GetMerchantItemMaxStack units a call (Blizzard's MerchantFrame does the same).
-local function BuyMissing()
+---@param expected number? the cost the player agreed to; anything else is not bought
+local function BuyMissing(expected)
 	if ordered then
 		return
 	end
 	local purchases, cost = MerchantPurchases()
+	if expected and cost ~= expected then
+		return
+	end
 	if cost > GetMoney() then
 		ns.Print(L["not enough money for every missing reagent here."])
 		return
@@ -273,14 +286,104 @@ local function BuyMissing()
 	end)
 end
 
-local function RefreshBuyButton()
-	if not (MerchantFrame and MerchantFrame:IsShown()) then
-		if buyButton then
-			buyButton:Hide()
+-- What a purchase buys, for the confirmation: the first few items by name and how many more.
+local LISTED_PURCHASES = 4
+
+---@param purchases {index: integer, count: integer}[]
+---@return string
+local function PurchaseList(purchases)
+	local parts = {}
+	for index, purchase in ipairs(purchases) do
+		if index > LISTED_PURCHASES then
+			parts[#parts + 1] = string.format(L["%d more"], #purchases - LISTED_PURCHASES)
+			break
 		end
+		local info = C_MerchantFrame.GetItemInfo(purchase.index)
+		local name = info and info.name or C_Item.GetItemNameByID(GetMerchantItemID(purchase.index)) or UNKNOWN
+		parts[#parts + 1] = string.format(L["%d %s"], purchase.count, name)
+	end
+	return table.concat(parts, ", ")
+end
+
+-- The addon's own confirmation, on the merchant's window so it goes when the merchant does. One click
+-- spends gold on every missing reagent, so the player sees what and how much before anything is bought.
+---@class SkillUpBuyConfirm : Frame
+---@field Text FontString
+---@field Accept Button
+---@field Cancel Button
+---@field cost number?
+---@type SkillUpBuyConfirm?
+local confirm
+
+local function HideConfirm()
+	if confirm then
+		confirm.cost = nil
+		confirm:Hide()
+	end
+end
+
+---@return SkillUpBuyConfirm
+local function Confirm()
+	if confirm then
+		return confirm
+	end
+	local frame = CreateFrame("Frame", nil, MerchantFrame) --[[@as SkillUpBuyConfirm]]
+	frame:SetSize(320, 112)
+	frame:SetPoint("TOP", MerchantFrame, "TOP", 0, -72)
+	frame:SetFrameStrata("DIALOG")
+	frame:EnableMouse(true)
+	CreateFrame("Frame", nil, frame, "DialogBorderDarkTemplate"):SetAllPoints()
+	frame.Text = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+	frame.Text:SetPoint("TOPLEFT", 20, -18)
+	frame.Text:SetPoint("TOPRIGHT", -20, -18)
+	frame.Text:SetJustifyH("CENTER")
+	frame.Accept = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate") --[[@as Button]]
+	frame.Accept:SetSize(110, 22)
+	frame.Accept:SetPoint("BOTTOMRIGHT", frame, "BOTTOM", -4, 16)
+	frame.Accept:SetText(L["Buy"])
+	frame.Accept:SetScript("OnClick", function()
+		local cost = frame.cost
+		HideConfirm()
+		if cost then
+			BuyMissing(cost)
+		end
+	end)
+	frame.Cancel = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate") --[[@as Button]]
+	frame.Cancel:SetSize(110, 22)
+	frame.Cancel:SetPoint("BOTTOMLEFT", frame, "BOTTOM", 4, 16)
+	frame.Cancel:SetText(L["Cancel"])
+	frame.Cancel:SetScript("OnClick", HideConfirm)
+	frame:Hide()
+	confirm = frame
+	return frame
+end
+
+-- The button asks first: what it would buy here and what that costs.
+local function AskToBuy()
+	if ordered then
 		return
 	end
 	local purchases, cost = MerchantPurchases()
+	if #purchases == 0 then
+		return
+	end
+	local frame = Confirm()
+	frame.cost = cost
+	frame.Text:SetText(
+		string.format(L["Buy %s for %s?"], PurchaseList(purchases), C_CurrencyInfo.GetCoinTextureString(cost))
+	)
+	frame:Show()
+end
+
+local function RefreshBuyButton()
+	local purchases, cost = {}, 0
+	if ns.db.merchantButton and MerchantFrame and MerchantFrame:IsShown() then
+		purchases, cost = MerchantPurchases()
+	end
+	-- Whatever the player agreed to is out of date once the merchant, the bags or the route change.
+	if confirm and confirm.cost ~= cost then
+		HideConfirm()
+	end
 	if #purchases == 0 then
 		if buyButton then
 			buyButton:Hide()
@@ -290,7 +393,7 @@ local function RefreshBuyButton()
 	if not buyButton then
 		buyButton = CreateFrame("Button", nil, MerchantFrame, "UIPanelButtonTemplate") --[[@as Button]]
 		buyButton:SetPoint("BOTTOMRIGHT", MerchantFrame, "TOPRIGHT", 0, 2)
-		buyButton:SetScript("OnClick", BuyMissing)
+		buyButton:SetScript("OnClick", AskToBuy)
 	end
 	buyButton:SetText(string.format(L["Buy tracked reagents  %s"], C_CurrencyInfo.GetCoinTextureString(cost)))
 	buyButton:SetSize(buyButton:GetTextWidth() + 32, 22)
@@ -346,6 +449,11 @@ function ModuleMixin:OnBlockHeaderClick(block)
 			root:CreateButton(string.format(L["Waypoint to a vendor: %s"], item.name), function()
 				ns.SetWaypoint(ns.NearestVendor(item.itemID, true) or item.vendor)
 			end)
+		end
+		-- Recipes left out with Not this recipe on the route page, each with Show again.
+		local skipped = #ns.SkippedRecipes(block.id)
+		if skipped > 0 then
+			ns.AddSkippedMenu(root:CreateButton(string.format(L["Skipped (%d)"], skipped)), block.id)
 		end
 		root:CreateButton(L["Stop tracking"], function()
 			ns.SetTracked(block.id, false)

@@ -203,4 +203,43 @@ equal(message.kind, "message", "and knows it is a message")
 equal(message.Text.text, list.rows[5].text, "with its text")
 equal(message.Text.wordWrap, true, "wrapped")
 
+-- A left click is the row's own and a right-click opens its menu, from the row; a row with only a menu still
+-- takes the mouse.
+local menus, clicks = {}, {}
+env.GameTooltip_Hide = function() end
+env.MenuUtil = {
+	CreateContextMenu = function(owner, generator)
+		menus[#menus + 1] = { owner = owner, generator = generator }
+	end,
+}
+local function Menu() end
+list:Begin()
+list:Add({
+	text = "Linen Bandage",
+	click = function(clicked)
+		clicks[#clicks + 1] = clicked
+	end,
+	menu = Menu,
+})
+list:Add({ text = "Skipped (1)", menu = Menu })
+list:Add({ text = "Total 54s" })
+list:Finish()
+local clickable = Materialize(list.rows[1])
+local mouse
+clickable.EnableMouse = function(_, enabled)
+	mouse = enabled
+end
+Materialize(list.rows[1], clickable)
+clickable.scripts.OnClick(clickable, "LeftButton")
+equal(clicks[1], clickable, "a left click is the row's own, given the row")
+equal(#menus, 0, "and opens no menu")
+clickable.scripts.OnClick(clickable, "RightButton")
+equal(#clicks, 1, "a right-click is not a left click")
+equal(menus[1].owner, clickable, "it opens the menu on the row")
+equal(menus[1].generator, Menu, "filled by the entry's menu")
+Materialize(list.rows[2], clickable)
+equal(mouse, true, "a row with only a menu takes the mouse")
+Materialize(list.rows[3], clickable)
+equal(mouse, false, "a row with nothing to do does not")
+
 Client.report("list_spec")

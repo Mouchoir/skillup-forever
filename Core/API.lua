@@ -338,9 +338,13 @@ function API.OpenRecipes(skillLineID)
 	if not profession then
 		return false
 	end
-	-- Forever's own profession ID opens it; the classic skill line is the fallback.
+	-- Forever's own profession ID opens it; the classic skill line is the fallback, asked only when it is
+	-- another ID: the same one again would just repeat a request the client has refused.
 	local id = profession.professionID
-	return id and C_TradeSkillUI.OpenTradeSkill(id) or C_TradeSkillUI.OpenTradeSkill(skillLineID)
+	if id and C_TradeSkillUI.OpenTradeSkill(id) then
+		return true
+	end
+	return id ~= skillLineID and C_TradeSkillUI.OpenTradeSkill(skillLineID) == true
 end
 
 ---@type SkillUpPublicAddon

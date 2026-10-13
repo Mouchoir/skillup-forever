@@ -59,7 +59,41 @@ local function AuctionPrice(itemID)
 	}
 end
 
--- In gather mode, what another of your professions gathers costs nothing.
+local itemInfoPending = false
+
+-- Live vendor sell price wins, including zero. Bundled prices cover uncached
+-- outputs while the item-data request and eventual refresh are still pending.
+---@param itemID integer
+---@return number?
+local function SellPrice(itemID)
+	local sell = ns.Readable((select(11, C_Item.GetItemInfo(itemID))))
+	if sell == nil then
+		itemInfoPending = true
+		C_Item.RequestLoadItemDataByID(itemID)
+	end
+	return sell or (ns.ItemSellPrices and ns.ItemSellPrices[itemID])
+end
+
+-- Auction value is net of the house's 5% cut and only counts when it beats the vendor.
+local AUCTION_CUT = 0.05
+
+-- What selling a gathered material would bring instead of crafting with it: its auction price after the
+-- cut, with its vendor sell price as the floor. Nil when neither is known.
+---@param itemID integer
+---@return number?
+---@return 'auction'|'vendor'|nil
+local function SaleValue(itemID)
+	local ah = AuctionPrice(itemID)
+	local resale = ah and ah.copper * (1 - AUCTION_CUT)
+	local sell = SellPrice(itemID)
+	if resale and (not sell or resale > sell) then
+		return resale, "auction"
+	end
+	return sell, sell and "vendor" or nil
+end
+
+-- In gather mode, what another of your professions gathers costs nothing, or, with *Value gathered
+-- materials* on, what it would sell for. A material neither price is known for stays free.
 ---@param itemID integer
 ---@return SkillUpPrice?
 local function Gathered(itemID)
@@ -72,7 +106,14 @@ local function Gathered(itemID)
 	end
 	professions = professions or ns.PlayerProfessions()
 	local profession = professions[skillLine]
-	return profession and { copper = 0, source = "gather", profession = profession.name }
+	if not profession then
+		return nil
+	end
+	local worth, from = nil, nil
+	if ns.db.valueGathered then
+		worth, from = SaleValue(itemID)
+	end
+	return { copper = worth or 0, source = "gather", profession = profession.name, worth = from }
 end
 
 -- Cheapest known unit price and where it came from: "gather", "vendor" or
@@ -254,7 +295,8 @@ local function ObtainCost(itemID, depth, stack)
 	stack[itemID] = true
 	for _, recipeID in ipairs(MakersOf(itemID)) do
 		local quantity, reagents = OutputQuantity(recipeID), ns.Reagents(recipeID)
-		if ns.IsLearned(recipeID) and quantity and quantity > 0 and reagents and #reagents > 0 then
+		local skipped = ns.IsSkipped ~= nil and ns.IsSkipped(recipeID)
+		if ns.IsLearned(recipeID) and not skipped and quantity and quantity > 0 and reagents and #reagents > 0 then
 			---@type number?
 			local total = 0
 			for _, reagent in ipairs(reagents) do
@@ -295,21 +337,6 @@ function ns.SubCraft(itemID)
 	return maker or nil
 end
 
-local itemInfoPending = false
-
--- Live vendor sell price wins, including zero. Bundled prices cover uncached
--- outputs while the item-data request and eventual refresh are still pending.
----@param itemID integer
----@return number?
-local function SellPrice(itemID)
-	local sell = select(11, C_Item.GetItemInfo(itemID))
-	if sell == nil then
-		itemInfoPending = true
-		C_Item.RequestLoadItemDataByID(itemID)
-	end
-	return sell or (ns.ItemSellPrices and ns.ItemSellPrices[itemID])
-end
-
 -- Copper for one craft's reagents, or nil when any has no known price: a partial sum would rank a
 -- recipe as cheap only because we can't price its reagents. A reagent a known recipe makes is priced
 -- at the cheaper of buying and crafting it.
@@ -329,9 +356,6 @@ local function ReagentCost(reagents)
 	end
 	return total
 end
-
--- Auction value is net of the house's 5% cut and only counts when it beats the vendor.
-local AUCTION_CUT = 0.05
 
 -- What one crafted item is worth under the craft value setting, and where that came from.
 ---@param sell number?

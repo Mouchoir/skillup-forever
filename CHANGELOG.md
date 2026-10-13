@@ -11,6 +11,20 @@ verbatim rather than rewritten as the addon moves.
 
 ## [Unreleased]
 
+- **Value gathered materials at what they'd sell for.** A new Prices setting, off by default, prices a material your professions gather at its Auctionator price after the 5% cut, or its vendor sell price if that is more, instead of free. That is what crafting with it costs you, so the route picks a vendor-reagent recipe over one that burns valuable ore, and recipe rows and tooltips show the same cost. A material with neither price stays free. Thanks to berserkerlxl for the idea.
+
+- **Not this recipe.** Right-click a step or a suggested recipe on the route page and choose *Not this recipe* to leave it out of every route on this character, as training, a sub-craft or a scroll to find. The route plans around it, or says nothing else gets there. A *Skipped* row under the route, the tracker's header menu and `/su unskip` bring a recipe back with *Show again*; `/su skipped` lists them.
+
+- **A detached tracker with nothing to show leaves the screen.** Its "Forever tracker" title hides with the empty column and comes back, where you left it, as soon as a section has something to show.
+
+- **A trainer that shows no skill requirement is not saved as needing none.** Such a recipe keeps the bundled requirement, and one saved as 0 by an earlier version is dropped, so the route no longer plans to learn it before you can.
+
+- **No more secret-number errors on item tooltips.** When the game hands over an item count, sell price or tooltip item it won't let addons read, SkillUp uses the last count it saw (or the bundled price) instead of failing with "attempt to perform arithmetic on a secret number value". Before, one such read could keep failing until `/reload`.
+
+- **The merchant's buy button asks first.** *Buy tracked reagents* now lists what it will buy and the total cost, and buys nothing until you click *Buy*. A change in your bags or route while it is open closes the question. Turn off *Show the buy button at merchants* under Route and trainer to remove the button.
+
+- **Recipes start where Forever lets you make them.** Forever lowered many recipes' skill ranges but its data kept the old Classic starting skill on some, so Runed Copper Belt and Breastplate showed red while the game showed orange, and Heavy Sharpening Stone showed `?`. A recipe now starts at what its pattern asks, or moves down with its range, and a bundled trainer requirement moves down the same way: Heavy Sharpening Stone is trained at 100, not 125, and about 40 trainer recipes that went grey before the trainer would teach them are back in the route. A trainer's own number, once you visit, still wins (#107).
+
 ## [0.9.3] - 2026-10-13
 
 - **Data checked against Forever 1.60.1.70338.** The bundled data is unchanged apart from its build pin.
