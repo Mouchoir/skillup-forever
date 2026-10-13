@@ -2,7 +2,7 @@
 -- Source: CMaNGOS classic-db 22b51464f1625f6ef6275771de1f5466c6f5d19e (GPL-3.0): item_template, creature_loot_template,
 -- reference_loot_template, npc_trainer, gameobject(_loot)_template, skinning_loot_template. Which item
 -- is a recipe scroll and which spell is a rank: wago.tools SpellEffect, wow_classic_era 1.15.9.70003;
--- gathering locks: wago.tools Lock, wow_classic_beta 1.60.1.70291.
+-- gathering locks: wago.tools Lock, wow_classic_beta 1.60.1.70338.
 -- Neither QuestieDB nor AtlasLoot holds these; all else about a recipe's sources is read from them.
 -- scrolls with named drops=191, world drops=198.
 ---@type string, SkillUpNamespace

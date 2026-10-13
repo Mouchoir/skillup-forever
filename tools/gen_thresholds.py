@@ -10,9 +10,9 @@ from pathlib import Path
 from forever_tools import wago
 
 USER_AGENT = "SkillUpForever/1.0"
-BUILD = "1.60.1.70291"
+BUILD = "1.60.1.70338"
 # Date this source snapshot was selected, not the date of each regeneration.
-SOURCE_DATE = "2026-10-09"
+SOURCE_DATE = "2026-10-13"
 # SpellEffect.Effect codes the generators read.
 DUMMY = 3
 TELEPORT_UNITS = 5
