@@ -475,7 +475,7 @@ env = setmetatable({
 	OFF = "Off",
 	Enum = {
 		TradeskillRelativeDifficulty = { Optimal = 0, Medium = 1, Easy = 2, Trivial = 3 },
-		TooltipDataType = { Item = 0 },
+		TooltipDataType = { Item = 0, Unit = 2, Object = 4 },
 		CraftingReagentType = { Basic = 0 },
 		TrainerType = { Tradeskills = 1 },
 	},
@@ -518,8 +518,10 @@ env = setmetatable({
 		end,
 	},
 	TooltipDataProcessor = {
-		AddTooltipPostCall = function(_, fn)
-			postCalls[#postCalls + 1] = fn
+		-- Kept by tooltip type: the reagent scene draws an item tooltip, so only the item post-calls run on it.
+		AddTooltipPostCall = function(kind, fn)
+			postCalls[kind] = postCalls[kind] or {}
+			table.insert(postCalls[kind], fn)
 		end,
 	},
 	GameTooltip_AddBlankLineToTooltip = function(tooltip)
@@ -938,7 +940,7 @@ end
 
 -- The reagent's item tooltip: what the post-call adds.
 local tooltip = Stub()
-for _, fn in ipairs(postCalls) do
+for _, fn in ipairs(postCalls[env.Enum.TooltipDataType.Item] or {}) do
 	fn(tooltip, { id = STATE.tooltipItem })
 end
 local reagent = {}
