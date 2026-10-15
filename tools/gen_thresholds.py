@@ -25,6 +25,10 @@ LEARN_SPELL = 36
 TRANS_DOOR = 50  # summons an object: a campfire
 ENCHANT_ITEM = 53  # a permanent enchant
 SKILL = 118  # sets a skill line's rank: base points 0-3 raise the cap to 75-300
+SKILL_STEP = 44  # the same for Apprentice and Journeyman on Forever, which uses SKILL for Expert and Artisan
+# Each rank raises a profession's cap by this much. Classic Era's integer EffectBasePoints holds the tier less
+# one; Forever's export has only EffectBasePointsF, which holds the tier itself (1-4).
+RANK_SKILL = 75
 # ItemSparse.Flags_0 bit the client sets on an item it no longer drops or sells ("Deprecated Recipe: ...",
 # "Pattern: ... OLD"). Such an item's requirement is not a skill anyone learns the recipe at.
 ITEM_DEPRECATED = 0x10

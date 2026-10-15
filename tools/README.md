@@ -73,7 +73,10 @@ item's required level, class and subclass (its armour or weapon type), inventory
 `Core/Gear.lua`'s class proficiency table (the client's `SkillRaceClassInfo`). `ns.RecipeScrolls`
 holds, per recipe spell, the pattern or recipe item that teaches it and the skill that item asks for,
 from the same build's `ItemEffect` and `ItemSparse`: where the client's `SkillLineAbility` orange sits
-at its placeholder 1, this is the recipe's real learn requirement. It imports the threshold generator's build,
+at its placeholder 1, this is the recipe's real learn requirement. `ns.RankBooks` holds the profession ranks a book teaches
+(Forever's Expert First Aid, Cooking and Fishing): the rank spell (`SpellEffect` SKILL or SKILL_STEP, tier in
+its base points), the spell that learns it (LEARN_SPELL), the item that casts that (`ItemEffect`) and what the
+book asks and costs (`ItemSparse`). The route reads a rank from a book only where no trainer teaches it. It imports the threshold generator's build,
 snapshot date, cache and profession discovery; run thresholds first when changing
 builds. All five generators accept `--offline` and `--refresh`. To verify the data
 is fresh and reproducible:

@@ -438,11 +438,13 @@ function ModuleMixin:OnBlockHeaderClick(block)
 			end)
 		end
 		-- The layout picked by straight line; a click ranks by travel time.
-		local cap = block.steps[1] and block.steps[1].cap
-		local trainer = cap and ns.NearestTrainer(block.plan.profession, cap)
-		if trainer then
-			root:CreateButton(L["Waypoint to a trainer"], function()
-				ns.SetWaypoint(ns.NearestTrainer(block.plan.profession, cap, true) or trainer)
+		local first = block.steps[1]
+		local npc = first and first.nearest()
+		if npc then
+			local label = first.book and string.format(L["Waypoint to a vendor: %s"], first.book)
+				or L["Waypoint to a trainer"]
+			root:CreateButton(label, function()
+				ns.SetWaypoint((first.nearest(true)) or npc)
 			end)
 		end
 		for _, item in ipairs(block.vendorMissing) do
@@ -486,18 +488,31 @@ local function Waypointed(line, title, label, nearest)
 	line:SetScript("OnLeave", GameTooltip_Hide)
 end
 
--- The ranks and recipes to train, in the order the route page lists them.
+-- The ranks and recipes to train, in the order the route page lists them, each with where to go for it:
+-- a trainer, or the vendor of a rank's book.
 ---@param plan SkillUpPlan
----@return {cap: number, text: string}[]
+---@return SkillUpTrackerStep[]
 local function TrainingSteps(plan)
 	local steps = {}
+	local profession = plan.profession
 	for _, step in ipairs(plan.steps) do
 		local rank, training = step.rank, step.training
 		if rank then
-			steps[#steps + 1] = { cap = rank.cap, text = ns.RankText(rank) }
+			steps[#steps + 1] = {
+				text = ns.RankText(rank),
+				book = rank.book and ns.RankBookName(rank),
+				nearest = function(byTravel)
+					return ns.NearestForRank(profession, rank, byTravel)
+				end,
+			}
 		elseif training then
 			local name = C_Spell.GetSpellName(training.recipeID) or string.format(L["recipe %d"], training.recipeID)
-			steps[#steps + 1] = { cap = training.cap, text = string.format(L["Train %s at %d"], name, training.usedAt) }
+			steps[#steps + 1] = {
+				text = string.format(L["Train %s at %d"], name, training.usedAt),
+				nearest = function(byTravel)
+					return ns.NearestTrainer(profession, training.cap, byTravel), L["Nearest trainer"]
+				end,
+			}
 		end
 	end
 	return steps
@@ -521,12 +536,12 @@ function ModuleMixin:LayoutContents()
 		if #steps > 0 then
 			local more = #steps > 1 and string.format(" |cff808080(%s)|r", string.format(L["+%d more"], #steps - 1))
 				or ""
-			local cap = steps[1].cap
-			local trainer = ns.NearestTrainer(info, cap)
-			local line = block:AddObjective("Train", steps[1].text .. more, trainer and LINE_TEMPLATE or nil)
-			if trainer then
-				Waypointed(line, steps[1].text, L["Nearest trainer"], function()
-					return ns.NearestTrainer(info, cap, true)
+			local first = steps[1]
+			local npc, label = first.nearest()
+			local line = block:AddObjective("Train", first.text .. more, npc and LINE_TEMPLATE or nil)
+			if npc then
+				Waypointed(line, first.text, label, function()
+					return (first.nearest(true))
 				end)
 			end
 		end

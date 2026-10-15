@@ -5,6 +5,7 @@ local Client = dofile("tests/client.lua")
 local equal = Client.equal
 
 local BANDAGE, HEAVY, SILK = 1, 2, 3
+local BOOK = 5000
 local c = Client.load({
 	saved = { routeTargets = { [129] = 80 }, trackedProfessions = { [129] = true } },
 	-- First Aid in miniature: a known bandage, a better one to train at 40, and Journeyman from 50.
@@ -61,6 +62,21 @@ equal(ns.db.routeTargets[129], 80, "hiding keeps the profession target")
 ns.db.showTracker = true
 ns.Changed("settings")
 equal(#c.Tracker(), 1, "showing restores the tracked profession")
+
+-- A rank no trainer teaches comes from a book (#121): the tracker's line points at a vendor, not a trainer.
+local trainerRanks = ns.TrainerRanks[129]
+ns.TrainerRanks[129], ns.RankBooks[129] = {}, { { 150, BOOK, 500, 50, 0 } }
+c.known[HEAVY] = true
+c.professions[1].rank = 74
+c.items[BOOK] = { name = "Journeyman's Handbook" }
+ns.Changed("fees")
+lines = c.Tracker()[1].lines
+equal(lines[1].key, "Train", "the book leads")
+equal(lines[1].text, "Buy and read Journeyman's Handbook at 50", "bought and read")
+ns.TrainerRanks[129], ns.RankBooks[129] = trainerRanks, nil
+c.known[HEAVY] = nil
+c.professions[1].rank = 40
+ns.Changed("fees")
 
 -- Auctionator loses the only price there was: the scan reaches the tracker, which redraws to say why
 -- nothing can be crafted, not that the reagents are in hand.

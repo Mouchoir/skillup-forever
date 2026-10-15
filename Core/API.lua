@@ -163,6 +163,33 @@ local function Train(profession, text, cap, fee)
 	end or nil
 end
 
+-- A rank no trainer teaches: buy its book from a vendor and read it, or only read it when the bags hold it.
+---@param rank SkillUpRank
+---@return SkillUpAPIStep
+---@return (fun(): integer?)?
+local function Book(rank)
+	local book = rank.book
+	---@cast book integer
+	-- Asked by name here so the list rebuilds when the book's name arrives.
+	ItemName(book)
+	if ns.Have(book) > 0 then
+		return { kind = "train", text = ns.RankText(rank), itemID = book, nav = false }
+	end
+	local vendor = ns.NearestVendor(book)
+	local step = {
+		kind = "buy",
+		text = ns.RankText(rank),
+		detail = Detail(vendor, L["Vendor"], rank.fee),
+		itemID = book,
+		count = 1,
+		cost = rank.fee > 0 and rank.fee or nil,
+		nav = vendor ~= nil,
+	}
+	return step, vendor and function()
+		return ns.NearestVendor(book, true)
+	end or nil
+end
+
 -- The route's first few steps, each craft preceded by getting what the bags lack for it.
 ---@param plan SkillUpPlan
 ---@return SkillUpAPIStep[]
@@ -194,6 +221,8 @@ local function Steps(plan)
 				count = subcraft.crafts,
 				nav = false,
 			})
+		elseif rank and rank.book then
+			Add(Book(rank)) -- multi-value: the step and its picker
 		elseif rank then
 			Add(Train(profession, ns.RankText(rank), rank.cap, rank.fee)) -- multi-value: the step and its picker
 		elseif training then

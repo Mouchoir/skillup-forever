@@ -8,8 +8,9 @@ local LINEN, HEAVY, WOOL, CLOTH = 3275, 3276, 3277, 2589
 local known, costs, sources, skipped = {}, {}, {}, {}
 local auctionator, open, craftable, level = false, 129, 99, 20
 local dropPlans
+local itemNames, requested = {}, {}
 local ns = {
-	db = { trainer = {}, trainerRanks = {}, routeTargets = {} },
+	db = { trainer = {}, trainerRanks = {}, routeTargets = {}, vendor = {} },
 	Catalogue = {
 		Recipe = function(recipeID)
 			return sources[recipeID]
@@ -46,8 +47,9 @@ local ns = {
 ns.Reagents = function(id)
 	return ns.RecipeData[id].reagents
 end
-ns.Have = function()
-	return 0
+local bags = {}
+ns.Have = function(id)
+	return bags[id] or 0
 end
 local env = setmetatable({
 	APPRENTICE = "Apprentice",
@@ -65,6 +67,14 @@ local env = setmetatable({
 	C_TradeSkillUI = {
 		GetCraftableCount = function()
 			return craftable
+		end,
+	},
+	C_Item = {
+		GetItemNameByID = function(id)
+			return itemNames[id]
+		end,
+		RequestLoadItemDataByID = function(id)
+			requested[#requested + 1] = id
 		end,
 	},
 }, { __index = _G })
@@ -123,7 +133,7 @@ equal(ns.RouteBlocked(short), nil, "a plan with crafts isn't blocked")
 equal(ns.PlanRoute(FirstAid(1)), short, "the same skill and target is the same plan")
 equal(Plan(FirstAid(1), 100) ~= short, true, "an invalidated plan is planned again")
 equal(Plan(FirstAid(1), 0).target, 26, "no target, or one already reached, is 25 points on")
-equal(Plan(FirstAid(60), 300).target, 150, "a target stops at the last rank a trainer teaches")
+equal(Plan(FirstAid(60), 300).target, 225, "a target stops at the last rank a trainer or book teaches")
 
 -- A rank is trained between the crafts either side of the skill it needs.
 known[HEAVY], costs[HEAVY] = true, 1
@@ -146,6 +156,39 @@ ns.db.trainerRanks[129] = nil
 ranked.ranks[1].level, level = 10, 5
 equal(ns.RankText(ranked.ranks[1]), "Train Journeyman at 50 (level 10)", "with the level while below it")
 level = 20
+
+-- Issue #121: no trainer teaches Expert First Aid; the book Expert First Aid - Under Wraps does, at 125.
+local HEAVY_WOOL, UNDER_WRAPS = 3278, 16084
+known[HEAVY_WOOL], costs[HEAVY_WOOL] = true, 1
+local expert = Plan(FirstAid(120, 0, 150), 170)
+equal(Kinds(expert), "craft rank craft", "crafts, the book, then crafts on")
+equal(expert.steps[1].craft.to, 125, "crafts up to the skill the book asks")
+local book = expert.steps[2].rank
+equal(book.name, "Expert", "the rank is Expert")
+equal(book.book, UNDER_WRAPS, "taught by the book")
+equal(book.cap, 225, "raising the cap to 225")
+equal(book.reqSkill, 125, "read at 125")
+equal(book.fee, 10000, "for the book's list price")
+equal(expert.reached, 170, "the route goes on past 150")
+equal(ns.RankText(book), "Buy and read the Expert book at 125", "named by its rank until the item loads")
+equal(requested[#requested], UNDER_WRAPS, "and the item is asked for")
+itemNames[UNDER_WRAPS] = "Expert First Aid - Under Wraps"
+equal(ns.RankText(book), "Buy and read Expert First Aid - Under Wraps at 125", "then by its name")
+ns.db.vendor[UNDER_WRAPS] = 9000
+equal(Plan(FirstAid(120, 0, 150), 170).steps[2].rank.fee, 9000, "a merchant's price wins")
+ns.db.vendor[UNDER_WRAPS] = nil
+local capped = Plan(FirstAid(150, 0, 150), 170)
+equal(Kinds(capped), "rank craft", "at the cap, the book comes first")
+equal(
+	ns.NextCraft(capped).reason,
+	"Read Expert First Aid - Under Wraps first: you're at your cap.",
+	"and is read before crafting"
+)
+bags[UNDER_WRAPS] = 1
+equal(ns.RankText(book), "Read Expert First Aid - Under Wraps at 125", "a book in the bags only needs reading")
+bags[UNDER_WRAPS] = nil
+equal(Plan(FirstAid(200, 0, 225), 300).target, 225, "Artisan comes from a quest the data can't name: the route stops")
+known[HEAVY_WOOL], costs[HEAVY_WOOL], itemNames[UNDER_WRAPS] = nil, nil, nil
 
 -- Every reagent the crafts use, totalled, in the bucket its price puts it in.
 local cloth = ranked.crafts[1].crafts * 2 + ranked.crafts[2].crafts * 2

@@ -7,6 +7,8 @@ local equal = Client.equal
 local THREAD, LEATHER, SILK, BAR = 2321, 2319, 4306, 2840
 local GLOVES, HILLMANS, LEATHER_RECIPE, SHIRT, BRACERS = 1, 2, 9, 3, 4
 local GINA, TELONIS = 77, 88
+-- A book that teaches Tailoring's 150 cap here (#121): no trainer rank is bundled in this spec.
+local BOOK = 5000
 
 local c = Client.load({
 	boot = false,
@@ -35,6 +37,7 @@ local c = Client.load({
 		},
 		TrainerFees = { [HILLMANS] = { 1800, 145 } },
 		TrainerRanks = {},
+		RankBooks = { [197] = { { 150, BOOK, 500, 70, 0 } } },
 		ItemSellPrices = {},
 		GatheredBy = {},
 		VendorPrices = { [THREAD] = 100, [BAR] = 10 },
@@ -44,7 +47,7 @@ local c = Client.load({
 	},
 	-- Who sells thread and where the trainer stands come from the player's QuestieDB.
 	questie = {
-		items = { [THREAD] = { class = 7, vendors = { GINA } } },
+		items = { [THREAD] = { class = 7, vendors = { GINA } }, [BOOK] = { class = 9, vendors = { GINA } } },
 		npcs = {
 			[GINA] = { name = "Gina", spawns = { [10] = { { 50, 50 } } }, side = "AH" },
 			[TELONIS] = { name = "Telonis", spawns = { [141] = { { 50, 50 } } }, side = "AH" },
@@ -256,5 +259,53 @@ equal(ns.db.craftValue, "none", "the options panel's slider writes the saved cho
 equal(#Leatherworking().recipes, 2, "a setting changed in the options panel re-plans the public list")
 equal(Leatherworking().recipes[1].spellID, GLOVES, "with the gloves first")
 equal(Leatherworking().recipes[2].spellID, HILLMANS, "and Hillman's carrying the rest")
+
+-- Past the 75 cap Tailoring needs its next rank, which here comes from a book: bought at a vendor and read.
+ns.db.routeTargets[197] = 80
+ns.Changed("target")
+local function Tailoring()
+	for _, entry in ipairs(API.Professions()) do
+		if entry.skillLineID == 197 then
+			return entry
+		end
+	end
+end
+-- The first ask starts reading who sells the book; it is named once read.
+Tailoring()
+c.Advance(0)
+local book
+for _, step in ipairs(Tailoring().steps) do
+	if step.itemID == BOOK then
+		book = step
+	end
+end
+equal(book and book.kind, "buy", "a rank from a book is a purchase")
+equal(book and book.text, "Buy and read the Journeyman book at 70", "read at the skill it asks")
+equal(book and book.detail, "Gina, Darkshire · 500c", "from the nearest vendor, at the book's price")
+equal(book and book.cost, 500, "costing the book")
+equal(book and book.nav, true, "the vendor can be routed to")
+-- Bought and not yet read: nothing to buy, only the reading.
+c.bags[BOOK] = 1
+c.Fire("BAG_UPDATE_DELAYED")
+book = nil
+for _, step in ipairs(Tailoring().steps) do
+	if step.itemID == BOOK then
+		book = step
+	end
+end
+equal(book and book.kind, "train", "a book in the bags is not bought again")
+equal(book and book.text, "Read the Journeyman book at 70", "only read")
+equal(book and book.cost, nil, "at no cost")
+equal(book and book.nav, false, "with nowhere to go")
+-- The book's name arriving rebuilds the list.
+c.items[BOOK] = { name = "Journeyman's Handbook" }
+c.Fire("ITEM_DATA_LOAD_RESULT")
+book = nil
+for _, step in ipairs(Tailoring().steps) do
+	if step.itemID == BOOK then
+		book = step
+	end
+end
+equal(book and book.text, "Read Journeyman's Handbook at 70", "named once the item loads")
 
 Client.report("api_spec")

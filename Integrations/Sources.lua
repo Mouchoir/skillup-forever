@@ -421,6 +421,20 @@ function ns.NearestTrainer(profession, cap, byTravel)
 	return ns.NearestNPC(C.Trainers(profession.skillLine, cap), byTravel)
 end
 
+-- Where a rank is got: the nearest vendor of its book, else the nearest trainer teaching it, and the
+-- tooltip label for that NPC.
+---@param profession SkillUpContext
+---@param rank SkillUpRank
+---@param byTravel boolean?
+---@return integer?
+---@return string
+function ns.NearestForRank(profession, rank, byTravel)
+	if rank.book then
+		return ns.NearestVendor(rank.book, byTravel), L["Nearest vendor"]
+	end
+	return ns.NearestTrainer(profession, rank.cap, byTravel), L["Nearest trainer"]
+end
+
 -- The nearest vendor of an item, of your faction; nil until its vendors are read.
 ---@param itemID integer
 ---@param byTravel boolean?

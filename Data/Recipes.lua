@@ -6,7 +6,7 @@
 -- Threshold recipe spell IDs only; skillLine is the parent profession ID.
 -- Output quantity is mean yield; false is verified non-item output. Missing recipes are unknown.
 -- Trainer names use the source locale (enUS); false means ambiguous within the profession.
--- thresholds=2346; recipes=2337; omitted_reagents=9; multi_profession=1; reagent_entries=7903; distinct_reagents=568; item_outputs=2154; non_item_outputs=183; sell_prices=1588; missing_output_items=322; gear_items=1827; missing_gear_items=322; consumed_gear_items=516; recipe_scrolls=1663; names=2274; ambiguous_names=66; missing_names=7.
+-- thresholds=2346; recipes=2337; omitted_reagents=9; multi_profession=1; reagent_entries=7903; distinct_reagents=568; item_outputs=2154; non_item_outputs=183; sell_prices=1588; missing_output_items=322; gear_items=1827; missing_gear_items=322; consumed_gear_items=516; recipe_scrolls=1663; rank_books=3; names=2274; ambiguous_names=66; missing_names=7.
 ---@type string, SkillUpNamespace
 local _, ns = ...
 -- stylua: ignore
@@ -4017,6 +4017,15 @@ ns.RecipeScrolls = {
 	[1319164] = { 286086, 275 },
 	[1319165] = { 286087, 275 },
 	[1319313] = { 286153, 225 },
+}
+
+-- RankBooks: [skill line] = { { cap, book, list price, required skill, level } }:
+-- the profession ranks a book teaches (SpellEffect SKILL, LEARN_SPELL; ItemEffect; ItemSparse).
+-- stylua: ignore
+ns.RankBooks = {
+	[129] = { { 225, 16084, 10000, 125, 0 } },
+	[185] = { { 225, 16072, 10000, 125, 0 } },
+	[356] = { { 225, 16083, 10000, 125, 20 } },
 }
 
 ns.ItemSellPrices = {

@@ -51,6 +51,7 @@
 ---@field UnpricedReagents fun(plan: SkillUpPlan): integer[]
 ---@field PlanRoute fun(profession: SkillUpProfession): SkillUpPlan
 ---@field RankText fun(rank: SkillUpRank): string
+---@field RankBookName fun(rank: SkillUpRank): string
 ---@field CreateList fun(parent: Frame): SkillUpList
 ---@field NextCraft fun(plan: SkillUpPlan): SkillUpCraft
 ---@field OpenSkillLine fun(): integer?
@@ -100,6 +101,7 @@
 ---@field AddSourceLines fun(tooltip: GameTooltip, source: SkillUpScrollSource, first?: integer)
 ---@field NearestTrainer fun(profession: SkillUpContext, cap: number, byTravel?: boolean): integer?
 ---@field NearestVendor fun(itemID: integer, byTravel?: boolean): integer?
+---@field NearestForRank fun(profession: SkillUpContext, rank: SkillUpRank, byTravel?: boolean): integer?, string
 ---@field AddNearest fun(tooltip: GameTooltip, label: string, npcID?: integer)
 ---@field AddCompanionHint fun(tooltip: GameTooltip)
 ---@field AnnounceUpdate fun()
@@ -125,6 +127,7 @@
 ---@field VendorPrices table<integer, number>
 ---@field RecipeData table<integer, SkillUpRecipe>
 ---@field RecipeScrolls table<integer, number[]> { scroll item, required skill } per recipe spell.
+---@field RankBooks table<integer, number[][]> per skill line: { cap, book item, list price, required skill, level }.
 ---@field ItemGear table<integer, number[]>
 ---@field ItemSellPrices table<integer, number>
 ---@field RecipeNames table<integer, table<string, integer|false>>
@@ -284,7 +287,8 @@ SkillUpForeverDB = nil
 ---@class SkillUpRank
 ---@field name string
 ---@field cap number
----@field fee number
+---@field fee number The trainer's fee, or a book's price.
+---@field book? integer The item that teaches the rank when no trainer does: bought and read, not trained.
 ---@field reqSkill number
 ---@field level number
 

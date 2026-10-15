@@ -97,7 +97,7 @@ local requested, lists = {}, {}
 local page
 page = {
 	auctionAutoscan = nil,
-	db = { trainer = {}, trainerRanks = {}, routeTargets = { [129] = 100 }, showRouteTab = true },
+	db = { trainer = {}, trainerRanks = {}, routeTargets = { [129] = 100 }, showRouteTab = true, vendor = {} },
 	COLORS = {},
 	IsLearned = function(id)
 		return id == 3275

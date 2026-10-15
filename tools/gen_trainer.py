@@ -13,6 +13,7 @@ from gen_thresholds import (
     BUILD,
     CACHE,
     LEARN_SPELL,
+    RANK_SKILL,
     ROOT,
     SKILL,
     TEACH_BUILD,
@@ -29,7 +30,6 @@ CLASSICDB_URL = (
 )
 CLASSICDB_CACHE = CACHE / f"classicdb-{CLASSICDB_COMMIT[:7]}.sql.gz"
 PROFESSION_SKILLS = {129, 164, 165, 171, 182, 185, 186, 197, 202, 333, 356, 393}
-RANK_SKILL = 75
 # Forever's client leaves out the trainers' teaching spells; Classic Era (TEACH_BUILD, pinned in
 # gen_thresholds.py) keeps them, with the same recipe spell IDs.
 
