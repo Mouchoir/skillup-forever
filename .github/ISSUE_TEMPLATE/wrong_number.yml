@@ -1,0 +1,41 @@
+name: Wrong number
+description: A skill, colour, chance, cost, trainer requirement or route step SkillUp shows differs from what the game does.
+title: "Wrong number: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for checking the numbers. What the game itself shows is the one SkillUp has to match, so the most useful thing is what you saw in game next to what SkillUp said.
+  - type: textarea
+    id: report
+    attributes:
+      label: /su report output
+      description: Type `/su report` in game. A window opens with the text already selected. Press Ctrl+C (Cmd+C on a Mac) and paste it here. If you can, open the profession first so the report includes the audit.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: recipe
+    attributes:
+      label: Recipe, node or trainer
+      description: The recipe, gathering node or trainer the number is for, with its ID if you have it (Wowhead or the tooltip).
+      placeholder: Bronze Warhammer (9985)
+    validations:
+      required: true
+  - type: textarea
+    id: shown
+    attributes:
+      label: What SkillUp shows
+      description: The number or colour, and where you saw it (recipe row, tooltip, route page, trainer window).
+      placeholder: Route says train it at 125.
+    validations:
+      required: true
+  - type: textarea
+    id: game
+    attributes:
+      label: What the game does
+      description: What happened in game, and your skill at the time.
+      placeholder: The trainer taught it to me at 110.
+    validations:
+      required: true
