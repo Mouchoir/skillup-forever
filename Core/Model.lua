@@ -17,6 +17,17 @@ function ns.Readable(value)
 	return value
 end
 
+-- Whether a tooltip may be read and drawn on: false for nil and for one the client marks forbidden (a secure
+-- tooltip), which raises on any method call. Every tooltip hook starts with it (tools/lint_secret.py).
+---@param frame? Frame
+---@return boolean
+function ns.Usable(frame)
+	if not frame then
+		return false
+	end
+	return not (frame.IsForbidden and frame:IsForbidden())
+end
+
 -- Classic's gathering bands: a node is orange from its required skill, then yellow, green and grey this far past.
 local GATHER_BANDS = { 0, 25, 50, 100 }
 -- Classic asks a skinner (or a herbalist or miner on a corpse) for 1 up to level 10, ten points a level to 20 and

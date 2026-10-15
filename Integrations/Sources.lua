@@ -108,9 +108,10 @@ end
 ---@param itemIDs integer[]
 ---@return boolean
 function ns.SeeVendor(itemIDs)
-	local guid = UnitGUID("npc")
+	-- The vendor's GUID and name are secret in some restricted states; then it is not recorded.
+	local guid = ns.Readable(UnitGUID("npc"))
 	local npcID = guid and tonumber(guid:match("^Creature%-%d+%-%d+%-%d+%-%d+%-(%d+)"))
-	local name, where = UnitName("npc"), PlayerMapPosition()
+	local name, where = ns.Readable(UnitName("npc")), PlayerMapPosition()
 	if not (npcID and name and where) then
 		return false
 	end

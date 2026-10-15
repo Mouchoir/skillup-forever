@@ -111,6 +111,30 @@ lines = {}
 post(G.GameTooltip, { id = Secret })
 equal(#lines, 0, "a secret item id draws nothing")
 
+-- A forbidden tooltip is never read or drawn on.
+local forbidden = setmetatable({
+	IsForbidden = function()
+		return true
+	end,
+}, { __index = G.GameTooltip })
+post(forbidden, { id = SILK })
+equal(#lines, 0, "a forbidden tooltip draws nothing")
+
+-- A vendor whose GUID or name is secret is not recorded, and nothing raises.
+c.npc = { id = 1234, name = "Vendor" }
+local UnitGUID, UnitName = G.UnitGUID, G.UnitName
+G.UnitGUID = function()
+	return Secret
+end
+equal(ns.SeeVendor({ SILK }), false, "a secret vendor GUID records nothing")
+G.UnitGUID = UnitGUID
+G.UnitName = function()
+	return Secret
+end
+equal(ns.SeeVendor({ SILK }), false, "a secret vendor name records nothing")
+G.UnitName = UnitName
+c.npc = nil
+
 -- A secret sell price is no live price: the bundled one stands in, as while item data loads.
 local cost, value = ns.CraftCost(BANDAGE)
 equal(cost, 10, "the reagents still cost what the vendor asks")
