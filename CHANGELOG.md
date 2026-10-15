@@ -12,15 +12,21 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
-- **No error from a vendor the game hides.** When the game keeps a vendor's name or ID hidden, SkillUp no longer tries to record where that vendor stands.
-
-- **`/su report` gives you something to paste into a bug report.** It opens a small window with the text already selected: your addon and game versions, your character, your professions and where each route gets to, the audit if a profession is open, the trainer checks, your other addons and any errors SkillUp caught this session. Press Ctrl+C and paste it. It fits in one message.
+## [0.11.0] - 2026-10-15
 
 - **First Aid and Cooking routes go past 150.** No trainer teaches Expert First Aid or Expert Cooking: you buy a book and read it at 125. The route now plans that step, "Buy and read Expert First Aid - Under Wraps at 125", with the book's price and the nearest vendor that sells it, and carries on to 225 instead of stopping at Journeyman. Artisan comes from a quest the game's data doesn't name, so routes still stop at 225 for now.
 
 - **Herb and ore nodes show the skill they need.** Hovering a node names the Herbalism or Mining skill it asks for and colours it at your skill, orange, yellow, green or grey like a recipe, so you can see which nodes still give skill-ups. It works on English clients, and there's a setting to turn it off. Skinnable corpses show `?` for now, until someone checks that Forever kept Classic's skinning rule.
 
 - **Check the trainer requirements SkillUp guesses with /su trainers.** Where Forever moved a recipe's colours, SkillUp moves the skill its trainer asks for by the same amount, which is right for most recipes but not all. The new command lists those guesses per profession, which ones a trainer you visited agreed with or showed differently, and which ones your trainer should teach at your current skill, so one visit settles them. Paste what it prints into an issue and the wrong ones get fixed in the data.
+
+- **`/su report` gives you something to paste into a bug report.** It opens a small window with the text already selected: your addon and game versions, your character, your professions and where each route gets to, the audit if a profession is open, the trainer checks, your other addons and any errors SkillUp caught this session. Press Ctrl+C and paste it. It fits in one message.
+
+- **No error from a vendor the game hides.** When the game keeps a vendor's name or ID hidden, SkillUp no longer tries to record where that vendor stands.
+
+### For addon authors
+
+- **A rank learned from a book is a step in `SkillUpForever.API.Professions()`.** It is a `buy` step with the book's `itemID`, its price as `cost` and the nearest vendor for `Navigate`, or, once the book is in the bags, a `train` step with the book's `itemID` and no `spellID`. The API version stays 1.
 
 ## [0.10.0] - 2026-10-15
 

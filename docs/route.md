@@ -28,9 +28,13 @@ Each step is one row: the recipe's full-size icon in its stock border, the name 
 
 ### Training
 
-The target can go past your current cap, up to the last rank a trainer teaches. The route then adds *Train Journeyman/Expert/Artisan* steps with the fee, the skill the trainer wants and, while you are below it, the level.
+The target can go past your current cap, up to the last rank a trainer or book teaches. The route then adds a step for each rank: *Train Journeyman/Expert/Artisan* with the fee, the skill the trainer wants and, while you are below it, the level, or a book to buy and read.
+
+No trainer teaches Expert First Aid or Expert Cooking: you buy a book and read it at 125. The route adds that step, *Buy and read Expert First Aid - Under Wraps at 125*, with the book's price and the nearest vendor that sells it, or only *Read* once you have the book. The price is the game's list price for the book until you see it at a merchant. Artisan comes from a quest the game's data doesn't name, so those routes stop at 225.
 
 Fees come from the classic trainer data (CMaNGOS), which also says who trains what. A trainer you have visited quotes its own fees, for recipes and for the ranks it still offers, and those then win.
+
+Where Forever moved a recipe's colours, the bundled skill its trainer asks for moves by the same amount. That is right for most recipes but is a guess. `/su trainers` lists the guesses for each profession, which ones a trainer you visited agreed with or showed differently, and which ones your trainer should teach at your skill now. A requirement a trainer shows replaces the guess.
 
 ### Prices
 
