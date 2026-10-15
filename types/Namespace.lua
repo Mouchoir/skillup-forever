@@ -59,6 +59,8 @@
 ---@field PlanRoute fun(profession: SkillUpProfession): SkillUpPlan
 ---@field RankText fun(rank: SkillUpRank): string
 ---@field RankBookName fun(rank: SkillUpRank): string
+---@field RankHeld fun(rank: SkillUpRank): boolean
+---@field PlanCost fun(plan: SkillUpPlan): number
 ---@field CreateList fun(parent: Frame): SkillUpList
 ---@field NextCraft fun(plan: SkillUpPlan): SkillUpCraft
 ---@field OpenSkillLine fun(): integer?

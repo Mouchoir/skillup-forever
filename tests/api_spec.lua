@@ -284,9 +284,17 @@ equal(book and book.text, "Buy and read the Journeyman book at 70", "read at the
 equal(book and book.detail, "Gina, Darkshire · 500c", "from the nearest vendor, at the book's price")
 equal(book and book.cost, 500, "costing the book")
 equal(book and book.nav, true, "the vendor can be routed to")
+-- Where the route page and the tracker send you for the rank: the book's vendor, until the book is in the bags.
+local tailoringRoute = ns.RouteProfessions()[197]
+local bookRank
+for _, step in ipairs(ns.PlanRoute(tailoringRoute).steps) do
+	bookRank = bookRank or (step.rank and step.rank.book and step.rank)
+end
+equal(bookRank and ns.NearestForRank(tailoringRoute, bookRank), GINA, "a book not yet bought is got at its vendor")
 -- Bought and not yet read: nothing to buy, only the reading.
 c.bags[BOOK] = 1
 c.Fire("BAG_UPDATE_DELAYED")
+equal(ns.NearestForRank(tailoringRoute, bookRank), nil, "a book in the bags is read where you stand")
 book = nil
 for _, step in ipairs(Tailoring().steps) do
 	if step.itemID == BOOK then

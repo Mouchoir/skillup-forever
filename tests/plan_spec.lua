@@ -184,8 +184,12 @@ equal(
 	"Read Expert First Aid - Under Wraps first: you're at your cap.",
 	"and is read before crafting"
 )
+equal(ns.PlanCost(capped), capped.cost, "the route pays for a book it still has to buy")
+equal(capped.cost >= 10000, true, "which the plan counts")
 bags[UNDER_WRAPS] = 1
 equal(ns.RankText(book), "Read Expert First Aid - Under Wraps at 125", "a book in the bags only needs reading")
+equal(ns.RankHeld(book), true, "and is held")
+equal(ns.PlanCost(capped), capped.cost - 10000, "so the route no longer pays for it")
 bags[UNDER_WRAPS] = nil
 equal(Plan(FirstAid(200, 0, 225), 300).target, 225, "Artisan comes from a quest the data can't name: the route stops")
 known[HEAVY_WOOL], costs[HEAVY_WOOL], itemNames[UNDER_WRAPS] = nil, nil, nil

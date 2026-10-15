@@ -672,4 +672,72 @@ equal(
 	"an old price asks for a rescan"
 )
 
+-- A rank's book you already have (#121): the step only asks for it to be read, and neither the row,
+-- the total nor the tooltip sends you to buy it again (api_spec covers where a click goes).
+local UNDER_WRAPS = 16084
+local savedHave, savedNormalLine, savedItemName =
+	page.Have, pageEnv.GameTooltip_AddNormalLine, pageEnv.C_Item.GetItemNameByID
+local bookRank = { name = "Expert", book = UNDER_WRAPS, cap = 225, reqSkill = 125, fee = 10000, level = 0 }
+local bookCraft = { recipeID = 3275, crafts = 5, from = 125, to = 130, color = "orange" }
+page.PlanRoute = function(profession)
+	return {
+		profession = profession,
+		target = 130,
+		crafts = { bookCraft },
+		steps = { { rank = bookRank }, { craft = bookCraft } },
+		ranks = { bookRank },
+		cost = 10500,
+		unpriced = 0,
+		unpricedRecipes = {},
+	}
+end
+pageEnv.UnitLevel = function()
+	return 60
+end
+pageEnv.C_Item.GetItemNameByID = function(itemID)
+	return itemID == UNDER_WRAPS and "Expert First Aid - Under Wraps" or nil
+end
+local nearestShown = 0
+page.NearestForRank = function()
+	return 77, "Nearest vendor"
+end
+page.AddNearest = function()
+	nearestShown = nearestShown + 1
+end
+local heldBook = 0
+page.Have = function(itemID)
+	return itemID == UNDER_WRAPS and heldBook or 0
+end
+local tooltipLines = {}
+pageEnv.GameTooltip_AddNormalLine = function(_, text)
+	tooltipLines[#tooltipLines + 1] = text
+end
+-- The stub list keeps every row and message it was given, so a redraw's are the ones after the count before it.
+local function BookPage()
+	local rows, said = #lists[1].rows, #lists[1].messages
+	routeTab:Click()
+	Drain()
+	tooltipLines = {}
+	return lists[1].rows[rows + 1], lists[1].messages[said + 1]
+end
+local bookRow, messages = BookPage()
+equal(bookRow.text, "Buy and read Expert First Aid - Under Wraps at 125", "a book not yet bought is bought and read")
+equal(bookRow.click ~= nil, true, "and a click goes to its vendor")
+equal(bookRow.detail:find("Price 10000", 1, true) ~= nil, true, "at its price")
+equal(messages, "Total 10500", "and the total pays for it")
+bookRow.tooltip(Stub())
+equal(nearestShown, 1, "its tooltip names the nearest vendor")
+heldBook = 1
+bookRow, messages = BookPage()
+equal(bookRow.text, "Read Expert First Aid - Under Wraps at 125", "a book in the bags is only read")
+equal(bookRow.detail, "You have it, requires First Aid (125)", "with no price on the row")
+equal(messages, "Total 500", "and the total no longer pays for it")
+bookRow.tooltip(Stub())
+equal(tooltipLines[#tooltipLines], "You have this book: read it.", "its tooltip says you have it")
+equal(nearestShown, 1, "and names no vendor")
+equal(bookRow.click, nil, "and a click goes nowhere")
+page.PlanRoute, page.Have, page.NearestForRank, page.AddNearest = realPlan, savedHave, nil, nil
+pageEnv.UnitLevel, pageEnv.GameTooltip_AddNormalLine, pageEnv.C_Item.GetItemNameByID =
+	nil, savedNormalLine, savedItemName
+
 Client.report("route_spec")

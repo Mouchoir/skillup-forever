@@ -239,6 +239,8 @@ L["What hovering an item says about your professions: how much of it your tracke
 L["What's new after an update"] = "What's new after an update"
 L["World drop"] = "World drop"
 L["Wrist"] = "Wrist"
+L["You have it, requires %s (%d)"] = "You have it, requires %s (%d)"
+L["You have this book: read it."] = "You have this book: read it."
 L["You know it"] = "You know it"
 L["You: %d"] = "You: %d"
 L["Your bags allow %d of the route's %d."] = "Your bags allow %d of the route's %d."

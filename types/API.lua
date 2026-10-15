@@ -10,7 +10,7 @@
 ---@field kind SkillUpAPIStepKind
 ---@field text string Short imperative line, "Craft 3 Toughened Leather Gloves".
 ---@field detail? string "142 to 145", "Name, Zone · fee".
----@field itemID? integer Reagent to get, or the craft's or trained recipe's product.
+---@field itemID? integer Reagent to get, the craft's or trained recipe's product, or a rank's book to buy or read.
 ---@field spellID? integer Recipe to craft or train.
 ---@field count? number
 ---@field cost? number Copper: a purchase or training fee.

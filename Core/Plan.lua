@@ -32,13 +32,33 @@ function ns.RankBookName(rank)
 	return string.format(L["the %s book"], rank.name)
 end
 
+-- A rank's book already held (bags or bank, as ns.Have counts): only reading it is left, with nothing to buy.
+---@param rank SkillUpRank
+---@return boolean
+function ns.RankHeld(rank)
+	return rank.book ~= nil and ns.Have(rank.book) > 0
+end
+
+-- What a plan still costs: its cost less the books already in the bags. A plan is not rebuilt on every
+-- bag change, so this is read when the route is drawn.
+---@param plan SkillUpPlan
+---@return number
+function ns.PlanCost(plan)
+	local cost = plan.cost
+	for _, rank in ipairs(plan.ranks) do
+		if ns.RankHeld(rank) then
+			cost = cost - rank.fee
+		end
+	end
+	return cost
+end
+
 ---@param rank SkillUpRank
 ---@return string
 function ns.RankText(rank)
 	if rank.book then
 		local name = ns.RankBookName(rank)
-		-- A book already in the bags only needs reading.
-		local held = ns.Have(rank.book) > 0
+		local held = ns.RankHeld(rank)
 		if rank.level > UnitLevel("player") then
 			local text = held and L["Read %s at %d (level %d)"] or L["Buy and read %s at %d (level %d)"]
 			return string.format(text, name, rank.reqSkill, rank.level)

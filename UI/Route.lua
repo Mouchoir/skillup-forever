@@ -210,14 +210,21 @@ local function RankTooltip(tooltip, profession, rank)
 	if rank.book then
 		GameTooltip_AddNormalLine(tooltip, L["No trainer teaches this rank: a book does."])
 	end
-	AddLine(tooltip, rank.book and L["Price"] or L["Fee"], Money(rank.fee))
+	local held = ns.RankHeld(rank)
+	if held then
+		GameTooltip_AddNormalLine(tooltip, L["You have this book: read it."])
+	else
+		AddLine(tooltip, rank.book and L["Price"] or L["Fee"], Money(rank.fee))
+	end
 	RequiresLine(tooltip, profession, rank.reqSkill)
 	if rank.level > 0 then
 		local color = UnitLevel("player") < rank.level and RED_FONT_COLOR or HIGHLIGHT_FONT_COLOR
 		AddLine(tooltip, L["Requires"], string.format(L["level %d"], rank.level), color)
 	end
-	local npcID, label = ns.NearestForRank(profession, rank, true)
-	ns.AddNearest(tooltip, label, npcID)
+	if not held then
+		local npcID, label = ns.NearestForRank(profession, rank, true)
+		ns.AddNearest(tooltip, label, npcID)
+	end
 end
 
 -- A waypoint to the nearest trainer teaching up to `cap`.
@@ -411,20 +418,24 @@ local function RenderRoute(list, plan)
 				menu = RecipeMenu(subcraft.recipeID),
 			})
 		elseif rank then
+			local detail
+			local held = ns.RankHeld(rank)
+			if held then
+				detail = string.format(L["You have it, requires %s (%d)"], profession.name, rank.reqSkill)
+			else
+				local text = rank.book and L["Price %s, requires %s (%d)"] or L["Fee %s, requires %s (%d)"]
+				detail = string.format(text, Money(rank.fee), profession.name, rank.reqSkill)
+			end
 			list:Add({
 				icon = profession.icon,
 				text = ns.RankText(rank),
-				detail = string.format(
-					rank.book and L["Price %s, requires %s (%d)"] or L["Fee %s, requires %s (%d)"],
-					Money(rank.fee),
-					profession.name,
-					rank.reqSkill
-				),
+				detail = detail,
 				color = NORMAL_FONT_COLOR,
 				tooltip = function(tooltip)
 					RankTooltip(tooltip, profession, rank)
 				end,
-				click = RankClick(profession, rank),
+				-- A book you have has nowhere to send you.
+				click = not held and RankClick(profession, rank) or nil,
 			})
 		elseif training then
 			list:Add({
@@ -461,7 +472,7 @@ local function RenderRoute(list, plan)
 		end
 	end
 	if #plan.crafts > 0 then
-		list:Message(string.format(L["Total %s"], Money(plan.cost)), NORMAL_FONT_COLOR)
+		list:Message(string.format(L["Total %s"], Money(ns.PlanCost(plan))), NORMAL_FONT_COLOR)
 	end
 	if blocked and plan.unpriced > 0 then
 		list:Message(blocked)

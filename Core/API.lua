@@ -172,7 +172,7 @@ local function Book(rank)
 	---@cast book integer
 	-- Asked by name here so the list rebuilds when the book's name arrives.
 	ItemName(book)
-	if ns.Have(book) > 0 then
+	if ns.RankHeld(rank) then
 		return { kind = "train", text = ns.RankText(rank), itemID = book, nav = false }
 	end
 	local vendor = ns.NearestVendor(book)
