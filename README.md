@@ -115,7 +115,7 @@ Run `luajit tests/bench.lua` from the repository root to measure loading, route 
 
 ## Licence
 
-GPL-3.0-or-later. Per-build thresholds come from the game via [wago.tools](https://wago.tools). Trainer fees, who trains what, drop chances and gathered reagents come from [CMaNGOS classic-db](https://github.com/cmangos/classic-db) (GPL-3.0); vendors, quests, NPC places and scroll recipes are read in game from your own Questie and AtlasLoot, and none of their data is bundled; vendor reagents from [LibPeriodicTable-3.1](https://github.com/doadin/libperiodictable-3-1) (LGPL-2.1).
+GPL-3.0-or-later. Per-build thresholds come from the game via [wago.tools](https://wago.tools). Trainer fees, who trains what, drop chances and gathered reagents come from [CMaNGOS classic-db](https://github.com/cmangos/classic-db) (GPL-3.0); vendors, quests, NPC places and scroll recipes are read in game from your own Questie and AtlasLoot, and none of their data is bundled; vendor reagents from [LibPeriodicTable-3.1](https://github.com/doadin/libperiodictable-3-1) (LGPL-2.1). Every input, its pin and licence, and what ships: [THIRD_PARTY.md](THIRD_PARTY.md).
 
 Made by Cillian Berragan · [cillian.dev](https://cillian.dev) · [GitHub](https://github.com/cjber) · [Twitter](https://twitter.com/cjberragan)
 

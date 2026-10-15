@@ -30,6 +30,8 @@ authorization. A preparation-only request ends before tags or uploads.
    `tests/core_spec.lua` fails while it names an older entry. Run
    `python3 tools/changelog.py --check X.Y.Z` and
    `python3 tools/changelog.py --check`; inspect the extracted version notes.
+   Public API changes go under an optional `### For addon authors` subsection after the
+   player bullets; the release notes carry it as written.
 
 ## Refresh every presentation surface
 
