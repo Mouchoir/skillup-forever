@@ -137,6 +137,7 @@
 ---@field TrainerInferred table<integer, number> classic-db's required skill, where the bundled one was moved from it.
 ---@field ProfessionTrainers table<integer, number[][]>
 ---@field GatheredBy table<integer, integer>
+---@field NodeSkills table<string, number[]> { gathering skill line, required skill } per enUS herb or ore node name.
 ---@field ScrollDrops table<integer, number[][]>
 ---@field WorldDrops table<integer, boolean>
 ---@field Questie SkillUpQuestie
@@ -158,6 +159,7 @@
 ---@field showGearTab boolean
 ---@field merchantButton boolean
 ---@field reagentTooltip 'off'|'route'|'full'
+---@field gatherTooltip boolean
 ---@field collectModes table<string, SkillUpCollectMode>
 ---@field showAllGear table<string, boolean>
 ---@field skippedRecipes table<string, table<integer, true>>

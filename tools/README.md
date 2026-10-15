@@ -128,6 +128,10 @@ comes from QuestieDB.
 needs the skill) and `skinning_loot_template`, with reference loot expanded. Rarer
 finds (gems in veins) are left out.
 
+`ns.NodeSkills` maps a herb or ore node's enUS name to the gathering skill and rank it asks for: the node's
+`gameobject_template` lock (`data0`) joined to the client's `Lock` DB2 (a WFA-28 waiver in `AGENTS.md`). A lock
+asking no skill (quest plants) is left out, and so is a name that nodes asking different skills share.
+
 The recipe generator joins `SkillLineAbility` to `SpellReagents` and base-difficulty
 `SpellEffect` rows. Reagents are sorted by item ID and repeated slots combined.
 Missing or unresolved reagent rows are omitted, never converted into free recipes.

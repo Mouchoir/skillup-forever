@@ -17,6 +17,45 @@ function ns.Readable(value)
 	return value
 end
 
+-- Classic's gathering bands: a node is orange from its required skill, then yellow, green and grey this far past.
+local GATHER_BANDS = { 0, 25, 50, 100 }
+-- Classic asks a skinner (or a herbalist or miner on a corpse) for 1 up to level 10, ten points a level to 20 and
+-- five times the level above that. Nobody has checked Forever kept it, so until someone does a corpse shows "?"
+-- (#122). Once it is confirmed in game, set this to true.
+local CORPSE_RULE_CONFIRMED = false
+
+-- A gathering requirement as recipe thresholds, so it colours like a recipe.
+---@param required number
+---@return number[]
+function Model.GatherThresholds(required)
+	local t = {}
+	for i, past in ipairs(GATHER_BANDS) do
+		t[i] = required + past
+	end
+	return t
+end
+
+-- Classic's rule: the skill gathering from a corpse of this level asks; nil for an unknown level.
+---@param level number?
+---@return number?
+function Model.ClassicCorpseSkill(level)
+	if not level or level < 1 then
+		return nil
+	elseif level <= 10 then
+		return 1
+	elseif level <= 20 then
+		return (level - 10) * 10
+	end
+	return level * 5
+end
+
+-- What the tooltip uses: nothing while the rule is unconfirmed.
+---@param level number?
+---@return number?
+function Model.CorpseSkill(level)
+	return CORPSE_RULE_CONFIRMED and Model.ClassicCorpseSkill(level) or nil
+end
+
 ---@param recipeID integer
 ---@return number[]?
 function Model.Get(recipeID)

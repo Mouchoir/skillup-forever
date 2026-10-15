@@ -65,8 +65,10 @@ local ns = c.ns
 local noop = function() end
 local tooltipPostCall
 c.G.TooltipDataProcessor = {
-	AddTooltipPostCall = function(_, fn)
-		tooltipPostCall = fn
+	AddTooltipPostCall = function(kind, fn)
+		if kind == c.G.Enum.TooltipDataType.Item then
+			tooltipPostCall = fn
+		end
 	end,
 }
 c.G.GameTooltip = {

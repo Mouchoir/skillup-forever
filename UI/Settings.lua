@@ -208,6 +208,13 @@ function ns.RegisterSettings()
 			L["What hovering an item says about your professions: how much of it your tracked routes need (hold Shift for every recipe that uses it), every such recipe and its colour, or nothing."]
 		)
 
+		Checkbox(
+			rows,
+			"gatherTooltip",
+			L["Gathering skill on nodes"],
+			L["Herb and ore node tooltips show the skill they need and its colour at yours (English client only). Skinnable corpses show ? until the skinning rule is confirmed on Forever."]
+		)
+
 		Choice(
 			rows,
 			"sortMode",

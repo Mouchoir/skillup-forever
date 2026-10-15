@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 
 import gen_sources
-from gen_sources import CHEST, gathered
+from gen_sources import CHEST, gathered, node_skills
 
 MINE, VEIN, LOOT = "7", "70", "700"
 
@@ -20,12 +20,30 @@ def loot(entry, item, chance, ref=0, group=0, times=1):
     }
 
 
-def lock():
-    row = {"ID": MINE}
+def lock(lock_id=MINE, rank=125):
+    row = {"ID": lock_id}
     for i in range(8):
-        row[f"Type_{i}"], row[f"_Index_{i}"] = "0", "0"
-    row["Type_0"], row["_Index_0"] = "2", "3"  # LOCK_KEY_SKILL, Mining
+        row[f"Type_{i}"], row[f"_Index_{i}"], row[f"Skill_{i}"] = "0", "0", "0"
+    row["Type_0"], row["_Index_0"], row["Skill_0"] = "2", "3", str(rank)  # LOCK_KEY_SKILL, Mining
     return row
+
+
+class NodeSkillTests(unittest.TestCase):
+    # Issue #122: a node's required skill is its classic-db lock's in the client's Lock DB2, by its name.
+    def nodes(self, *nodes):
+        rows = [{"type": CHEST, "data0": lock_id, "name": name} for name, lock_id in nodes]
+        locks = [lock(), lock("8", 175), lock("9", 0)]
+        return node_skills({"gameobject_template": rows}, locks)
+
+    def test_a_node_asks_its_locks_skill(self):
+        self.assertEqual(self.nodes(("Iron Deposit", MINE)), ({"Iron Deposit": (186, 125)}, []))
+
+    def test_a_lock_asking_no_skill_is_left_out(self):
+        self.assertEqual(self.nodes(("Doom Weed", "9")), ({}, []))
+
+    def test_a_name_asking_two_skills_is_left_out_and_reported(self):
+        both = self.nodes(("Iron Deposit", MINE), ("Iron Deposit", "8"), ("Mithril Deposit", "8"))
+        self.assertEqual(both, ({"Mithril Deposit": (186, 175)}, ["Iron Deposit"]))
 
 
 class GatheredTests(unittest.TestCase):

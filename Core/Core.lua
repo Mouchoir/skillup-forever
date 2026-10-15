@@ -17,6 +17,7 @@ local DEFAULTS = {
 	showGearTab = false,
 	merchantButton = true, -- the merchant window's "Buy tracked reagents" button
 	reagentTooltip = "route",
+	gatherTooltip = true, -- a herb or ore node's and a skinnable corpse's required skill, coloured at yours
 	collectModes = {}, -- ["Name-Realm"] = "gather" | "auction": where a reagent you could gather comes from
 	showAllGear = {}, -- ["Name-Realm"] = true: the crafted gear view shows gear this character cannot make yet
 	skippedRecipes = {}, -- ["Name-Realm"] = { [recipeID] = true }: "Not this recipe", left out of every route

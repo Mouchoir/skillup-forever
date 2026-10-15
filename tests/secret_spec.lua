@@ -39,8 +39,10 @@ local G, ns = c.G, c.ns
 -- The item tooltip's post call and what it drew.
 local post
 G.TooltipDataProcessor = {
-	AddTooltipPostCall = function(_, fn)
-		post = fn
+	AddTooltipPostCall = function(kind, fn)
+		if kind == G.Enum.TooltipDataType.Item then
+			post = fn
+		end
 	end,
 }
 local lines, refreshed = {}, 0

@@ -196,7 +196,7 @@ local groups = {
 		"checkbox:showTracker checkbox:trackerAttached checkbox:showRouteTab checkbox:showGearTab"
 			.. " checkbox:merchantButton checkbox:showTrainer",
 	},
-	{ "Tooltips and sorting", "slider:reagentTooltip slider:sortMode" },
+	{ "Tooltips and sorting", "slider:reagentTooltip checkbox:gatherTooltip slider:sortMode" },
 	{ "Addon", "checkbox:companionHints checkbox:whatsNew" },
 }
 local kinds, expected = {}, {}

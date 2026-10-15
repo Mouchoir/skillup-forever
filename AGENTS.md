@@ -72,7 +72,11 @@ publishes it as the notes.
 - Quality: load `.agents/skills/sift-project/SKILL.md` before cleanup, dead-code or refactoring
   work.
 - A recipe colour always comes from the game; bundled thresholds only fill in what it does not show.
-  Missing data renders `?`, never a guess.
+  Missing data renders `?`, never a guess. A gathering node has no colour in the game: its tooltip colours
+  your live skill against the node's waivered requirement with Classic's gathering bands (orange to 25 past
+  it, yellow to 50, green to 100). Nodes are matched by their enUS name, so other locales show nothing.
+  A corpse (skinning, or herbalism and mining on a corpse) shows `?` until Classic's level rule is confirmed on
+  Forever (`CORPSE_RULE_CONFIRMED` in `Core/Model.lua`).
 - Never stretch art: an icon, atlas or texture is drawn at its native aspect, through `UI/Art.lua` (`Art.Fit`,
   `Art.Markup`); only nine-slice pieces, bars and fills stretch by design. `tools/lint_art.py` refuses a raw
   setter elsewhere unless its line says why its shape is right: `-- art-ok: <reason>`.
@@ -97,6 +101,8 @@ publishes it as the notes.
   dungeon bosses; AtlasLoot's rate replaces the bundled one where it has one.
 - WFA-28: which gathering skill yields a reagent (`ns.GatheredBy`): CMaNGOS classic-db node and skinning loot,
   neither database ties an item to a gathering skill.
+- WFA-28: a gathering node's required skill (`ns.NodeSkills`): CMaNGOS classic-db `gameobject_template` lock with
+  the client's `Lock` DB2; neither database ties a node to a lock (owner decision 2026-10-15).
 
 A scroll's vendor price and limited stock are in neither database and are not bundled: the price is the one
 seen at a merchant's window. `Data/Recipes.lua`, `Data/Thresholds.lua` and `Data/Vendor.lua` come from the
