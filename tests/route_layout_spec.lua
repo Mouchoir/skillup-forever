@@ -495,6 +495,13 @@ local ns = {
 }
 
 local env = setmetatable({
+	-- SafeCall hands a caught error to the game's handler: here it fails the spec.
+	geterrorhandler = function()
+		return function(message)
+			io.stderr:write("error handler: ", tostring(message), "\n")
+			os.exit(1)
+		end
+	end,
 	CreateFrame = CreateFrame,
 	C_Timer = {
 		After = function(_, fn)
@@ -580,6 +587,7 @@ for _, file in ipairs({
 	"Data/Recipes.lua",
 	"Data/Trainer.lua",
 	"Core/Model.lua",
+	"Core/SafeCall.lua",
 	"Core/Changes.lua",
 	"Core/Plan.lua",
 	"UI/List.lua",

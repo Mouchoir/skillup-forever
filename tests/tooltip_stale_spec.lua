@@ -85,6 +85,13 @@ end
 
 local ns = {}
 local env = setmetatable({
+	-- SafeCall hands a caught error to the game's handler: here it fails the spec.
+	geterrorhandler = function()
+		return function(message)
+			io.stderr:write("error handler: ", tostring(message), "\n")
+			os.exit(1)
+		end
+	end,
 	GameTooltip = GameTooltip,
 	CreateFrame = CreateFrame,
 	CreateScrollBoxListLinearView = CreateView,
@@ -96,6 +103,7 @@ local env = setmetatable({
 	HIGHLIGHT_FONT_COLOR = color,
 	GRAY_FONT_COLOR = color,
 }, { __index = _G })
+setfenv(assert(loadfile("Core/SafeCall.lua")), env)("SkillUpForever", ns)
 setfenv(assert(loadfile("Core/Changes.lua")), env)("SkillUpForever", ns)
 setfenv(assert(loadfile("UI/List.lua")), env)("SkillUpForever", ns)
 

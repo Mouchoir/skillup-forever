@@ -44,3 +44,14 @@ end
 function Art.Markup(atlas, height)
 	return ("|A:%s:%d:%d|a"):format(atlas, height, math.floor(height * Aspect(atlas) + 0.5))
 end
+
+-- A file icon, square as every one is, `size` across and whole: a texture that drew an atlas before keeps that
+-- atlas's crop until it is reset.
+---@param texture Texture
+---@param file string|integer
+---@param size number
+function Art.Icon(texture, file, size)
+	texture:SetTexCoord(0, 1, 0, 1)
+	texture:SetTexture(file)
+	texture:SetSize(size, size)
+end

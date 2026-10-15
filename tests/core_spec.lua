@@ -57,6 +57,7 @@ for _, complete in ipairs({ false, true }) do
 		ns.InitCatalogue = function() end
 		ns.PlanRoute, ns.Changed, ns.WhenEvent = Init, Init, function() end
 		ns.CraftedGear = Init
+		ns.SafeCall, ns.Report, ns.ReportLines = pcall, {}, Init
 	end
 	local env = Env(messages, callbacks)
 	-- A save from before auction prices moved to Auctionator, and one with vendors and a price store from
@@ -130,6 +131,9 @@ do
 		Catalogue = {},
 		InitCatalogue = function() end,
 		CraftedGear = function() end,
+		SafeCall = pcall,
+		Report = {},
+		ReportLines = function() end,
 	}
 	assert(loadfile("Data/Recipes.lua"))("SkillUpForever", ns)
 	local env = Env(messages, callbacks)

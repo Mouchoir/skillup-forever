@@ -19,6 +19,7 @@ Data\Vendor.lua
 Data\Recipes.lua
 Data\Trainer.lua
 Data\Sources.lua
+Core\SafeCall.lua
 Core\Model.lua
 Core\Changes.lua
 Core\Live.lua
@@ -30,6 +31,7 @@ Integrations\AtlasLoot.lua
 Integrations\Catalogue.lua
 Integrations\Prices.lua
 UI\Art.lua
+UI\Report.lua
 UI\Settings.lua
 UI\Tooltip.lua
 UI\RecipeList.lua
@@ -42,3 +44,4 @@ UI\TrackerHost.lua
 UI\Shopping.lua
 Integrations\Trainer.lua
 Core\API.lua
+Core\Report.lua

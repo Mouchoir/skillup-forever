@@ -32,6 +32,12 @@ end
 function Texture:SetSize(width, height)
 	self.width, self.height = width, height
 end
+function Texture:SetTexture(file)
+	self.file = file
+end
+function Texture:SetTexCoord(...)
+	self.coords = { ... }
+end
 
 local ns = {}
 local chunk = assert(loadfile("UI/Art.lua"))
@@ -53,6 +59,16 @@ do
 	width, height = Art.Fit(texture, "unknown", 14, 18)
 	equal(width, 14, "fit: an unknown atlas is square")
 	equal(height, 14, "fit: an unknown atlas is square, inside the box")
+end
+
+-- Icon: a square file icon, whole, with an atlas's earlier crop reset.
+do
+	local texture = setmetatable({ coords = { 0.1, 0.9, 0.1, 0.9 } }, Texture)
+	Art.Icon(texture, "Interface\\Icon", 62)
+	equal(texture.file, "Interface\\Icon", "icon: the file")
+	equal(table.concat(texture.coords, " "), "0 1 0 1", "icon: whole")
+	equal(texture.width, 62, "icon: as wide")
+	equal(texture.height, 62, "icon: as tall")
 end
 
 -- Markup: the height given, the width from the aspect.

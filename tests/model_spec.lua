@@ -363,6 +363,13 @@ do
 		RegisterEvent = function() end,
 	}
 	local env = setmetatable({
+		-- SafeCall hands a caught error to the game's handler: here it fails the spec.
+		geterrorhandler = function()
+			return function(message)
+				io.stderr:write("error handler: ", tostring(message), "\n")
+				os.exit(1)
+			end
+		end,
 		CreateFrame = function()
 			return frame
 		end,
@@ -394,6 +401,7 @@ do
 			},
 		},
 	}, { __index = _G })
+	setfenv(assert(loadfile("Core/SafeCall.lua")), env)("SkillUpForever", runtime)
 	setfenv(assert(loadfile("Core/Changes.lua")), env)("SkillUpForever", runtime)
 	setfenv(assert(loadfile("Integrations/Prices.lua")), env)("SkillUpForever", runtime)
 	runtime.InitPrices()

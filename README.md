@@ -69,6 +69,7 @@ Open a profession and the numbers are already there.
 | `/su skipped` | List the recipes you said *Not this recipe* to on this character, with their IDs |
 | `/su unskip <ID>`, `/su unskip all` | Show a skipped recipe, or every one, in the route again |
 | `/su audit` | With a profession open, compare the bundled thresholds with the colours the game shows and print any mismatch |
+| `/su report` | Show a report to copy into a bug report: versions, your professions and routes, the audit, trainer checks and recent errors |
 | `/su trainers` | List the trainer skill requirements SkillUp guessed, which ones a trainer has confirmed or shown differently, and which your trainer should teach at your skill now |
 
 Settings cover rows and tooltips, what crafts count for, sort order, the route and crafted gear tabs, trainer annotations, reagent and gathering tooltips and companion hints.

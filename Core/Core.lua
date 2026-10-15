@@ -495,11 +495,13 @@ function ns.RowColor(d)
 	return ns.COLORS[d.chance and d.color or (d.thresholds and "red" or "unknown")]
 end
 
-local function Audit()
+-- /su audit's lines: with a profession open, the bundled thresholds against the colours the game shows, as a
+-- summary line then each mismatch; nil with none open. English throughout: it is a data check for bug reports.
+---@return string[]?
+function ns.AuditLines()
 	local ctx = ProfessionsFrame and ProfessionsFrame:IsShown() and ns.SkillContext()
 	if not ctx then
-		ns.Print(L["open a profession first."])
-		return
+		return nil
 	end
 	local skill = ctx.skill
 	local checked, missing, mismatches = 0, 0, {}
@@ -531,7 +533,7 @@ local function Audit()
 			end
 		end
 	end
-	ns.Print(
+	local lines = {
 		string.format(
 			"%s at %d: %d checked, %d mismatched, %d without data.",
 			ctx.name or "?",
@@ -539,9 +541,21 @@ local function Audit()
 			checked,
 			#mismatches,
 			missing
-		)
-	)
+		),
+	}
 	for _, line in ipairs(mismatches) do
+		lines[#lines + 1] = line
+	end
+	return lines
+end
+
+local function Audit()
+	local lines = ns.AuditLines()
+	if not lines then
+		ns.Print(L["open a profession first."])
+		return
+	end
+	for _, line in ipairs(lines) do
 		ns.Print(line)
 	end
 end
@@ -582,9 +596,13 @@ end
 
 SLASH_SKILLUPFOREVER1 = "/skillup"
 SLASH_SKILLUPFOREVER2 = "/su"
-SlashCmdList.SKILLUPFOREVER = function(msg)
+local function Slash(msg)
 	local command, argument = strtrim(msg):lower():match("^(%S*)%s*(.-)$")
-	if command == "audit" then
+	if command == "report" then
+		-- SkillUp's lines can fail in the very state being reported: the header and caught errors still show.
+		local ok, lines = ns.SafeCall("report lines", ns.ReportLines)
+		ns.Report.Show(ns.Report.Text(ok and lines or { "Report lines failed: " .. tostring(lines) }))
+	elseif command == "audit" then
 		Audit()
 	elseif command == "trainers" then
 		for _, line in ipairs(ns.TrainerReport()) do
@@ -596,6 +614,14 @@ SlashCmdList.SKILLUPFOREVER = function(msg)
 		Unskip(argument)
 	else
 		ns.OpenSettings()
+	end
+end
+SlashCmdList.SKILLUPFOREVER = function(msg)
+	-- Without Core/SafeCall.lua (a /reload after an update that added it) the command runs as it is.
+	if ns.SafeCall then
+		ns.SafeCall("slash command", Slash, msg)
+	else
+		Slash(msg)
 	end
 end
 
@@ -619,6 +645,9 @@ EventUtil.ContinueOnAddOnLoaded(addonName, function()
 			and ns.PlanRoute
 			and ns.CraftedGear
 			and ns.Changed
+			and ns.SafeCall
+			and ns.Report
+			and ns.ReportLines
 		)
 	then
 		ns.Print("|cffff4040" .. L["files are missing: restart the game (not /reload) after updating."] .. "|r")

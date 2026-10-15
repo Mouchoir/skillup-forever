@@ -7,6 +7,9 @@
 SlashCmdList = {}
 ---@type MessageFrame
 DEFAULT_CHAT_FRAME = nil
+-- Frames Escape closes, by name.
+---@type string[]
+UISpecialFrames = {}
 ---@type Frame
 MerchantFrame = nil
 ---@type table<string, number>

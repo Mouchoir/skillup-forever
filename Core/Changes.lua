@@ -82,6 +82,19 @@ local EVENTS = {
 	MERCHANT_CLOSED = "merchant",
 }
 
+-- A /reload after an update that added Core/SafeCall.lua runs without it (Core.lua says to restart the game):
+-- the handlers are then called directly.
+local SafeCall = ns.SafeCall
+	or function(_, fn, ...)
+		return true, fn(...) -- multi-value: fn's results, as SafeCall gives them
+	end
+-- The name each stale handler's failure is kept under for /su report, made once.
+---@type table<SkillUpStale, string>
+local LABELS = {}
+for _, name in ipairs(ORDER) do
+	LABELS[name] = "stale " .. name
+end
+
 ---@type table<SkillUpStale, fun()>
 local handlers = {}
 ---@type table<string, (fun(): SkillUpChange?)[]>
@@ -98,7 +111,8 @@ local function Apply(kinds)
 	for _, name in ipairs(ORDER) do
 		local handler = stale[name] and handlers[name]
 		if handler then
-			handler()
+			-- One failing cache or view doesn't stop the rest; the error is kept for /su report.
+			SafeCall(LABELS[name], handler)
 		end
 	end
 end
@@ -128,8 +142,8 @@ frame:SetScript("OnEvent", function(_, event)
 		kinds[EVENTS[event]] = true
 	end
 	for _, watcher in ipairs(watchers[event] or {}) do
-		local kind = watcher()
-		if kind then
+		local ok, kind = SafeCall(event, watcher)
+		if ok and kind then
 			kinds[kind] = true
 		end
 	end

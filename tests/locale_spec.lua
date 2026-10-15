@@ -40,13 +40,8 @@ local SINKS = {
 -- A settings option, { value, label }, closes after its label.
 local OPTION = '{%s*"%l+",%s*"([^"\n]*)"%s*}'
 
--- Literals that stay English: /su audit's report is a data check for bug reports. Its prompt to open a
--- profession is for the player, so it is a phrase.
-local ALLOWED = {
-	["Core/Core.lua"] = {
-		["%s at %d: %d checked, %d mismatched, %d without data."] = true,
-	},
-}
+-- Literals that may stay English. /su audit and /su report build their lines as data, so none pass a sink.
+local ALLOWED = {}
 
 -- Hardcoded text passed straight to a sink, as "file: literal" lines.
 local function Unwrapped(name, source)
