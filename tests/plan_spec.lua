@@ -236,6 +236,21 @@ local leatherworking = { skillLine = 165, name = "Leatherworking", skill = 0, mo
 equal(ns.LearnSkill(leatherworking, 1255109), 100, "Brawler's Leather Hood's pattern asks 100")
 equal(ns.LearnSkill(leatherworking, 1255105), 100, "Stormrider's Leather Hood's pattern asks 100")
 equal(ns.LearnSkill(leatherworking, 12719), 0, "a recipe with no known source has no skill")
+-- A deprecated pattern teaches nobody: Enchant Cloak - Minor Protection's only item is the old "Formula:
+-- Imbue Cloak - Protection" (asks 90), and its trainer teaches it at 70. Its orange is no higher than that.
+equal(ns.Thresholds[7771][1] <= ns.TrainerFees[7771][2], true, "Minor Protection is not orange above its trainer")
+equal(ns.LearnSkill(FirstAid(40), 7771), 70, "Enchant Cloak - Minor Protection is taught at 70")
+equal(ns.RecipeScrolls[7771], nil, "and no deprecated formula is offered as its scroll")
+equal(ns.Model.Color(ns.Model.Get(7771), 75), "orange", "trained at 75 it is orange, as the game shows it")
+local cloak = ns.RecipeBands(FirstAid(40), 7771)
+equal(cloak[1].color .. " " .. cloak[1].from, "orange 70", "its first band starts where it is taught")
+for recipeID, taught in pairs(ns.TrainerFees) do
+	local t, scroll = ns.Thresholds[recipeID], ns.RecipeScrolls[recipeID]
+	if t and scroll and taught[2] >= 1 and t[1] == scroll[2] then
+		equal(t[1] <= taught[2], true, "recipe " .. recipeID .. ": a pattern's orange is not above its trainer")
+	end
+end
+
 -- It draws no band below where it is taught, so the orange band starts at the pattern's skill.
 local hood = ns.RecipeBands(leatherworking, 1255109)
 equal(hood[1].color .. " " .. hood[1].from, "orange 100", "the hood's first band starts at the pattern's skill")

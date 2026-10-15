@@ -10,12 +10,12 @@ from pathlib import Path
 from forever_tools import wago
 
 USER_AGENT = "SkillUpForever/1.0"
-BUILD = "1.60.1.70338"
+BUILD = "1.60.1.70374"
 # The Classic Era build Forever's thresholds are compared with: where Forever moved a recipe's yellow and
 # grey but kept Classic's minimum, the minimum is stale. gen_trainer.py reads its teaching spells too.
 TEACH_BUILD = "1.15.9.70003"
 # Date this source snapshot was selected, not the date of each regeneration.
-SOURCE_DATE = "2026-10-13"
+SOURCE_DATE = "2026-10-15"
 # SpellEffect.Effect codes the generators read.
 DUMMY = 3
 TELEPORT_UNITS = 5
@@ -25,6 +25,9 @@ LEARN_SPELL = 36
 TRANS_DOOR = 50  # summons an object: a campfire
 ENCHANT_ITEM = 53  # a permanent enchant
 SKILL = 118  # sets a skill line's rank: base points 0-3 raise the cap to 75-300
+# ItemSparse.Flags_0 bit the client sets on an item it no longer drops or sells ("Deprecated Recipe: ...",
+# "Pattern: ... OLD"). Such an item's requirement is not a skill anyone learns the recipe at.
+ITEM_DEPRECATED = 0x10
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = ROOT / "tools" / ".cache"
 OUTPUT = ROOT / "Data" / "Thresholds.lua"
@@ -126,9 +129,14 @@ def scroll_requirements(ids, item_rows, item_effect_rows, effect_link_rows):
     """[spell] = (item, skill): the pattern or recipe item that teaches each spell and the skill it asks.
 
     Its own profession requirement is the skill at which the recipe can first be learned. Where several
-    items teach one spell, the lowest requirement is the earliest any of them can be learned."""
+    items teach one spell, the lowest requirement is the earliest any of them can be learned. A deprecated
+    item (ITEM_DEPRECATED) teaches nobody, so its requirement is left out."""
     taught = {int(row["ID"]): int(row["SpellID"]) for row in item_effect_rows}
-    requirements = {int(row["ID"]): (int(row["RequiredSkill"]), int(row["RequiredSkillRank"])) for row in item_rows}
+    requirements = {
+        int(row["ID"]): (int(row["RequiredSkill"]), int(row["RequiredSkillRank"]))
+        for row in item_rows
+        if not int(row.get("Flags_0") or 0) & ITEM_DEPRECATED
+    }
     scrolls = {}
     for row in effect_link_rows:
         spell = taught.get(int(row["ItemEffectID"]))
@@ -247,9 +255,10 @@ def render(emitted, coverage, names, sources=None):
         "-- SkillLine, SpellName, and SpellEffect: same source and build.",
         "-- {orange, yellow, green, grey}; green = floor((yellow + grey) / 2).",
         "-- Yellow and grey are this Forever build's. Orange is its MinSkillLineRank where that is a real value",
-        "-- inside the range; else the same build's pattern requirement (ItemSparse, ItemEffect); else, for a",
-        f"-- minimum left at Classic Era {TEACH_BUILD}'s on a range Forever moved, that minimum moved as far;",
-        "-- else the client's placeholder 1, and the learn requirement gates the recipe at runtime.",
+        "-- inside the range; else the same build's pattern requirement (ItemSparse, ItemEffect), deprecated",
+        f"-- patterns left out; else, for a minimum left at Classic Era {TEACH_BUILD}'s on a range Forever moved,",
+        "-- that minimum moved as far; else the client's placeholder 1, and the learn requirement gates the",
+        "-- recipe at runtime.",
         f"-- {len(emitted)} unique recipe spell IDs; a shared recipe counts in each profession below.",
     ]
     lines.extend("-- " + line for line in coverage)
@@ -310,7 +319,7 @@ def main():
     )
     scrolls = scroll_requirements(
         {int(row["Spell"]) for row in ability_rows},
-        db2("ItemSparse", ("ID", "RequiredSkill", "RequiredSkillRank"), **options),
+        db2("ItemSparse", ("ID", "RequiredSkill", "RequiredSkillRank", "Flags_0"), **options),
         db2("ItemEffect", ("ID", "SpellID"), **options),
         db2("ItemXItemEffect", ("ItemID", "ItemEffectID"), **options),
     )

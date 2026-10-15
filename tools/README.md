@@ -42,7 +42,8 @@ real value inside the range: Forever leaves most at the placeholder 1, and where
 moved a recipe's yellow and grey from Classic Era's (`TEACH_BUILD`) it often kept
 Classic's minimum, which then sits too high or above yellow (issue #107). Such a row
 takes the same build's pattern or recipe requirement (`ItemSparse`, `ItemEffect`,
-`ItemXItemEffect`) when it is at most yellow; else a stale minimum moves as far as
+`ItemXItemEffect`) when it is at most yellow, leaving out a pattern the client flags
+deprecated (`Flags_0` 0x10: "Deprecated Recipe: ...", "... OLD"), which nobody learns from; else a stale minimum moves as far as
 its range did; else the row keeps the placeholder 1 and the learn requirement
 (`Core/Plan.lua`'s `LearnSkill`) gates the recipe at runtime. A replaced client value
 is named in the row's comment, and every emitted row is ordered. `SkillLine` discovers professions and child

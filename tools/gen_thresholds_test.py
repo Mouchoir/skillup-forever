@@ -115,6 +115,25 @@ class ThresholdSourceTest(unittest.TestCase):
         # A pattern asking more than yellow cannot start the orange range.
         self.assertEqual(emitted[22757], (1, 275, 285, 295))
 
+    def test_deprecated_pattern_teaches_nobody(self):
+        # Enchant Cloak - Minor Protection (7771): Forever's only item for it is the deprecated
+        # "Formula: Imbue Cloak - Protection" (6345, asks 90), while a trainer teaches it at 70.
+        items = [
+            {"ID": "6345", "RequiredSkill": "333", "RequiredSkillRank": "90", "Flags_0": "80"},
+            {"ID": "4295", "RequiredSkill": "165", "RequiredSkillRank": "125", "Flags_0": "16"},
+            {"ID": "5974", "RequiredSkill": "165", "RequiredSkillRank": "160", "Flags_0": "64"},
+        ]
+        effects = [{"ID": "1", "SpellID": "7771"}, {"ID": "2", "SpellID": "7153"}, {"ID": "3", "SpellID": "7153"}]
+        links = [
+            {"ItemID": "6345", "ItemEffectID": "1"},
+            {"ItemID": "4295", "ItemEffectID": "2"},
+            {"ItemID": "5974", "ItemEffectID": "3"},
+        ]
+        scrolls = gen_thresholds.scroll_requirements({7771, 7153}, items, effects, links)
+        self.assertEqual(scrolls, {7153: (5974, 160)})
+        emitted, _ = self.emit([self.row(7771, 1, 110, 150)], classic=[(7771, 1, 110, 150)], scrolls=scrolls)
+        self.assertEqual(emitted[7771], (1, 110, 130, 150))
+
     def test_real_client_minimum_is_kept(self):
         emitted, sources = self.emit(
             [self.row(7, 40, 50, 100), self.row(8, 50, 70, 100)],

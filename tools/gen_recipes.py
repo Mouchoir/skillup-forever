@@ -386,7 +386,7 @@ def main():
         ),
         db2(
             "ItemSparse",
-            ("ID", "SellPrice", "RequiredLevel", "AllowableClass", "RequiredSkill", "RequiredSkillRank"),
+            ("ID", "SellPrice", "RequiredLevel", "AllowableClass", "RequiredSkill", "RequiredSkillRank", "Flags_0"),
             **options,
         ),
         db2("Item", ("ID", "ClassID", "SubclassID", "InventoryType"), **options),
