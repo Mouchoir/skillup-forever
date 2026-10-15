@@ -40,6 +40,8 @@
 ---@field CraftedGear fun(level: number, classID: integer): SkillUpGearSlot[]
 ---@field Gear SkillUpGear
 ---@field TrainingFor fun(profession: SkillUpContext, recipeID: integer): number[]?
+---@field TrainerChecks fun(): SkillUpTrainerCheck[]
+---@field TrainerReport fun(): string[]
 ---@field RankName fun(cap: number): string?
 ---@field RecipeBands fun(profession: SkillUpContext, recipeID: integer): SkillUpBand[]
 ---@field LearnSkill fun(profession: SkillUpContext, recipeID: integer): number
@@ -129,6 +131,7 @@
 ---@field ProfessionSkillLines table<string, integer>
 ---@field TrainerFees table<integer, number[]>
 ---@field TrainerRanks table<integer, number[][]>
+---@field TrainerInferred table<integer, number> classic-db's required skill, where the bundled one was moved from it.
 ---@field ProfessionTrainers table<integer, number[][]>
 ---@field GatheredBy table<integer, integer>
 ---@field ScrollDrops table<integer, number[][]>
@@ -162,7 +165,7 @@
 ---@field learned table<string, table<integer, boolean>>
 ---@field professionIDs table<string, integer>
 ---@field trackedProfessions table<integer, boolean>
----@field trainer table<integer, table<integer, number[]>>
+---@field trainer table<integer, table<integer, number[]>> { fee, required skill, required skill the trainer showed? }
 ---@field trainerRanks table<integer, table<integer, number>>
 ---@field vendor table<integer, number>
 ---@field sellers table<integer, SkillUpSeller>
@@ -551,6 +554,15 @@ SkillUpForeverDB = nil
 ---@field kind string
 ---@field recipeID? integer
 ---@field ambiguous? boolean
+
+-- A bundled trainer requirement a visit could prove wrong (/su trainers).
+---@class SkillUpTrainerCheck
+---@field skillLine integer
+---@field recipeID integer
+---@field bundled? number
+---@field classic? number classic-db's, where the bundled one was moved from it.
+---@field shown? number What a trainer showed.
+---@field visited boolean Whether a trainer listed it, requirement or not.
 
 ---@class SkillUpTrainerState
 ---@field services SkillUpTrainerService[]

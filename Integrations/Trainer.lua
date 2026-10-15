@@ -1,5 +1,6 @@
 ---@type string, SkillUpNamespace
 local _, ns = ...
+local L = ns.L
 
 -- Per trainer update: which recipe each service teaches, and the one to train next.
 ---@type SkillUpTrainerState?
@@ -116,13 +117,14 @@ local function BuildState(services)
 	local seen = ns.db.trainer[skillLine] or {}
 	ns.db.trainer[skillLine] = seen
 	-- A row that shows no skill requirement keeps the bundled one: recording 0 would plan to learn it at once.
+	-- The third value is the requirement the trainer showed, kept apart so /su trainers can tell the two apart.
 	for index, service in pairs(services) do
 		if service.recipeID then
-			local _, required = GetTrainerServiceSkillReq(index)
+			local _, shown = GetTrainerServiceSkillReq(index)
 			local bundled = ns.TrainerFees[service.recipeID]
-			required = required or (bundled and bundled[2])
+			local required = shown or (bundled and bundled[2])
 			if required then
-				seen[service.recipeID] = { GetTrainerServiceCost(index), required }
+				seen[service.recipeID] = { GetTrainerServiceCost(index), required, shown }
 			end
 		end
 	end
@@ -138,6 +140,139 @@ local function BuildState(services)
 		capped = maxRank > 0 and rank >= maxRank,
 	}
 	return { services = services, ctx = ctx, best = ns.BestTraining(ctx, Known(services), Offers(services)) }
+end
+
+-- Every bundled trainer requirement a trainer could prove wrong (#124): those moved from classic-db's by how far
+-- Forever moved the recipe's range, and any a trainer showed differently. `shown` is what a trainer showed, nil
+-- until this character's profession trainer has been opened since this was recorded; `visited` is whether a
+-- trainer listed the recipe at all.
+---@return SkillUpTrainerCheck[]
+function ns.TrainerChecks()
+	local checks, listed = {}, {}
+	---@param skillLine integer
+	---@param recipeID integer
+	local function Add(skillLine, recipeID)
+		local key = skillLine .. ":" .. recipeID
+		if listed[key] then
+			return
+		end
+		local seen = ns.db.trainer[skillLine] and ns.db.trainer[skillLine][recipeID]
+		local bundled = ns.TrainerFees[recipeID]
+		local check = {
+			skillLine = skillLine,
+			recipeID = recipeID,
+			bundled = bundled and bundled[2],
+			classic = ns.TrainerInferred[recipeID],
+			shown = seen and seen[3],
+			visited = seen ~= nil,
+		}
+		if check.classic or (check.shown and check.shown ~= check.bundled) then
+			listed[key] = true
+			checks[#checks + 1] = check
+		end
+	end
+	for recipeID in pairs(ns.TrainerInferred) do
+		local recipe = ns.RecipeData[recipeID]
+		if recipe then
+			Add(recipe.skillLine, recipeID)
+		end
+	end
+	for skillLine, seen in pairs(ns.db.trainer) do
+		for recipeID in pairs(seen) do
+			Add(skillLine, recipeID)
+		end
+	end
+	table.sort(checks, function(a, b)
+		if a.skillLine ~= b.skillLine then
+			return a.skillLine < b.skillLine
+		end
+		if (a.bundled or 0) ~= (b.bundled or 0) then
+			return (a.bundled or 0) < (b.bundled or 0)
+		end
+		return a.recipeID < b.recipeID
+	end)
+	return checks
+end
+
+---@param recipeID integer
+---@return string
+local function RecipeName(recipeID)
+	return C_Spell.GetSpellName(recipeID) or string.format(L["recipe %d"], recipeID)
+end
+
+-- What /su trainers prints: per profession, how many moved requirements a trainer has confirmed, each one a
+-- trainer showed differently, and, for a profession this character has, the ones its trainer should teach at
+-- the current skill if the bundled value is right, so a visit now settles them.
+---@return string[]
+function ns.TrainerReport()
+	local professions = ns.PlayerProfessions()
+	local lines, groups, order = {}, {}, {}
+	for _, check in ipairs(ns.TrainerChecks()) do
+		local group = groups[check.skillLine]
+		if not group then
+			group = { moved = 0, confirmed = 0, wrong = {}, now = {} }
+			groups[check.skillLine] = group
+			order[#order + 1] = check.skillLine
+		end
+		if check.classic then
+			group.moved = group.moved + 1
+		end
+		local name = RecipeName(check.recipeID)
+		if check.shown and check.shown == check.bundled then
+			group.confirmed = group.confirmed + 1
+		elseif check.shown then
+			group.wrong[#group.wrong + 1] = string.format(
+				L["%s (%d): bundled %s, the trainer wants %d"],
+				name,
+				check.recipeID,
+				check.bundled and tostring(check.bundled) or L["none"],
+				check.shown
+			)
+		end
+		-- Between the guess and classic-db's, the trainer's answer settles which is right. A recipe a trainer
+		-- already listed (with or without a requirement) has had its visit.
+		local profession = professions[check.skillLine]
+		if
+			profession
+			and check.classic
+			and check.bundled
+			and not check.visited
+			and not ns.IsLearned(check.recipeID)
+			and math.min(check.bundled, check.classic) <= profession.base
+			and profession.base < math.max(check.bundled, check.classic)
+		then
+			group.now[#group.now + 1] = string.format(
+				L["%s (%d): bundled %d, classic-db %d"],
+				name,
+				check.recipeID,
+				check.bundled,
+				check.classic
+			)
+		end
+	end
+	if #order == 0 then
+		return { L["no trainer requirements to check."] }
+	end
+	for _, skillLine in ipairs(order) do
+		local group = groups[skillLine]
+		lines[#lines + 1] = string.format(
+			L["%s: %d moved, %d confirmed at a trainer, %d wrong."],
+			ns.Gear.ProfessionName(skillLine),
+			group.moved,
+			group.confirmed,
+			#group.wrong
+		)
+		for _, line in ipairs(group.wrong) do
+			lines[#lines + 1] = "  " .. line
+		end
+		if #group.now > 0 then
+			lines[#lines + 1] = "  " .. L["Its trainer should teach these at your skill now:"]
+			for _, line in ipairs(group.now) do
+				lines[#lines + 1] = "    " .. line
+			end
+		end
+	end
+	return lines
 end
 
 -- The recipe to train next wears the green arrow the bags put on an upgrade, 13 tall at its own aspect.

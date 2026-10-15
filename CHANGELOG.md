@@ -11,6 +11,8 @@ verbatim rather than rewritten as the addon moves.
 
 ## [Unreleased]
 
+- **Check the trainer requirements SkillUp guesses with /su trainers.** Where Forever moved a recipe's colours, SkillUp moves the skill its trainer asks for by the same amount, which is right for most recipes but not all. The new command lists those guesses per profession, which ones a trainer you visited agreed with or showed differently, and which ones your trainer should teach at your current skill, so one visit settles them. Paste what it prints into an issue and the wrong ones get fixed in the data.
+
 ## [0.10.0] - 2026-10-15
 
 - **Data checked against Forever 1.60.1.70374.** The bundled data is unchanged apart from its build pin.

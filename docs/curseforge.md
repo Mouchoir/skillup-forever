@@ -58,6 +58,7 @@ Open a profession and the numbers are already there.
 - `/su` opens the settings (also in Settings > AddOns, or from the addon compartment on the minimap).
 - `/su skipped` lists the recipes you said *Not this recipe* to, and `/su unskip <ID>` (or `all`) brings them back.
 - `/su audit`, with a profession open, compares the bundled thresholds with the colours the game shows and prints any mismatch.
+- `/su trainers` lists the trainer skill requirements SkillUp guessed, which ones a trainer has confirmed or shown differently, and which your trainer should teach at your skill now.
 
 Thresholds come from the Forever client's recipe data; missing data shows `?`. Settings cover rows and tooltips, prices, the route and crafted gear tabs, trainer annotations, sorting, reagent tooltips and companion hints.
 

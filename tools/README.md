@@ -96,7 +96,8 @@ classic-db's required skill is Classic's: where Forever moved a recipe's yellow 
 together from Classic Era's, the requirement moves as far (Forever moved its patterns'
 requirements that way for all but a few recipes both clients teach by pattern), never below 1. It also writes `ns.TrainerRanks`: each profession rank a trainer teaches (the
 taught spell's `SKILL` effect gives the skill line and the new cap), with fee,
-required skill and level. Ranks that come from books or quests are absent.
+required skill and level. Ranks that come from books or quests are absent. `ns.TrainerInferred` keeps classic-db's
+requirement for each one the range rule moved, so `/su trainers` can show which a trainer confirmed (#124).
 
 `gen_sources.py` writes `Data/Sources.lua`: what neither QuestieDB nor AtlasLoot holds about
 where recipes come from, from the same classic-db dump. Who sells a scroll or a reagent, the

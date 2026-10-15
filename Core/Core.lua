@@ -57,7 +57,7 @@ ns.REAGENT_TOOLTIP_OPTIONS = {
 ns.TITLE = "SkillUp Forever"
 -- The chat line after an update: one sentence for the release being tagged, the bold lead of one of its
 -- CHANGELOG.md bullets (tests/core_spec.lua holds it to the newest entry).
-ns.WHATS_NEW = L["Recipes start where Forever lets you make them."]
+ns.WHATS_NEW = L["Check the trainer requirements SkillUp guesses with /su trainers."]
 
 -- Classic difficulty colours, matching the retail recipe list's own palette.
 ns.COLORS = {
@@ -121,12 +121,17 @@ local function LoadDB()
 		end
 	end
 	-- Earlier versions saved a trainer row that showed no skill requirement as needing 0, which planned
-	-- learning it at once; the bundled requirement stands in for those.
-	for _, recipes in pairs(loaded.trainer) do
-		if type(recipes) == "table" then
+	-- learning it at once; the bundled requirement stands in for those. A shown requirement that is no
+	-- skill is forgotten, so /su trainers never reports it.
+	for skillLine, recipes in pairs(loaded.trainer) do
+		if type(skillLine) ~= "number" or type(recipes) ~= "table" then
+			loaded.trainer[skillLine] = nil
+		else
 			for recipeID, seen in pairs(recipes) do
-				if type(seen) ~= "table" or type(seen[2]) ~= "number" or seen[2] <= 0 then
+				if type(recipeID) ~= "number" or type(seen) ~= "table" or type(seen[2]) ~= "number" or seen[2] <= 0 then
 					recipes[recipeID] = nil
+				elseif seen[3] ~= nil and (type(seen[3]) ~= "number" or seen[3] <= 0) then
+					seen[3] = nil
 				end
 			end
 		end
@@ -580,6 +585,10 @@ SlashCmdList.SKILLUPFOREVER = function(msg)
 	local command, argument = strtrim(msg):lower():match("^(%S*)%s*(.-)$")
 	if command == "audit" then
 		Audit()
+	elseif command == "trainers" then
+		for _, line in ipairs(ns.TrainerReport()) do
+			ns.Print(line)
+		end
 	elseif command == "skipped" then
 		ListSkipped()
 	elseif command == "unskip" then
