@@ -24,9 +24,9 @@ The gear tab, turned on in settings: each slot shows the newest thing this chara
 
 Track it and the route sits beside your quests.
 
-![A Leatherworking trainer's recipes with skill-up chance, cost and a green arrow on the one to train next](https://raw.githubusercontent.com/cjber/skillup-forever/main/docs/screenshots/trainer.png)
+![A Leatherworking trainer's recipes with skill-up chance, cost and a green arrow on the one that best helps the route](https://raw.githubusercontent.com/cjber/skillup-forever/main/docs/screenshots/trainer.png)
 
-At the trainer, a green arrow marks the one to train next.
+At the trainer, a green arrow marks the recipe that best extends or cheapens your route.
 
 ![Light Leather's tooltip with how much the tracked route needs](https://raw.githubusercontent.com/cjber/skillup-forever/main/docs/screenshots/reagent.png)
 

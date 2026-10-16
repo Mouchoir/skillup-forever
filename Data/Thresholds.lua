@@ -7,8 +7,8 @@
 -- inside the range; else the same build's pattern requirement (ItemSparse, ItemEffect), deprecated
 -- patterns left out; else, for a minimum left at Classic Era 1.15.9.70003's on a range Forever moved,
 -- that minimum moved as far; else the client's placeholder 1, and the learn requirement gates the
--- recipe at runtime.
--- 2354 unique recipe spell IDs; a shared recipe counts in each profession below.
+-- recipe at runtime. Recipes the game retired (RETIRED in gen_thresholds.py) are left out.
+-- 2347 unique recipe spell IDs; a shared recipe counts in each profession below.
 -- First Aid (129): 31 emitted / 9 skipped (grey<=yellow=9); orange placeholder=16, scroll=15
 -- Blacksmithing (164): 472 emitted / 55 skipped (duplicate recipe row=1, grey<=yellow=54); orange dropped=1, placeholder=130, scroll=330, shifted=9
 -- Leatherworking (165): 541 emitted / 75 skipped (grey<=yellow=75); orange placeholder=132, scroll=409
@@ -17,7 +17,7 @@
 -- Cooking (185): 131 emitted / 10 skipped (grey<=yellow=10); orange placeholder=16, scroll=115
 -- Mining (186): 11 emitted / 22 skipped (gathering ability=3, grey<=yellow=19); orange placeholder=10, scroll=1
 -- Tailoring (197): 432 emitted / 54 skipped (grey<=yellow=54); orange placeholder=122, scroll=310
--- Engineering (202): 269 emitted / 26 skipped (grey<=yellow=26); orange placeholder=105, scroll=164
+-- Engineering (202): 262 emitted / 33 skipped (grey<=yellow=26, retired=7); orange placeholder=98, scroll=164
 -- Enchanting (333): 261 emitted / 11 skipped (grey<=yellow=11); orange placeholder=98, scroll=163
 -- Fishing (356): 1 emitted / 13 skipped (grey<=yellow=13); orange scroll=1
 -- Skinning (393): 2 emitted / 10 skipped (grey<=yellow=10); orange placeholder=1, scroll=1
@@ -1576,13 +1576,6 @@ ns.Thresholds = {
 	[1225760] = { 250, 260, 270, 280 }, -- Sunrise Omelette
 	[1225762] = { 280, 290, 300, 310 }, -- Specklefin Feast
 	[1225763] = { 280, 290, 300, 310 }, -- Grand Lobster Banquet
-	[1226206] = { 1, 260, 270, 280 }, -- Tinkerbox
-	[1226207] = { 1, 270, 280, 290 }, -- Tinkerbox: Teleport
-	[1226208] = { 1, 270, 280, 290 }, -- Tinkerbox: Nitro Boosts
-	[1226209] = { 1, 270, 280, 290 }, -- Tinkerbox: Magnetic Displacement
-	[1226210] = { 1, 280, 282, 285 }, -- Tinker: Teleport
-	[1226211] = { 1, 280, 282, 285 }, -- Tinker: Nitro Boosts
-	[1226212] = { 1, 280, 282, 285 }, -- Tinker: Magnetic Displacement
 	[1226689] = { 275, 280, 285, 290 }, -- Scarlet Quiver
 	[1226690] = { 275, 280, 285, 290 }, -- Scarlet Ammo Pouch
 	[1227723] = { 250, 260, 262, 265 }, -- Crusader's Knapsack

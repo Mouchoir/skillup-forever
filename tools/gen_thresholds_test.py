@@ -152,7 +152,73 @@ class ThresholdSourceTest(unittest.TestCase):
         self.assertEqual(gen_thresholds.shifts(forever, classic), {1: -25})
 
 
+class RetiredRecipeTest(unittest.TestCase):
+    # Forever 70425 took the Tinkerbox schematics and the Tinkerbox out of ItemSparse (they stay in Item), so nobody
+    # can learn or make Tinkerbox (1226206) or Tinker: Teleport (1226210, taught through a LEARN_SPELL and making
+    # no item, but using the Tinkerbox as a reagent).
+    RETIRED = {1226206: "Tinkerbox", 1226210: "Tinker: Teleport"}
+
+    @staticmethod
+    def effect(spell, kind, item=0, trigger=0):
+        return {
+            "SpellID": str(spell),
+            "DifficultyID": "0",
+            "Effect": str(kind),
+            "EffectItemType": str(item),
+            "EffectTriggerSpell": str(trigger),
+        }
+
+    def check(self, sparse):
+        effects = [
+            self.effect(1226206, gen_thresholds.CREATE_ITEM, item=238737),
+            self.effect(1229402, gen_thresholds.LEARN_SPELL, trigger=1226210),
+        ]
+        item_effects = [{"ID": "1", "SpellID": "1226206"}, {"ID": "2", "SpellID": "1229402"}]
+        links = [{"ItemID": "238782", "ItemEffectID": "1"}, {"ItemID": "240018", "ItemEffectID": "2"}]
+        reagents = [
+            {"SpellID": "1226206", "Reagent_0": "10558", **{f"Reagent_{i}": "0" for i in range(1, 8)}},
+            {
+                "SpellID": "1226210",
+                "Reagent_0": "238737",
+                "Reagent_1": "15994",
+                **{f"Reagent_{i}": "0" for i in range(2, 8)},
+            },
+        ]
+        spells = {1226206, 1226210}
+        gen_thresholds.check_retired(self.RETIRED, spells, effects, set(sparse), item_effects, links, reagents)
+
+    def test_retired_recipes_stay_out_while_nothing_teaches_or_makes_them(self):
+        # Their reagents being in the game doesn't bring them back: 1226210 needs the Tinkerbox too.
+        self.check({10558, 15994})
+
+    def test_a_returning_pattern_product_or_reagent_set_fails_the_run(self):
+        for back in ({238782}, {240018}, {238737}):
+            with self.assertRaises(ValueError, msg=back):
+                self.check({10558, 15994} | back)
+
+    def test_a_stale_entry_fails_the_run(self):
+        with self.assertRaises(ValueError):
+            gen_thresholds.check_retired(self.RETIRED, {1226206}, [], set(), [], [], [])
+
+    def test_a_retired_recipe_is_not_emitted(self):
+        rows = [ThresholdSourceTest.row(None, spell, 1, 260, 280) for spell in (1226206, 3001)]
+        effects = {1226206: {24}, 3001: {24}}
+        emitted, coverage, _ = gen_thresholds.generate(rows, {}, {164}, {}, effects, retired={1226206})
+        self.assertEqual(set(emitted), {3001})
+        self.assertIn("retired=1", coverage[0])
+
+
 class GeneratedThresholdsTest(unittest.TestCase):
+    def test_retired_recipes_are_left_out_and_obtainable_ones_kept(self):
+        content = (gen_thresholds.OUTPUT).read_text(encoding="utf-8")
+        self.assertLessEqual(set(range(1226206, 1226213)), set(gen_thresholds.RETIRED))
+        for spell in gen_thresholds.RETIRED:
+            self.assertNotIn(f"\t[{spell}] =", content)
+        # A missing ItemSparse row alone is not retirement: Ironvine Breastplate (plans from Vargus, Cenarion
+        # Circle) and Revealing Draught (new in Forever) have none for their plan or product and stay.
+        for spell in (28461, 1250775):
+            self.assertIn(f"\t[{spell}] =", content)
+
     # Model.Get answers nil for a row that is not ordered, and the recipe shows "?".
     def test_every_bundled_row_is_ordered(self):
         content = (gen_thresholds.OUTPUT).read_text(encoding="utf-8")

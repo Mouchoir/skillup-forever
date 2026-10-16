@@ -12,6 +12,10 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-10-16
+
+- **Data checked against Forever 1.60.1.70425.** The new build adds a few crafts to the gathering professions and First Aid, such as Camp Chair, Rock Garden, Greenhouse and First Aid Kit. In Alchemy, Disorienting Smog Potion is gone, Draught of Predatory Senses is now Potion of Predatory Senses, and Greater Mender's Potion now comes from a pattern and starts at 180. This build also takes out the Tinkerbox schematics and the Tinkerbox itself, so nobody can learn or make the seven Tinkerbox recipes any more, and SkillUp leaves them out of routes, suggestions and prices. Vendor sell prices changed for 72 items, mostly downwards, which changes the net cost of some crafts and which recipes a route picks.
+
 - **First Aid and Cooking routes go to 300.** Artisan First Aid and Artisan Cooking come from a quest, not a trainer: Triage for First Aid, with one quest for each side, and Clamlette Surprise for Cooking, both at 225 and level 35. The route now adds that step, "Complete Triage at 225", points you to the quest giver, and carries on past 225 instead of stopping. The quest's name and giver come from Questie; without it the step says "the Artisan quest".
 
 - **SkillUp lets go of the quest tracker when it has nothing to show.** To fit the Forever sections above your quests, SkillUp moves the game's quest tracker. It kept holding it there with no route tracked, *Show tracked professions* off or All Objectives collapsed. Now the tracker goes straight back to where the game, Edit Mode or your UI addon put it, and SkillUp moves it again only once a section has something to show. Thanks to chuujitsuna and another player on CurseForge, who found it stuck mid-screen or over the minimap.

@@ -51,6 +51,12 @@ lines, `SpellName` supplies comments, and `SpellEffect` excludes gathering abili
 `Model.Get` returns unknown for a contradictory row, including one a live grey
 threshold makes, so displays and plans cannot use it.
 
+A recipe the game retired is left out, and so is out of every other `Data/` file: `RETIRED` in `gen_thresholds.py`
+lists each with the build that retired it. `ItemSparse` is partial (about 40% of `Item` rows have no `ItemSparse`
+row, many live patterns among them), so a missing row alone does not mean an item is gone; an item that leaves
+`ItemSparse` between pinned builds does. Forever 70425 retired the Tinkerbox schematics and the Tinkerbox that way.
+The run fails if a later build brings back an item that teaches or makes a listed recipe, so it gets reviewed.
+
 Coverage prints per skill line, including skipped/duplicate rows and missing
 names. Gathering abilities and test professions are excluded. Shared recipes
 count once per profession but occupy one output key. DB2 download/schema failures

@@ -6,7 +6,7 @@
 -- Threshold recipe spell IDs only; skillLine is the parent profession ID.
 -- Output quantity is mean yield; false is verified non-item output. Missing recipes are unknown.
 -- Trainer names use the source locale (enUS); false means ambiguous within the profession.
--- thresholds=2354; recipes=2345; omitted_reagents=9; multi_profession=1; reagent_entries=7923; distinct_reagents=571; item_outputs=2162; non_item_outputs=183; sell_prices=1586; missing_output_items=326; gear_items=1831; missing_gear_items=326; consumed_gear_items=524; recipe_scrolls=1661; rank_books=3; names=2282; ambiguous_names=66; missing_names=7.
+-- thresholds=2347; recipes=2338; omitted_reagents=9; multi_profession=1; reagent_entries=7903; distinct_reagents=570; item_outputs=2158; non_item_outputs=180; sell_prices=1586; missing_output_items=322; gear_items=1831; missing_gear_items=322; consumed_gear_items=521; recipe_scrolls=1661; rank_books=3; names=2275; ambiguous_names=66; missing_names=7.
 ---@type string, SkillUpNamespace
 local _, ns = ...
 -- stylua: ignore
@@ -1542,13 +1542,6 @@ ns.RecipeData = {
 	[1225760] = { skillLine = 185, reagents = { { itemID = 12207, quantity = 2 }, { itemID = 239016, quantity = 1 } }, output = { itemID = 238639, quantity = 2 } },
 	[1225762] = { skillLine = 185, reagents = { { itemID = 4603, quantity = 12 }, { itemID = 6362, quantity = 3 }, { itemID = 12184, quantity = 4 }, { itemID = 239017, quantity = 1 } }, output = { itemID = 238641, quantity = 1 } },
 	[1225763] = { skillLine = 185, reagents = { { itemID = 3404, quantity = 3 }, { itemID = 3712, quantity = 4 }, { itemID = 13888, quantity = 12 }, { itemID = 239017, quantity = 1 } }, output = { itemID = 238642, quantity = 1 } },
-	[1226206] = { skillLine = 202, reagents = { { itemID = 10558, quantity = 2 }, { itemID = 10561, quantity = 1 } }, output = { itemID = 238737, quantity = 1 } },
-	[1226207] = { skillLine = 202, reagents = { { itemID = 10560, quantity = 1 }, { itemID = 15994, quantity = 1 }, { itemID = 238737, quantity = 1 } }, output = { itemID = 238734, quantity = 1 } },
-	[1226208] = { skillLine = 202, reagents = { { itemID = 10560, quantity = 1 }, { itemID = 16000, quantity = 1 }, { itemID = 238737, quantity = 1 } }, output = { itemID = 238735, quantity = 1 } },
-	[1226209] = { skillLine = 202, reagents = { { itemID = 4387, quantity = 2 }, { itemID = 10560, quantity = 1 }, { itemID = 238737, quantity = 1 } }, output = { itemID = 238736, quantity = 1 } },
-	[1226210] = { skillLine = 202, reagents = { { itemID = 15994, quantity = 1 }, { itemID = 16006, quantity = 1 }, { itemID = 238737, quantity = 1 } }, output = false },
-	[1226211] = { skillLine = 202, reagents = { { itemID = 16000, quantity = 1 }, { itemID = 16006, quantity = 1 }, { itemID = 238737, quantity = 1 } }, output = false },
-	[1226212] = { skillLine = 202, reagents = { { itemID = 4387, quantity = 2 }, { itemID = 16006, quantity = 1 }, { itemID = 238737, quantity = 1 } }, output = false },
 	[1226689] = { skillLine = 165, reagents = { { itemID = 8170, quantity = 24 }, { itemID = 12811, quantity = 1 }, { itemID = 15407, quantity = 2 } }, output = { itemID = 238925, quantity = 1 } },
 	[1226690] = { skillLine = 165, reagents = { { itemID = 12811, quantity = 1 }, { itemID = 15407, quantity = 2 }, { itemID = 15408, quantity = 24 } }, output = { itemID = 238926, quantity = 1 } },
 	[1227723] = { skillLine = 197, reagents = { { itemID = 2604, quantity = 8 }, { itemID = 12811, quantity = 1 }, { itemID = 14048, quantity = 14 }, { itemID = 14227, quantity = 3 } }, output = { itemID = 239147, quantity = 1 } },
@@ -9473,13 +9466,6 @@ ns.RecipeNames = {
 		["Thorium Shells"] = 19800,
 		["Thorium Tube"] = 19795,
 		["Thorium Widget"] = 19791,
-		["Tinker: Magnetic Displacement"] = 1226212,
-		["Tinker: Nitro Boosts"] = 1226211,
-		["Tinker: Teleport"] = 1226210,
-		["Tinkerbox"] = 1226206,
-		["Tinkerbox: Magnetic Displacement"] = 1226209,
-		["Tinkerbox: Nitro Boosts"] = 1226208,
-		["Tinkerbox: Teleport"] = 1226207,
 		["Tranquil Mechanical Yeti"] = 26011,
 		["Tru-Trigger Frag Bomb"] = 1266922,
 		["Truesilver Transformer"] = 23071,

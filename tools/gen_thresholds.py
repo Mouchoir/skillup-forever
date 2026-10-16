@@ -154,6 +154,74 @@ def scroll_requirements(ids, item_rows, item_effect_rows, effect_link_rows):
     return scrolls
 
 
+# Recipes the game no longer lets anyone learn or make, left out of every Data/ file. ItemSparse is partial (about
+# 40% of Item rows have no ItemSparse row, the Arcanist set and many live patterns among them), so a missing row
+# alone does not mean an item is gone; an item that leaves ItemSparse between pinned builds does. Each entry names
+# the build that retired it, and check_retired fails the run if a later build brings back an item that teaches or
+# makes it, so it gets reviewed rather than staying hidden.
+RETIRED = {
+    # Forever 70425 took every Tinkerbox schematic, the Tinkerbox (238737) and the three Tinkerbox kits out of
+    # ItemSparse, all of which 70374 had (owner decision 2026-10-16).
+    1226206: "Tinkerbox, retired in 1.60.1.70425",
+    1226207: "Tinkerbox: Teleport, retired in 1.60.1.70425",
+    1226208: "Tinkerbox: Nitro Boosts, retired in 1.60.1.70425",
+    1226209: "Tinkerbox: Magnetic Displacement, retired in 1.60.1.70425",
+    1226210: "Tinker: Teleport, retired in 1.60.1.70425",
+    1226211: "Tinker: Nitro Boosts, retired in 1.60.1.70425",
+    1226212: "Tinker: Magnetic Displacement, retired in 1.60.1.70425",
+}
+
+
+def check_retired(retired, spells, effect_rows, sparse_ids, item_effect_rows, effect_link_rows, reagent_rows):
+    """Fail when a RETIRED recipe can be learned or made again in this build, or is no longer a recipe in it.
+
+    It can be learned or made when an item that teaches it (directly, or through a LEARN_SPELL teaching spell) is
+    in ItemSparse and not deprecated, or the item it makes is, or for a recipe that makes no item, every one of its
+    reagents. `sparse_ids` holds the ItemSparse items, deprecated ones left out by the caller.
+    """
+    gone = sorted(set(retired) - spells)
+    if gone:
+        raise ValueError(f"RETIRED recipes are no longer in SkillLineAbility; remove them: {gone}")
+    learns = defaultdict(set)
+    outputs = defaultdict(set)
+    for row in effect_rows:
+        if int(row["DifficultyID"]) != 0:
+            continue
+        effect, spell = int(row["Effect"]), int(row["SpellID"])
+        if effect == LEARN_SPELL:
+            learns[int(row["EffectTriggerSpell"])].add(spell)
+        elif effect == CREATE_ITEM and spell in retired and int(row["EffectItemType"]) > 0:
+            outputs[spell].add(int(row["EffectItemType"]))
+    effects_of = defaultdict(set)
+    for row in item_effect_rows:
+        effects_of[int(row["SpellID"])].add(int(row["ID"]))
+    items_of = defaultdict(set)
+    for row in effect_link_rows:
+        items_of[int(row["ItemEffectID"])].add(int(row["ItemID"]))
+    reagents = {
+        int(row["SpellID"]): {int(row[f"Reagent_{i}"] or 0) for i in range(8)} - {0}
+        for row in reagent_rows
+        if int(row["SpellID"]) in retired
+    }
+    back = []
+    for spell in sorted(retired):
+        teachers = {
+            item
+            for teaching in {spell} | learns.get(spell, set())
+            for effect in effects_of.get(teaching, ())
+            for item in items_of.get(effect, ())
+        }
+        made, needs = outputs.get(spell), reagents.get(spell)
+        if made:
+            craftable = bool(made & sparse_ids)
+        else:
+            craftable = bool(needs) and needs <= sparse_ids
+        if teachers & sparse_ids or craftable:
+            back.append(f"{spell} ({retired[spell]})")
+    if back:
+        raise ValueError(f"RETIRED recipes can be learned or made again; review and remove them: {', '.join(back)}")
+
+
 def reconcile(spell, orange, yellow, grey, classic, scroll):
     """The orange a recipe's row gets, and where it came from.
 
@@ -173,9 +241,10 @@ def reconcile(spell, orange, yellow, grey, classic, scroll):
     return 1, "placeholder" if orange <= 1 else "dropped"
 
 
-def generate(ability_rows, skills, selected, names, effects, classic=None, scrolls=None):
+def generate(ability_rows, skills, selected, names, effects, classic=None, scrolls=None, retired=None):
     classic = classic or {}
     scrolls = scrolls or {}
+    retired = retired or set()
     stats = {sid: Counter() for sid in selected}
     candidates = defaultdict(list)
     for row in ability_rows:
@@ -201,6 +270,9 @@ def generate(ability_rows, skills, selected, names, effects, classic=None, scrol
         # crafting recipes. Do not emit them as smelting recipes.
         if effects.get(spell) == {OPEN_LOCK}:
             counts["skip:gathering ability"] += 1
+            continue
+        if spell in retired:
+            counts["skip:retired"] += 1
             continue
         candidates[spell].append((sid, (orange, yellow, grey)))
 
@@ -262,7 +334,7 @@ def render(emitted, coverage, names, sources=None):
         "-- inside the range; else the same build's pattern requirement (ItemSparse, ItemEffect), deprecated",
         f"-- patterns left out; else, for a minimum left at Classic Era {TEACH_BUILD}'s on a range Forever moved,",
         "-- that minimum moved as far; else the client's placeholder 1, and the learn requirement gates the",
-        "-- recipe at runtime.",
+        "-- recipe at runtime. Recipes the game retired (RETIRED in gen_thresholds.py) are left out.",
         f"-- {len(emitted)} unique recipe spell IDs; a shared recipe counts in each profession below.",
     ]
     lines.extend("-- " + line for line in coverage)
@@ -308,11 +380,7 @@ def main():
     name_rows = db2("SpellName", ("ID", "Name_lang"), **options)
     effect_rows = db2(
         "SpellEffect",
-        (
-            "SpellID",
-            "Effect",
-            "DifficultyID",
-        ),
+        ("SpellID", "Effect", "DifficultyID", "EffectItemType", "EffectTriggerSpell"),
         **options,
     )
     classic_rows = db2(
@@ -321,17 +389,25 @@ def main():
         build=TEACH_BUILD,
         **options,
     )
-    scrolls = scroll_requirements(
-        {int(row["Spell"]) for row in ability_rows},
-        db2("ItemSparse", ("ID", "RequiredSkill", "RequiredSkillRank", "Flags_0"), **options),
-        db2("ItemEffect", ("ID", "SpellID"), **options),
-        db2("ItemXItemEffect", ("ItemID", "ItemEffectID"), **options),
+    spells = {int(row["Spell"]) for row in ability_rows}
+    sparse_rows = db2("ItemSparse", ("ID", "RequiredSkill", "RequiredSkillRank", "Flags_0"), **options)
+    item_effect_rows = db2("ItemEffect", ("ID", "SpellID"), **options)
+    effect_link_rows = db2("ItemXItemEffect", ("ItemID", "ItemEffectID"), **options)
+    scrolls = scroll_requirements(spells, sparse_rows, item_effect_rows, effect_link_rows)
+    check_retired(
+        RETIRED,
+        spells,
+        effect_rows,
+        {int(row["ID"]) for row in sparse_rows if not int(row.get("Flags_0") or 0) & ITEM_DEPRECATED},
+        item_effect_rows,
+        effect_link_rows,
+        db2("SpellReagents", ("SpellID", *(f"Reagent_{i}" for i in range(8))), **options),
     )
     skills, selected, excluded = professions(skill_rows)
     names = {int(row["ID"]): row["Name_lang"] for row in name_rows}
     effects = spell_effects(effect_rows)
     emitted, coverage, sources = generate(
-        ability_rows, skills, selected, names, effects, ability_values(classic_rows), scrolls
+        ability_rows, skills, selected, names, effects, ability_values(classic_rows), scrolls, set(RETIRED)
     )
     if not emitted:
         raise ValueError("No usable recipes; leaving existing generated output untouched")
