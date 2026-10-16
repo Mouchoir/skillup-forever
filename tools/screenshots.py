@@ -545,6 +545,10 @@ env = setmetatable({
 	GetBuildInfo = function()
 		return "1.60.1", "70205", "Sep 24 2026", 16001
 	end,
+	-- The screenshots are of the English client: every translation file returns at its guard.
+	GetLocale = function()
+		return "enUS"
+	end,
 	UnitName = function()
 		return "Player"
 	end,

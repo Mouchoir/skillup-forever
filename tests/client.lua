@@ -242,6 +242,9 @@ function Client.load(options)
 	function Methods.GetTextWidth()
 		return 100
 	end
+	function Methods.GetStringWidth()
+		return 100
+	end
 	-- A font string keeps its text like a frame does.
 	function Methods:CreateFontString()
 		return NewFrame(nil, self)

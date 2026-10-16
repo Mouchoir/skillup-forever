@@ -12,6 +12,8 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+- **In your language.** SkillUp is now in German, French, Spanish (Spain and Latin America), Brazilian Portuguese, Russian, Korean and Chinese (simplified and traditional), using the game's own words for professions, trainers and reagents. It's machine translated, and corrections are welcome through the translation issue form. A few French lines are Brainc3ll's, from Legacy Forever. Herb and ore tooltips still need the English client.
+
 ## [0.14.0] - 2026-10-16
 
 - **A Forever addons page in settings, and a quiet line where one would help.** Without Shortest Path Forever, a waypoint tooltip (a route's trainer, vendor or quest giver, the tracker, the gear tab) now says that with it, SkillUp would pick the nearest by travel time and lead you there, in place of the old "Install Shortest Path Forever" line; where the waypoint is one fixed NPC, it says a click would lead you there. Without Adventure Guide Forever, an Artisan quest step on the route page says it can plan the quest chain, and so does the tracker's line when Questie names the quest giver. Neither line shows for an addon you have; if Shortest Path is installed but turned off, the tooltip still says to enable it. The new *Forever addons* page in SkillUp's settings lists all five addons, whether each is on, and a link to copy. *Suggest my other Forever addons* on that page turns all these lines off, the enable line included. It replaces *Suggest companion addons*, and if you had that off, it stays off.

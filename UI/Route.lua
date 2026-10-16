@@ -776,6 +776,7 @@ local function Render()
 	page.RouteList:Finish()
 	page.ReagentList:Finish()
 	page.Track:SetText(ns.IsTracked(selected) and L["Stop tracking"] or L["Track"])
+	page.Track:SetWidth(math.max(130, page.Track:GetTextWidth() + 32))
 	SetCraft(craft)
 end
 
@@ -952,6 +953,7 @@ local function CreateButtons()
 	local vendor = CreateFrame("Button", nil, page, "UIPanelButtonTemplate") --[[@as Button]]
 	vendor:SetSize(120, 22)
 	vendor:SetText(L["Nearest vendor"])
+	vendor:SetWidth(math.max(120, vendor:GetTextWidth() + 32))
 	vendor:SetScript("OnClick", function()
 		local npcID = NearestRouteVendor(page.vendorItems)
 		if npcID then

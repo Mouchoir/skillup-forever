@@ -1,5 +1,5 @@
--- Copy to Locales/deDE.lua (or your locale), translate the text on the right of each line and
--- delete the lines you leave in English. List the file in SkillUpForever.toc after Locales\enUS.lua.
+-- Every phrase SkillUp shows, with its English text: the template the Locales/<locale>.lua files follow.
+-- Each client language already has its file; to correct a line, edit that file (Locales/README.md).
 local _, ns = ...
 if GetLocale() ~= "deDE" then
 	return
@@ -30,7 +30,6 @@ L["%s: %d moved, %d confirmed at a trainer, %d wrong."] = "%s: %d moved, %d conf
 L["+%d more"] = "+%d more"
 L["/su skipped lists the recipes you skipped, with their IDs."] = "/su skipped lists the recipes you skipped, with their IDs."
 L["/su unskip <recipe ID> shows one again, /su unskip all every one."] = "/su unskip <recipe ID> shows one again, /su unskip all every one."
-L["A Forever addons page in settings, and a quiet line where one would help."] = "A Forever addons page in settings, and a quiet line where one would help."
 L["A button above a merchant's window that buys the reagents your tracked routes still need from that merchant. It asks first, with the total cost."] = "A button above a merchant's window that buys the reagents your tracked routes still need from that merchant. It asks first, with the total cost."
 L["A material your professions gather costs what selling it would bring instead of nothing: its auction price after the 5% cut, or its vendor sell price if that is more. Used for the route and the costs on recipe rows. Auction prices need Auctionator."] = "A material your professions gather costs what selling it would bring instead of nothing: its auction price after the 5% cut, or its vendor sell price if that is more. Used for the route and the costs on recipe rows. Auction prices need Auctionator."
 L["A side tab on the Professions window listing the newest crafted item this character can equip in each slot, under the route tab."] = "A side tab on the Professions window listing the newest crafted item this character can equip in each slot, under the route tab."
@@ -106,6 +105,7 @@ L["Hands"] = "Hands"
 L["Have (bags and bank)"] = "Have (bags and bank)"
 L["Head"] = "Head"
 L["Herb and ore node tooltips show the skill they need and its colour at yours (English client only). Skinnable corpses show ? until the skinning rule is confirmed on Forever."] = "Herb and ore node tooltips show the skill they need and its colour at yours (English client only). Skinnable corpses show ? until the skinning rule is confirmed on Forever."
+L["In your language."] = "In your language."
 L["Install AtlasLoot to see the recipes vendors, quests and drops would add."] = "Install AtlasLoot to see the recipes vendors, quests and drops would add."
 L["Install Questie and AtlasLoot to see where recipes, vendors and trainers are."] = "Install Questie and AtlasLoot to see where recipes, vendors and trainers are."
 L["Install Questie to see vendors, quests and trainers, with waypoints to them."] = "Install Questie to see vendors, quests and trainers, with waypoints to them."

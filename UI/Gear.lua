@@ -417,6 +417,8 @@ function RenderDetail()
 	detail.Action:SetPoint("TOPLEFT", above, "BOTTOMLEFT", 0, -10)
 	local text, enabled, click, reason = Action(item)
 	detail.Action:SetText(text)
+	-- As wide as its label, so a translated one fits.
+	detail.Action:SetWidth(math.max(130, detail.Action:GetTextWidth() + 32))
 	detail.Action:SetEnabled(enabled)
 	detail.Action.click = click
 	detail.Action.reason = reason

@@ -124,13 +124,13 @@ Run `luajit tests/bench.lua` from the repository root to measure loading, route 
 
 **Releasing:** follow the [release skill](.agents/skills/release/SKILL.md) for data, copy and screenshot checks, main-branch CI, signed tags and store verification. The BigWigs packager publishes the version's changelog entry to GitHub, CurseForge and Wago.
 
-**Translating:** translations are welcome as a pull request or an issue; [Locales](https://github.com/cjber/skillup-forever/tree/main/Locales) has a template.
+**Translating:** translated into German, French, Spanish, Brazilian Portuguese, Russian, Korean and Chinese (machine translated; corrections welcome through the [translation form](https://github.com/cjber/skillup-forever/issues/new?template=translation.yml)).
 
 **Contributing:** read [CONTRIBUTING.md](https://github.com/cjber/.github/blob/main/CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) first. Report security problems privately, as [SECURITY.md](https://github.com/cjber/.github/blob/main/SECURITY.md) describes.
 
 ## Credits
 
-Thresholds come from the game via [wago.tools](https://wago.tools), trainer fees, drop chances and gathered reagents from [CMaNGOS classic-db](https://github.com/cmangos/classic-db) (GPL-3.0), and vendor reagents from [LibPeriodicTable-3.1](https://github.com/doadin/libperiodictable-3-1) (LGPL-2.1). Some features were inspired by [Polestar](https://github.com/fitzforge/polestar) by Fitz, such as the skill colour on gathering nodes; no code was copied. Fitz is welcome to use our code. Thanks to kopuliak, chuujitsuna, berserkerlxl and everyone listed in [THIRD_PARTY.md](THIRD_PARTY.md).
+Thresholds come from the game via [wago.tools](https://wago.tools), trainer fees, drop chances and gathered reagents from [CMaNGOS classic-db](https://github.com/cmangos/classic-db) (GPL-3.0), and vendor reagents from [LibPeriodicTable-3.1](https://github.com/doadin/libperiodictable-3-1) (LGPL-2.1). Some features were inspired by [Polestar](https://github.com/fitzforge/polestar) by Fitz, such as the skill colour on gathering nodes; no code was copied. Fitz is welcome to use our code. Thanks to Brainc3ll for French lines, kopuliak, chuujitsuna, berserkerlxl and everyone listed in [THIRD_PARTY.md](THIRD_PARTY.md).
 
 ## Licence
 

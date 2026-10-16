@@ -32,6 +32,9 @@ authorization. A preparation-only request ends before tags or uploads.
    `python3 tools/changelog.py --check`; inspect the extracted version notes.
    Public API changes go under an optional `### For addon authors` subsection after the
    player bullets; the release notes carry it as written.
+   Then translate every phrase added since the last tag (the new `ns.WHATS_NEW` included)
+   into each shipped locale (WFA-34), marked as `Locales/README.md` says, until
+   `python3 tools/check_locales.py --release` passes.
 
 ## Refresh every presentation surface
 

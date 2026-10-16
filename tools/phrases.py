@@ -12,8 +12,8 @@ from typecheck_coverage import runtime_files
 
 ROOT = Path(__file__).resolve().parent.parent
 HEADER = """\
--- Copy to Locales/deDE.lua (or your locale), translate the text on the right of each line and
--- delete the lines you leave in English. List the file in SkillUpForever.toc after Locales\\enUS.lua.
+-- Every phrase SkillUp shows, with its English text: the template the Locales/<locale>.lua files follow.
+-- Each client language already has its file; to correct a line, edit that file (Locales/README.md).
 local _, ns = ...
 if GetLocale() ~= "deDE" then
 \treturn
@@ -27,6 +27,9 @@ PHRASE = re.compile(r'\bL\["((?:\\.|[^"\\\n])*)"\]')
 def phrases() -> list[str]:
     found = set()
     for path in runtime_files(ROOT):
+        # A translation's keys are this template's own phrases: reading them would keep a removed one alive.
+        if path.parent.name == "Locales":
+            continue
         found.update(PHRASE.findall(path.read_text()))
     return sorted(found)
 

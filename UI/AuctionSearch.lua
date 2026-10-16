@@ -262,6 +262,10 @@ function ns.AttachAuctionSearch()
 	bar.Search:SetSize(bar.Search:GetTextWidth() + 32, 22)
 	bar.Search:SetPoint("LEFT", bar.Crafts, "RIGHT", 10, 0)
 	bar.Search:SetScript("OnClick", OnSearch)
+	-- The row's own width, so a longer translated label grows it leftwards instead of over Create All.
+	bar:SetWidth(
+		bar.Label:GetStringWidth() + 10 + 36 + 4 + bar.Crafts:GetStringWidth() + 10 + bar.Search:GetTextWidth() + 32
+	)
 	bar.Search:SetScript("OnEnter", ShowSearchTooltip)
 	bar.Search:SetScript("OnLeave", GameTooltip_Hide)
 	bar:Hide()
