@@ -20,13 +20,22 @@ local ORDER = {
 	"routeTab",
 	"gear",
 	"tooltip",
+	"auctionSearch",
 }
 
 ---@type table<SkillUpChange, table<SkillUpStale, true>>
 local STALE = {
 	-- What a profession's recipes are or need: its window opened, its list or data source changed,
 	-- or a recipe was learned. The plan is built from all of it.
-	recipes = { schematics = true, plans = true, api = true, route = true, tracker = true, gear = true },
+	recipes = {
+		schematics = true,
+		plans = true,
+		api = true,
+		route = true,
+		tracker = true,
+		gear = true,
+		auctionSearch = true,
+	},
 	skill = { plans = true, api = true, route = true, tracker = true },
 	-- A profession learned or dropped changes what counts as gathered, so what things cost.
 	professions = {
@@ -63,6 +72,7 @@ local STALE = {
 		trainer = true,
 		routeTab = true,
 		gear = true,
+		auctionSearch = true,
 	},
 }
 

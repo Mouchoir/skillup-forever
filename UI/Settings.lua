@@ -193,6 +193,13 @@ function ns.RegisterSettings()
 
 		Checkbox(
 			rows,
+			"auctionSearch",
+			L["Search reagents at the auction house"],
+			L["While the auction house is open, the Professions window offers a search for the selected recipe's reagents: as many as the crafts you choose still need after your bags and bank. Auctionator's shopping list carries the quantities; without it, each click puts the next reagent in the search box."]
+		)
+
+		Checkbox(
+			rows,
 			"showTrainer",
 			L["Annotate trainer recipes"],
 			L["Required skill, skill-up chance and cost on profession trainer recipes, and which one is best to train next for your route."]

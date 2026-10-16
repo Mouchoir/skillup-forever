@@ -42,6 +42,7 @@ UI\Gear.lua
 UI\Shopping.xml
 UI\TrackerHost.lua
 UI\Shopping.lua
+UI\AuctionSearch.lua
 Integrations\Trainer.lua
 Core\API.lua
 Core\Report.lua

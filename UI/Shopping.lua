@@ -67,6 +67,7 @@ local function WithNames(items, callback)
 	end
 	container:ContinueOnLoad(callback)
 end
+ns.WithItemNames = WithNames
 
 -- The name of the shopping list this addon keeps for a profession in Auctionator.
 ---@param profession string

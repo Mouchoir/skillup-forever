@@ -54,7 +54,18 @@ ProfessionsFrame = nil
 
 ---@class SkillUpCraftingPage : Frame
 ---@field RecipeList SkillUpRecipeList
+---@field SchematicForm SkillUpSchematicForm
+---@field CreateAllButton? Button
 ---@field Init fun(self: SkillUpCraftingPage, info: ProfessionInfo)
+
+---@class SkillUpSchematicForm : Frame
+---@field GetRecipeInfo? fun(self: SkillUpSchematicForm): TradeSkillRecipeInfo?
+
+-- Blizzard_AuctionHouseUI's frame; its public SetSearchText fills the search box and queries nothing.
+---@class SkillUpAuctionHouseFrame : Frame
+---@field SetSearchText fun(self: SkillUpAuctionHouseFrame, text: string): boolean
+---@type SkillUpAuctionHouseFrame?
+AuctionHouseFrame = nil
 
 ---@class SkillUpRecipeList : Frame
 ---@field ScrollBox SkillUpRecipeScrollBox

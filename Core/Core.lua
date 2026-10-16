@@ -16,6 +16,7 @@ local DEFAULTS = {
 	showTracker = true,
 	showGearTab = false,
 	merchantButton = true, -- the merchant window's "Buy tracked reagents" button
+	auctionSearch = true, -- the Professions window's reagent search while the auction house is open
 	reagentTooltip = "route",
 	gatherTooltip = true, -- a herb or ore node's and a skinnable corpse's required skill, coloured at yours
 	collectModes = {}, -- ["Name-Realm"] = "gather" | "auction": where a reagent you could gather comes from
@@ -58,7 +59,7 @@ ns.REAGENT_TOOLTIP_OPTIONS = {
 ns.TITLE = "SkillUp Forever"
 -- The chat line after an update: one sentence for the release being tagged, the bold lead of one of its
 -- CHANGELOG.md bullets (tests/core_spec.lua holds it to the newest entry).
-ns.WHATS_NEW = L["First Aid and Cooking routes go to 300."]
+ns.WHATS_NEW = L["Search a recipe's reagents at the auction house for as many crafts as you want."]
 
 -- Classic difficulty colours, matching the retail recipe list's own palette.
 ns.COLORS = {

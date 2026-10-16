@@ -194,7 +194,7 @@ local groups = {
 	{
 		"Route and trainer",
 		"checkbox:showTracker checkbox:trackerAttached checkbox:showRouteTab checkbox:showGearTab"
-			.. " checkbox:merchantButton checkbox:showTrainer",
+			.. " checkbox:merchantButton checkbox:auctionSearch checkbox:showTrainer",
 	},
 	{ "Tooltips and sorting", "slider:reagentTooltip checkbox:gatherTooltip slider:sortMode" },
 	{ "Addon", "checkbox:companionHints checkbox:whatsNew" },

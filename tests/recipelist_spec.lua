@@ -48,6 +48,7 @@ local ns = {
 	SkillContext = noop,
 	AttachRoute = noop,
 	AttachGear = noop,
+	AttachAuctionSearch = noop,
 	WhenStale = noop,
 	ShowRecipeTooltip = noop,
 	Print = function(msg)

@@ -78,6 +78,11 @@
 ---@field SetSortMode fun(mode: string)
 ---@field OpenSettings fun()
 ---@field HasAuctionator fun(): boolean
+---@field WithItemNames fun(items: SkillUpShoppingItem[], callback: fun())
+---@field PlannedCrafts fun(recipeID: integer): integer
+---@field ReagentShortfall fun(recipeID: integer, count: integer): SkillUpShoppingItem[]
+---@field SearchReagents fun(recipeID: integer, count: integer): 'auctionator'|'game'|'unfilled'|'none', SkillUpShoppingItem?
+---@field AttachAuctionSearch fun()
 ---@field AuctionatorAutoscan fun(): boolean?
 ---@field AuctionListName fun(profession: string): string
 ---@field Have fun(itemID: integer): number
@@ -171,6 +176,7 @@
 ---@field showTracker boolean
 ---@field showGearTab boolean
 ---@field merchantButton boolean
+---@field auctionSearch boolean
 ---@field reagentTooltip 'off'|'route'|'full'
 ---@field gatherTooltip boolean
 ---@field collectModes table<string, SkillUpCollectMode>
@@ -339,7 +345,7 @@ SkillUpForeverDB = nil
 
 -- What a writer or a game event says changed, and the caches and views Core/Changes.lua keeps fresh.
 ---@alias SkillUpChange 'recipes'|'skill'|'professions'|'prices'|'bags'|'items'|'names'|'level'|'zone'|'merchant'|'fees'|'sources'|'target'|'tracking'|'settings'
----@alias SkillUpStale 'schematics'|'prices'|'plans'|'api'|'route'|'recipeList'|'tracker'|'trainer'|'routeTab'|'gear'|'tooltip'
+---@alias SkillUpStale 'schematics'|'prices'|'plans'|'api'|'route'|'recipeList'|'tracker'|'trainer'|'routeTab'|'gear'|'tooltip'|'auctionSearch'
 ---@alias SkillUpPriceSource 'vendor'|'auctionator'|'gather'
 ---@alias SkillUpCollectMode 'gather'|'auction'
 ---@alias SkillUpShoppingSource 'gather'|'vendor'|'auction'|'unknown'

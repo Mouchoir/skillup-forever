@@ -39,5 +39,6 @@ files["Data/Thresholds.lua"] = { max_line_length = false }
 files["Data/Sources.lua"] = { max_line_length = false }
 files["tests/"] = { std = "+luajit" }
 read_globals[#read_globals + 1] = "EditModeManagerFrame"
+read_globals[#read_globals + 1] = "AuctionHouseFrame"
 
 read_globals[#read_globals + 1] = "MinimalSliderWithSteppersMixin"

@@ -7,6 +7,8 @@
 ---@field RegisterForDBUpdate? fun(caller: string, callback: fun())
 ---@field CreateShoppingList fun(caller: string, name: string, searches: string[])
 ---@field ConvertToSearchString fun(caller: string, search: {searchString: string, isExact: boolean, quantity: number}): string
+---@field MultiSearchAdvanced? fun(caller: string, searches: string[])
+---@field MultiSearchExact? fun(caller: string, names: string[])
 -- Config is Auctionator's own settings table, which has no public API contract.
 ---@type {API: {v1: SkillUpAuctionatorAPI}, Config?: {Options: {AUTOSCAN: string}, Get: fun(name: string): any}}?
 Auctionator = nil
