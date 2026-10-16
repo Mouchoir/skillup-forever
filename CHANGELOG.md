@@ -18,6 +18,8 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 - **Bronze Warhammer is trained by 110.** A player made it at 110 on Forever, where SkillUp's data still asked for Classic's 125, so routes put it off until 125. It now plans it from 110, and `/su trainers` lists it among the guesses a trainer visit confirms. Heavy Sharpening Stone (100) and Patterned Bronze Bracers (95), from the same report, were already right. Thanks to kopuliak.
 
+- **The tracker keeps up in combat.** Collapsing All Objectives during a fight now hides the Forever sections straight away, and a route's lines update as you craft or loot instead of waiting for combat to end.
+
 ### For addon authors
 
 - **A rank taught by a quest is a `train` step with a `questID` in `SkillUpForever.API.Professions()`.** It has no cost, and `Navigate` goes to the quest giver. The API version stays 1.
