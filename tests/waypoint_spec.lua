@@ -137,6 +137,7 @@ env.GameTooltip_AddDisabledLine = function(_, text)
 	hints[#hints + 1] = text
 end
 setfenv(assert(loadfile("UI/ForeverFamily.lua")), env)("SkillUpForever", ns)
+equal(ns.Family == env.ForeverFamily.For(ns.L), true, "SkillUp's Family is the view bound to its own L")
 ns.db = { suggestFamily = true, familyDismissed = {} }
 local TRAVEL = "With Shortest Path Forever, this picks the nearest by travel time and leads you there."
 local ENABLE = "Enable Shortest Path Forever for walked routes and boat times."
