@@ -776,7 +776,6 @@ local function Render()
 	page.RouteList:Finish()
 	page.ReagentList:Finish()
 	page.Track:SetText(ns.IsTracked(selected) and L["Stop tracking"] or L["Track"])
-	page.Track:SetWidth(math.max(130, page.Track:GetTextWidth() + 32))
 	SetCraft(craft)
 end
 
@@ -863,7 +862,11 @@ end
 
 local function CreateButtons()
 	local track = CreateFrame("Button", nil, page, "UIPanelButtonTemplate") --[[@as Button]]
-	track:SetSize(130, 22)
+	-- Wide enough for both labels, so the Craft button beside it stays put when tracking toggles.
+	track:SetText(L["Stop tracking"])
+	local stop = track:GetTextWidth() + 32
+	track:SetText(L["Track"])
+	track:SetSize(math.max(130, stop, track:GetTextWidth() + 32), 22)
 	track:SetScript("OnClick", function()
 		local tracked = not ns.IsTracked(selected)
 		ns.SetTracked(selected, tracked)
