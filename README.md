@@ -24,7 +24,7 @@ The recipe tooltip draws the thresholds on the game's own bar with your skill ma
 
 ## Features
 
-- **Recipe rows and tooltips** show skill-up chance, cost and colour thresholds. The start of the difficulty range is optional.
+- **Recipe rows and tooltips** show skill-up chance, cost and colour thresholds.
 - **Sorting** orders recipes by difficulty range start, chance or cheapest skill-ups. *Default* restores the game's categories and filters.
 - **Levelling routes** list crafts, trainer visits, skill books and rank quests to your target skill, including fees, tools and stations. Steps allow for unlucky skill-ups. Cheaper crafted reagents become their own steps; a route that stops short names recipes that could extend it. Right-click a recipe and choose *Not this recipe* to plan without it. [Route details](docs/route.md#levelling-route).
 - **Shopping lists** count reagents against your bags and bank. *Buy reagents* chooses whether materials your professions gather are free or bought. Track the list beside quests, buy vendor stock and keep an Auctionator list up to date. At the auction house, search a recipe's reagents for as many crafts as you choose. [Shopping details](docs/route.md#shopping-list).
@@ -39,7 +39,7 @@ The route tab from 48 to 73: belts to 56, then train the pants, cure the hides t
 
 <p align="center"><img src="https://raw.githubusercontent.com/cjber/skillup-forever/main/docs/screenshots/gear.png" width="640" alt="The Crafted gear tab: item slots down both sides and along the bottom, each showing the newest crafted item, with one slot's recipe, reagents and status in the middle"></p>
 
-The gear tab, turned on in settings: each slot shows the newest thing this character could craft for it, with the pick's recipe, reagents and status in the middle.
+The gear tab, turned on in settings: each slot shows the newest thing this character could craft for it.
 
 <p align="center"><img src="https://raw.githubusercontent.com/cjber/skillup-forever/main/docs/screenshots/tracker.png" width="320" alt="The objective tracker with Leatherworking to 73, the next training step and the reagents still missing"></p>
 
@@ -59,8 +59,6 @@ Install it from [CurseForge](https://www.curseforge.com/wow/addons/skillup-forev
 
 ## Usage
 
-Turn off **Show tracked professions** in settings to hide the profession tracker. Your tracked professions and skill targets are kept.
-
 Open a profession and the numbers are already there.
 
 | Command | What it does |
@@ -69,18 +67,18 @@ Open a profession and the numbers are already there.
 | `/su skipped` | List the recipes you said *Not this recipe* to on this character, with their IDs |
 | `/su unskip <ID>`, `/su unskip all` | Show a skipped recipe, or every one, in the route again |
 | `/su audit` | With a profession open, compare the bundled thresholds with the colours the game shows and print any mismatch |
-| `/su report` | Show a report to copy into a bug report: versions, your professions and routes, the audit, trainer checks and recent errors |
-| `/su trainers` | List the trainer skill requirements SkillUp guessed, which ones a trainer has confirmed or shown differently, and which your trainer should teach at your skill now |
+| `/su report` | Show a report to copy into a bug report: versions, professions, routes, the audit and recent errors |
+| `/su trainers` | List the trainer skill requirements SkillUp guessed, and which ones a trainer has confirmed or shown differently |
 
-Settings cover rows and tooltips, what crafts count for, sort order, the route and crafted gear tabs, trainer annotations, reagent and gathering tooltips and companion hints.
+Settings cover rows and tooltips, what crafts count for, sort order, the route and crafted gear tabs, trainer annotations, reagent and gathering tooltips and companion hints. Turn off **Show tracked professions** to hide the tracker, or **Attach to quest tracker** to drag the Forever column.
 
 ## Prices
 
-Each reagent uses the cheapest known vendor or Auctionator price. Common vendor supplies have bundled prices; visiting a vendor records its prices and reputation discounts. Materials your professions gather can count as free until you choose *Buy reagents*, or, with *Value gathered materials at what they'd sell for* on, cost what selling them would bring.
+Each reagent uses the cheapest known vendor or Auctionator price. Common vendor supplies have bundled prices; visiting a vendor records its prices and reputation discounts. Materials your professions gather count as free until you choose *Buy reagents*, or cost what they'd sell for with *Value gathered materials at what they'd sell for* on.
 
-Auction prices use Auctionator's latest recorded price for reagents and crafted items. SkillUp never scans the auction house itself. Scan with Auctionator to update prices. Missing prices stay unknown and leave affected recipes out of the route.
+Auction prices are Auctionator's latest recorded price for reagents and crafted items. SkillUp never scans the auction house itself: scan with Auctionator to update prices. Missing prices stay unknown and leave affected recipes out of the route.
 
-A craft's vendor sell value comes off its cost by default. You can choose its auction value when higher, after the 5% cut. Profit shows a green `+`. Cost per skill-up is net craft cost divided by skill-up chance.
+A craft's vendor sell value comes off its cost, or its auction value after the 5% cut if you choose. Profit shows a green `+`. Cost per skill-up is net craft cost divided by skill-up chance.
 
 ## How the numbers work
 
@@ -92,15 +90,17 @@ Each recipe has four thresholds: orange (start of its skill range), yellow, gree
 | Yellow, green | `(grey − skill) / (grey − yellow)` |
 | Grey, or at your skill cap | 0% |
 
-The colour always comes from the game, so the addon never disagrees. Thresholds and recipe data come from the Forever client's `SkillLineAbility` (via [wago.tools](https://wago.tools)). All bundled thresholds use the same Forever build, and the grey threshold is the game's own live value where it reports one. Missing or contradictory ranges show `?`. Training requirements are separate from these difficulty bands.
+The colour always comes from the game, so the addon never disagrees. Thresholds and recipe data come from the Forever client's `SkillLineAbility` (via [wago.tools](https://wago.tools)). The grey threshold is the game's own live value where it reports one. Missing or contradictory ranges show `?`. Training requirements are separate from these difficulty bands.
 
-**Found a wrong number?** Open that profession, run `/su report` and paste its text into a [Wrong number issue](https://github.com/cjber/skillup-forever/issues/new?template=wrong_number.yml). The report includes the audit.
-
-Turn off **Attach to quest tracker** in Settings to drag the shared Forever column. Its position survives `/reload`; turn the setting back on to attach it above your quests.
+**Found a wrong number?** Open that profession, run `/su report` and paste its text into a [Wrong number issue](https://github.com/cjber/skillup-forever/issues/new?template=wrong_number.yml).
 
 ## Works alongside
 
-All optional: Auctionator supplies auction prices and takes the shopping list, TomTom draws waypoint arrows, and Syndicator shows your other characters' reagents. [Questie](https://www.curseforge.com/wow/addons/questie) names the vendors, quests and trainers the route points to, and [AtlasLoot Classic Forever](https://www.curseforge.com/wow/addons/atlasloot-forever) tells it which scroll teaches which recipe; without them the route still plans your crafts, and says in one line what to install for the rest. [Shortest Path Forever](https://www.curseforge.com/wow/addons/shortest-path-forever) plans the trip when you click a trainer or vendor, and SkillUp then picks the nearest one by travel time. [Adventure Guide Forever](https://www.curseforge.com/wow/addons/adventure-guide-forever) shows each profession's next steps in its Professions tab. A tracked route shares one tracker column with their sections and [Legacy Forever](https://www.curseforge.com/wow/addons/legacy-forever)'s, above your quests. [Tweaks Forever](https://www.curseforge.com/wow/addons/tweaks-forever) adds options for repairs, junk selling, bags and maps.
+All optional: Auctionator supplies auction prices and takes the shopping list, TomTom draws waypoint arrows, and Syndicator shows your other characters' reagents. [Questie](https://www.curseforge.com/wow/addons/questie) names the vendors, quests and trainers the route points to, and [AtlasLoot Classic Forever](https://www.curseforge.com/wow/addons/atlasloot-forever) tells it which scroll teaches which recipe; without them the route still plans your crafts, and says in one line what to install for the rest.
+
+[Legacy Forever](https://www.curseforge.com/wow/addons/legacy-forever) puts unfinished Legacy challenges on the world map and in the tracker, and [Tweaks Forever](https://www.curseforge.com/wow/addons/tweaks-forever) adds quest automation, rare alerts and merchant options to the game's settings.
+
+With [Shortest Path Forever](https://www.curseforge.com/wow/addons/shortest-path-forever), clicking a trainer or vendor in the route plans the trip there, and SkillUp picks the nearest one by travel time. [Adventure Guide Forever](https://www.curseforge.com/wow/addons/adventure-guide-forever) shows each profession's next steps in its Professions tab. A tracked route shares one tracker column with the Shortest Path, Adventure Guide and Legacy Forever sections, above your quests.
 
 ## Development
 
