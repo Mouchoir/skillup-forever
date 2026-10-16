@@ -12,6 +12,8 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+- **A Forever addons page in settings, and a quiet line where one would help.** Without Shortest Path Forever, the tooltips on a route's trainer and vendor steps say that with it, SkillUp picks the nearest by travel time and leads you there. Without Adventure Guide Forever, an Artisan quest step says it can plan the quest chain. Neither shows for an addon you have; one you've turned off still gets its "Enable ..." line. A new *Forever addons* page in SkillUp's settings lists all five, says whether each is on, and gives a link to copy for each. *Suggest my other Forever addons* on that page turns the lines off; it replaces *Suggest companion addons*, and if you'd turned that off, it stays off.
+
 ## [0.13.0] - 2026-10-16
 
 - **Search a recipe's reagents at the auction house for as many crafts as you want.** With the auction house open, the Professions window shows *Reagents for [ ] crafts* beside *Create All*, starting at what your route plans for that recipe, and *Search* looks for the auction house reagents that many still need after your bags (and your bank, once you've opened it this session), so there's nothing to work out on a calculator. With Auctionator it searches a shopping list with the quantities (an older Auctionator searches the names without them); without it, each click puts the next reagent in the game's search box and says how many you need. Vendor reagents and ones you gather are left out, and it says so when they're all that's missing. It only searches, and *Search reagents at the auction house* turns it off. Thanks to the CurseForge player who asked.

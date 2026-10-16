@@ -70,7 +70,7 @@ Open a profession and the numbers are already there.
 | `/su report` | Show a report to copy into a bug report: versions, professions, routes, the audit and recent errors |
 | `/su trainers` | List the trainer skill requirements SkillUp guessed, and which ones a trainer has confirmed or shown differently |
 
-Settings cover rows and tooltips, what crafts count for, sort order, the route and crafted gear tabs, trainer annotations, reagent and gathering tooltips and companion hints. Turn off **Show tracked professions** to hide the tracker, or **Attach to quest tracker** to drag the Forever column.
+Settings cover rows and tooltips, what crafts count for, sort order, the route and crafted gear tabs, trainer annotations, reagent and gathering tooltips and Forever addon hints. Turn off **Show tracked professions** to hide the tracker, or **Attach to quest tracker** to drag the Forever column.
 
 ## Prices
 

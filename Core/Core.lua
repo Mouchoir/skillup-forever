@@ -23,7 +23,7 @@ local DEFAULTS = {
 	showAllGear = {}, -- ["Name-Realm"] = true: the crafted gear view shows gear this character cannot make yet
 	skippedRecipes = {}, -- ["Name-Realm"] = { [recipeID] = true }: "Not this recipe", left out of every route
 	whatsNew = true,
-	companionHints = true,
+	suggestFamily = true, -- the quiet lines about my other Forever addons, where one would help (UI/ForeverFamily.lua)
 	lastVersion = "", -- the version that last ran; "" before the first
 	vendor = {}, -- [itemID] = copper per unit, observed at merchants
 	-- [npcID] = { name, side, map, x, y, build, items = { [itemID] = true } }: vendors seen selling a reagent or scroll
@@ -59,7 +59,7 @@ ns.REAGENT_TOOLTIP_OPTIONS = {
 ns.TITLE = "SkillUp Forever"
 -- The chat line after an update: one sentence for the release being tagged, the bold lead of one of its
 -- CHANGELOG.md bullets (tests/core_spec.lua holds it to the newest entry).
-ns.WHATS_NEW = L["Search a recipe's reagents at the auction house for as many crafts as you want."]
+ns.WHATS_NEW = L["A Forever addons page in settings, and a quiet line where one would help."]
 
 -- Classic difficulty colours, matching the retail recipe list's own palette.
 ns.COLORS = {
@@ -95,6 +95,11 @@ local function LoadDB()
 	-- Auction prices come from Auctionator now; drop what SkillUp's own scanner saved.
 	loaded.priceDays, loaded.latestPrice = nil, nil
 	loaded.scanAuctions, loaded.tracked, loaded.auctions, loaded.gatherFree = nil, nil, nil, nil
+	-- Suggest companion addons became the shared Suggest my other Forever addons: turned off, it stays off.
+	if loaded.companionHints == false and loaded.suggestFamily == nil then
+		loaded.suggestFamily = false
+	end
+	loaded.companionHints = nil
 	for key, value in pairs(DEFAULTS) do
 		if type(loaded[key]) ~= type(value) then
 			loaded[key] = type(value) == "table" and {} or value
@@ -649,6 +654,7 @@ EventUtil.ContinueOnAddOnLoaded(addonName, function()
 			and ns.SafeCall
 			and ns.Report
 			and ns.ReportLines
+			and ns.Family
 		)
 	then
 		ns.Print("|cffff4040" .. L["files are missing: restart the game (not /reload) after updating."] .. "|r")

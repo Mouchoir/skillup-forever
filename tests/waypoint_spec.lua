@@ -119,7 +119,8 @@ env.ShortestPathForever = { API = { version = 1 } }
 ns.SetWaypoint(1250)
 equal(calls.native and calls.native.map, 1429, "an API without Navigate falls back to the map waypoint")
 
--- The hint under a waypoint click: install or enable Shortest Path Forever, or nothing.
+-- The family hints (UI/ForeverFamily.lua decides when one may show): under a waypoint click to the nearest NPC,
+-- what Shortest Path Forever adds; under an Artisan quest step, what Adventure Guide Forever adds.
 local addons, hints = {}, {}
 env.C_AddOns = {
 	IsAddOnLoaded = function(name)
@@ -135,17 +136,48 @@ env.C_AddOns = {
 env.GameTooltip_AddDisabledLine = function(_, text)
 	hints[#hints + 1] = text
 end
-ns.db = { companionHints = true }
-local function Hint(state)
+setfenv(assert(loadfile("UI/ForeverFamily.lua")), env)("SkillUpForever", ns)
+ns.db = { suggestFamily = true, familyDismissed = {} }
+local TRAVEL = "With Shortest Path Forever, this picks the nearest by travel time and leads you there."
+local ENABLE = "Enable Shortest Path Forever for walked routes and boat times."
+local CHAIN = "Adventure Guide Forever can plan this quest chain."
+local function Hint(state, single)
 	addons.ShortestPathForever, hints = state, {}
-	ns.AddCompanionHint({})
+	ns.AddCompanionHint({}, single)
+	equal(#hints <= 1, true, "at most one Shortest Path line")
 	return hints[1]
 end
-equal(Hint(nil), "Install Shortest Path Forever for walked routes and boat times.", "missing: install it")
-equal(Hint("disabled"), "Enable Shortest Path Forever for walked routes and boat times.", "turned off: enable it")
+local function Chain(state)
+	addons.AdventureGuideForever, hints = state, {}
+	ns.AddQuestChainHint({})
+	return hints[1]
+end
+equal(Hint(nil), TRAVEL, "missing: the travel-time line")
+equal(Hint("disabled"), ENABLE, "turned off: how to get it back")
+equal(Hint("installed"), nil, "installed but not loaded for another reason: nothing")
 equal(Hint("loaded"), nil, "running: no hint")
-ns.db.companionHints = false
-equal(Hint(nil), nil, "the setting off hides the hint")
+equal(Hint(nil, true), "With Shortest Path Forever, a click leads you there.", "one fixed NPC: no nearest to pick")
+local getInfo = env.C_AddOns.GetAddOnInfo
+env.C_AddOns.GetAddOnInfo = function()
+	error("secret value")
+end
+equal(Hint("disabled"), nil, "an answer the client won't give shows no line")
+env.C_AddOns.GetAddOnInfo = getInfo
+equal(Chain(nil), CHAIN, "Adventure Guide missing: the quest chain line")
+equal(Chain("disabled"), nil, "Adventure Guide turned off: the player chose that")
+equal(Chain("loaded"), nil, "Adventure Guide running: no hint")
+ns.db.suggestFamily = false
+equal(Hint(nil), nil, "the setting off hides the travel-time line")
+equal(Hint("disabled"), nil, "and the enable line")
+equal(Chain(nil), nil, "and the quest chain line")
+ns.db.suggestFamily = true
+ns.db.familyDismissed["SkillUpForever:travel"] = true
+equal(Hint(nil), nil, "a dismissed travel hint stays away")
+equal(Hint("disabled"), ENABLE, "the enable line isn't a suggestion, so dismissing doesn't hide it")
+equal(Chain(nil), CHAIN, "dismissing one hint leaves the other")
+ns.db.familyDismissed["SkillUpForever:questChain"] = true
+equal(Chain(nil), nil, "a dismissed quest chain hint stays away")
+ns.db.familyDismissed = {}
 
 -- An NPC is named by its zone and its place on the zone's map.
 local where = ns.NPCLocation(1250)

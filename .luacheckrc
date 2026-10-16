@@ -3,7 +3,7 @@ max_line_length = 120
 exclude_files = { "tools/.cache/**", ".release/**", ".types/**", "types/**", ".claude/**" }
 ignore = { "212/_.*" } -- unused args prefixed with _
 
-globals = { "ForeverTrackerHost",
+globals = { "ForeverFamily", "ForeverTrackerHost",
 	"SkillUpForeverDB",
 	"SkillUpForever",
 	"SkillUpForever_OnAddonCompartmentClick",

@@ -316,6 +316,11 @@ function Settings.RegisterVerticalLayoutCategory(name) end
 ---@param name string
 ---@return SkillUpCategory
 function Settings.RegisterVerticalLayoutSubcategory(parent, name) end
+---@param parent SkillUpCategory
+---@param frame Frame
+---@param name string
+---@return SkillUpCategory
+function Settings.RegisterCanvasLayoutSubcategory(parent, frame, name) end
 ---@param category SkillUpCategory
 ---@param variable string
 ---@param key string

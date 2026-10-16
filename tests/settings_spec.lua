@@ -29,7 +29,7 @@ local function Initializer(kind, setting, tooltip)
 	return { kind = kind, setting = setting, tooltip = tooltip }
 end
 
-local opened, addOnCategory
+local opened, addOnCategory, canvas
 
 local env = setmetatable({
 	Settings = {
@@ -41,6 +41,12 @@ local env = setmetatable({
 		RegisterVerticalLayoutSubcategory = function(parent, name)
 			assert(parent == category, "a subpage belongs to the addon's category")
 			return Category(name, parent), { AddInitializer = Tainted }
+		end,
+		RegisterCanvasLayoutSubcategory = function(parent, frame, name)
+			assert(parent == category, "the Forever addons page belongs to the addon's category")
+			canvas = Category(name, parent)
+			canvas.frame = frame
+			return canvas
 		end,
 		RegisterAddOnSetting = function(_target, variable, key, db, varType, _name, default)
 			if db[key] == nil then
@@ -142,6 +148,12 @@ local ns = {
 		end,
 	},
 	TITLE = "SkillUp Forever",
+	-- UI/ForeverFamily.lua builds the page; forever_family_spec.lua covers what is on it.
+	Family = {
+		CreatePanel = function(parent, db, current)
+			return { parent = parent, db = db, current = current }
+		end,
+	},
 	db = {},
 	DEFAULTS = { craftValue = "vendor", reagentTooltip = "route", sortMode = "default", showRowText = true },
 	REAGENT_TOOLTIP_OPTIONS = { { "off", "Off" }, { "route", "Route" }, { "full", "Every recipe" } },
@@ -197,7 +209,7 @@ local groups = {
 			.. " checkbox:merchantButton checkbox:auctionSearch checkbox:showTrainer",
 	},
 	{ "Tooltips and sorting", "slider:reagentTooltip checkbox:gatherTooltip slider:sortMode" },
-	{ "Addon", "checkbox:companionHints checkbox:whatsNew" },
+	{ "Addon", "checkbox:whatsNew" },
 }
 local kinds, expected = {}, {}
 for _, group in ipairs(groups) do
@@ -211,6 +223,13 @@ for _, group in ipairs(groups) do
 	button.initializer.onClick()
 	assert(opened == Subpage(name):GetID(), name .. "'s button opens its subpage")
 end
+-- Then the Forever addons page: a canvas with the shared panel, its index button last.
+expected[#expected + 1] = "button@" .. addOnCategory.name
+assert(canvas and canvas.name == "Forever addons", "the Forever addons page is registered")
+assert(canvas.frame.parent == nil and canvas.frame.current == "SkillUpForever", "the panel marks this addon's row")
+assert(canvas.frame.db() == ns.db, "the panel reads and writes SkillUp's saved variables")
+Button("Forever addons").initializer.onClick()
+assert(opened == canvas:GetID(), "the Forever addons button opens its page")
 for _, entry in ipairs(registered) do
 	local kind = entry.initializer.kind
 	if entry.initializer.setting then

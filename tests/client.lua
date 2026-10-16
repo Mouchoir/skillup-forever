@@ -280,8 +280,9 @@ function Client.load(options)
 	function TrackerModule:GetBlock(id)
 		local block = { id = id, lines = {}, SetHeader = noop }
 		function block.AddObjective(_, key, text)
-			block.lines[#block.lines + 1] = { key = key, text = text }
-			return NewFrame()
+			local frame = NewFrame()
+			block.lines[#block.lines + 1] = { key = key, text = text, frame = frame }
+			return frame
 		end
 		self.blocks[#self.blocks + 1] = block
 		return block
@@ -732,6 +733,7 @@ function Client.load(options)
 		VarType = { Boolean = "boolean", String = "string", Number = "number" },
 		RegisterVerticalLayoutCategory = Category,
 		RegisterVerticalLayoutSubcategory = Category,
+		RegisterCanvasLayoutSubcategory = Category,
 		RegisterAddOnCategory = noop,
 		RegisterAddOnSetting = function(_, variable, key, db)
 			return Setting(variable, function()

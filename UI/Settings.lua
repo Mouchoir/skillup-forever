@@ -1,5 +1,5 @@
 ---@type string, SkillUpNamespace
-local _, ns = ...
+local addonName, ns = ...
 local L = ns.L
 
 -- Options > AddOns > SkillUp Forever: a short index page, then a stock subpage per group so no page grows
@@ -234,18 +234,27 @@ function ns.RegisterSettings()
 	Section(L["Addon"], function(rows)
 		Checkbox(
 			rows,
-			"companionHints",
-			L["Suggest companion addons"],
-			L["Waypoint tooltips say when Shortest Path Forever, not installed or turned off, would plot the route."]
-		)
-
-		Checkbox(
-			rows,
 			"whatsNew",
 			L["What's new after an update"],
 			L["One line in chat the first time a new version loads."]
 		)
 	end)
+
+	-- The Forever addons page is the same in all five addons (UI/ForeverFamily.lua), with the hint setting on it.
+	-- Its rows are plain frames on our own canvas, so nothing of ours goes into Blizzard's layouts or search.
+	local family = Settings.RegisterCanvasLayoutSubcategory(
+		category,
+		ns.Family.CreatePanel(nil, function()
+			return ns.db
+		end, addonName),
+		L["Forever addons"]
+	)
+	Settings.RegisterInitializer(
+		category,
+		CreateSettingsButtonInitializer(L["Forever addons"], L["Open"], function()
+			Settings.OpenToCategory(family:GetID())
+		end, nil, false)
+	)
 
 	Settings.RegisterAddOnCategory(category)
 end

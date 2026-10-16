@@ -19,6 +19,7 @@ Data\Vendor.lua
 Data\Recipes.lua
 Data\Trainer.lua
 Data\Sources.lua
+UI\ForeverFamily.lua
 Core\SafeCall.lua
 Core\Model.lua
 Core\Changes.lua

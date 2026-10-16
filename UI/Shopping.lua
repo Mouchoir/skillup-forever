@@ -474,7 +474,8 @@ local LINE_TEMPLATE = "SkillUpForeverTrackerLineTemplate"
 ---@param title string
 ---@param label string
 ---@param nearest fun(): integer?
-local function Waypointed(line, title, label, nearest)
+---@param quest? boolean an Artisan quest step
+local function Waypointed(line, title, label, nearest, quest)
 	line:SetScript("OnMouseUp", function(_, button)
 		local npcID = button == "LeftButton" and nearest()
 		if npcID then
@@ -485,6 +486,9 @@ local function Waypointed(line, title, label, nearest)
 		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 		GameTooltip_SetTitle(GameTooltip, title)
 		ns.AddNearest(GameTooltip, label, nearest())
+		if quest then
+			ns.AddQuestChainHint(GameTooltip)
+		end
 		GameTooltip:Show()
 	end)
 	line:SetScript("OnLeave", GameTooltip_Hide)
@@ -545,7 +549,7 @@ function ModuleMixin:LayoutContents()
 			if npc then
 				Waypointed(line, first.text, label, function()
 					return (first.nearest(true))
-				end)
+				end, first.quest and true)
 			end
 		end
 		local shown = 0

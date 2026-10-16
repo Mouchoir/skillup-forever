@@ -135,7 +135,7 @@ local function ItemTooltip(item)
 				end
 				local npcID = RecipeNPC(item)
 				if npcID then
-					ns.AddNearest(tooltip, L["Source"], npcID)
+					ns.AddNearest(tooltip, L["Source"], npcID, true)
 				end
 			end
 		end

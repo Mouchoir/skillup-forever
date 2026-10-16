@@ -710,6 +710,8 @@ env = setmetatable({
 	-- The optional databases the addon reads through their public tables: absent in this scene.
 	AtlasLoot = false,
 	LibQuestieDB = false,
+	-- No other Forever addon has loaded UI/ForeverFamily.lua: this copy sets the global.
+	ForeverFamily = false,
 }, {
 	__index = function(_, key)
 		local value = _G[key]

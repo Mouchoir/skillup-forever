@@ -60,7 +60,7 @@ Open a profession and the numbers are already there.
 - `/su report` shows a report to copy into a bug report.
 - `/su trainers` lists the trainer skill requirements SkillUp guessed and which ones a trainer has confirmed.
 
-Missing data shows `?`. Settings cover rows and tooltips, prices, the route and gear tabs, trainer annotations, sorting, reagent tooltips and companion hints.
+Missing data shows `?`. Settings cover rows and tooltips, prices, the route and gear tabs, trainer annotations, sorting, reagent tooltips and Forever addon hints.
 
 <!-- forever-family:start -->
 

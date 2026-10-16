@@ -74,7 +74,7 @@ On-demand tools for audits. Output is candidates, never verdicts.
 
 Things reached indirectly. The dead-code lens must treat these as referenced.
 
-- `SkillUpForever.toc` file list: loads the Lua and XML files it lists under `Locales/`, `Data/`, `Core/`, `Integrations/` and `UI/`, in that order; nothing `require`s them.
+- `SkillUpForever.toc` file list: loads the Lua and XML files it lists under `Locales/`, `Data/`, `Core/`, `Integrations/` and `UI/`, in that order, except `UI/ForeverFamily.lua`, which loads between `Data/` and `Core/` (Core needs `ns.Family`, and `tests/client.lua` injects fixtures before the first non-Locales, non-Data file); nothing `require`s them.
 - `ns.*` — the shared addon table; a function defined in one file is typically called from another. Search all files for `ns.Name`, not the local file.
 - `## SavedVariables: SkillUpForeverDB` — persisted per account; keys in `Core/Core.lua` `DEFAULTS` and anything read from `SkillUpForeverDB` may hold data written by older versions.
 - `Locales/<locale>.lua` — translators' files, loaded from the TOC after `enUS.lua`; `tools/phrases.py` runs from `tests/locale_spec.lua`.
