@@ -12,6 +12,8 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+- **SkillUp lets go of the quest tracker when it has nothing to show.** To fit the Forever sections above your quests, SkillUp moves the game's quest tracker. It kept holding it there with no route tracked, *Show tracked professions* off or All Objectives collapsed. Now the tracker goes straight back to where the game, Edit Mode or your UI addon put it, and SkillUp moves it again only once a section has something to show. Thanks to chuujitsuna and another player on CurseForge, who found it stuck mid-screen or over the minimap.
+
 ## [0.11.0] - 2026-10-15
 
 - **First Aid and Cooking routes go past 150.** No trainer teaches Expert First Aid or Expert Cooking: you buy a book and read it at 125. The route now plans that step, "Buy and read Expert First Aid - Under Wraps at 125", with the book's price and the nearest vendor that sells it, and carries on to 225 instead of stopping at Journeyman. Artisan comes from a quest the game's data doesn't name, so routes still stop at 225 for now.
