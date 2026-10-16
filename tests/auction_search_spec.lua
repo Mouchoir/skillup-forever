@@ -68,8 +68,9 @@ equal(ns.PlannedCrafts(HEAVY), 1, "a recipe the route doesn't craft starts at on
 
 -- Reagents for the count, less what the bags and bank hold; a reagent you have enough of is left out.
 c.bags[LINEN] = 5
-local short = ns.ReagentShortfall(HEAVY, 4)
+local short, elsewhere = ns.ReagentShortfall(HEAVY, 4)
 equal(#short, 2, "both auction reagents are short for four, and the vendor's salt is left out")
+equal(elsewhere, 1, "the salt is counted as short elsewhere")
 equal(short[1].itemID == LINEN and short[1].count, 3, "eight linen, less the five you hold")
 equal(short[2].itemID == THREAD and short[2].count, 4, "four thread")
 c.bags[THREAD] = 10
@@ -82,10 +83,12 @@ equal(c.shoppingLists["SkillUp: crafting"][1], "Linen Clothx3", "the list asks f
 equal(#c.shoppingLists["SkillUp: crafting"], 1, "and nothing you have")
 equal(c.auctionSearches[1] and c.auctionSearches[1][1], "Linen Clothx3", "and is searched with its quantities")
 c.bags[LINEN] = 8
+equal((ns.SearchReagents(HEAVY, 4)), "elsewhere", "with only the vendor's salt short, nothing is searched")
+c.bags[SALT] = 10
 equal((ns.SearchReagents(HEAVY, 4)), "none", "nothing is searched when the bags hold enough")
 equal(#c.auctionSearches, 1, "so Auctionator is not asked again")
 equal(ns.db.auctionSearch, true, "the search is on by default")
-c.bags[LINEN] = 0
+c.bags[LINEN], c.bags[SALT] = 0, 0
 c.CloseAuctionHouse()
 ns.SearchReagents(HEAVY, 4)
 equal(#c.auctionSearches, 1, "Auctionator is not asked once the auction house has closed")
@@ -115,6 +118,11 @@ equal(searched[6], "Coarse Thread", "and the next click retries the same reagent
 c.bags[LINEN] = 6
 ns.SearchReagents(HEAVY, 3)
 equal(searched[7], "Coarse Thread", "linen bought, thread is now first")
+-- A reagent whose name the client hasn't loaded yet is asked for, and the click says so rather than blaming the tab.
+c.items[THREAD] = nil
+equal((ns.SearchReagents(HEAVY, 3)), "loading", "an unloaded name is still loading")
+equal(#searched, 7, "and the box is left alone")
+c.items[THREAD] = { name = "Coarse Thread" }
 c.CloseAuctionHouse()
 equal((ns.SearchReagents(HEAVY, 3)), "unfilled", "nothing is written while the auction house is closed")
 equal(#searched, 7, "so the box is left alone")

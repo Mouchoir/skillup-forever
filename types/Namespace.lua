@@ -80,8 +80,8 @@
 ---@field HasAuctionator fun(): boolean
 ---@field WithItemNames fun(items: SkillUpShoppingItem[], callback: fun())
 ---@field PlannedCrafts fun(recipeID: integer): integer
----@field ReagentShortfall fun(recipeID: integer, count: integer): SkillUpShoppingItem[]
----@field SearchReagents fun(recipeID: integer, count: integer): 'auctionator'|'game'|'unfilled'|'none', SkillUpShoppingItem?
+---@field ReagentShortfall fun(recipeID: integer, count: integer): SkillUpShoppingItem[], integer
+---@field SearchReagents fun(recipeID: integer, count: integer): 'auctionator'|'game'|'loading'|'unfilled'|'elsewhere'|'none', SkillUpShoppingItem?
 ---@field AttachAuctionSearch fun()
 ---@field AuctionatorAutoscan fun(): boolean?
 ---@field AuctionListName fun(profession: string): string

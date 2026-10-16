@@ -37,19 +37,23 @@ end
 
 -- Each basic reagent `count` crafts need that the bags and bank (once it has been opened) lack, in recipe order:
 -- the auction house's and the unpriced ones. A vendor's reagent, or one you gather, is not searched for there.
+-- The second result counts the short reagents that come from elsewhere (a vendor, or your gathering).
 ---@param recipeID integer
 ---@param count integer
 ---@return SkillUpShoppingItem[]
+---@return integer
 function ns.ReagentShortfall(recipeID, count)
-	local short = {}
+	local short, elsewhere = {}, 0
 	for _, reagent in ipairs(ns.Reagents(recipeID) or {}) do
 		local missing = reagent.quantity * count - ns.Have(reagent.itemID)
 		local source = ns.PriceSource(reagent.itemID)
 		if missing > 0 and (source == nil or AUCTION_SOURCES[source]) then
 			short[#short + 1] = { itemID = reagent.itemID, count = missing }
+		elseif missing > 0 then
+			elsewhere = elsewhere + 1
 		end
 	end
-	return short
+	return short, elsewhere
 end
 
 -- Without Auctionator, which reagent the next click puts in the game's search box, per recipe, count and what is
@@ -59,16 +63,17 @@ local nextIndex, nextKey = 1, nil
 -- Searches the auction house for what `count` crafts of the recipe still lack. With Auctionator, one shopping
 -- list of exact names with quantities, searched at once; without it, the game's own search box gets the next
 -- missing reagent's name on each call. Returns how it searched: "auctionator", "game" with the reagent it put in
--- the box, "unfilled" with the reagent it could not (its name not loaded yet, or the auction house not on a
--- Buy tab), or "none".
+-- the box, "loading" with a reagent whose name the client is still loading, "unfilled" with the reagent the
+-- auction house declined (closed, or not on its Buy tab), "elsewhere" when only vendor or gathered reagents are
+-- short, or "none".
 ---@param recipeID integer
 ---@param count integer
----@return 'auctionator'|'game'|'unfilled'|'none'
+---@return 'auctionator'|'game'|'loading'|'unfilled'|'elsewhere'|'none'
 ---@return SkillUpShoppingItem?
 function ns.SearchReagents(recipeID, count)
-	local short = ns.ReagentShortfall(recipeID, count)
+	local short, elsewhere = ns.ReagentShortfall(recipeID, count)
 	if #short == 0 then
-		return "none"
+		return elsewhere > 0 and "elsewhere" or "none"
 	end
 	if ns.HasAuctionator() then
 		local api = Auctionator.API.v1
@@ -110,7 +115,7 @@ function ns.SearchReagents(recipeID, count)
 	local name = C_Item.GetItemNameByID(item.itemID)
 	if not name then
 		C_Item.RequestLoadItemDataByID(item.itemID)
-		return "unfilled", item
+		return "loading", item
 	end
 	-- The auction house's own public setter, which Blizzard's item clicks use: it fills the search box and
 	-- starts nothing, so the player's own Search click runs the query. It declines off the Buy tabs.
@@ -155,18 +160,25 @@ local function ShowSearchTooltip(button)
 	end
 	GameTooltip:SetOwner(button, "ANCHOR_TOP")
 	GameTooltip_SetTitle(GameTooltip, L["Reagents still needed"])
-	local short = ns.ReagentShortfall(recipeID, Count())
+	local short, elsewhere = ns.ReagentShortfall(recipeID, Count())
 	for _, item in ipairs(short) do
 		local name = C_Item.GetItemNameByID(item.itemID) or string.format(L["item %d"], item.itemID)
 		GameTooltip:AddDoubleLine(name, tostring(item.count), 1, 1, 1, 1, 1, 1)
 	end
-	if #short == 0 then
+	if elsewhere > 0 then
+		GameTooltip_AddNormalLine(GameTooltip, L["The rest comes from a vendor or your gathering."])
+	end
+	if #short == 0 and elsewhere == 0 then
 		GameTooltip_AddNormalLine(GameTooltip, L["Your bags and bank have enough."])
-	elseif not ns.HasAuctionator() then
+	elseif #short > 0 and not ns.HasAuctionator() then
 		GameTooltip_AddDisabledLine(GameTooltip, L["Each click puts the next one in the search box; press Search."])
 	end
 	GameTooltip:Show()
 end
+
+-- The count is filled in from the route when the bar comes into view for a recipe, not on every selection: the
+-- route is planned only at the auction house, and a count the player typed stays while the bar is up.
+local seeded = false
 
 local function Refresh()
 	if not bar then
@@ -174,17 +186,21 @@ local function Refresh()
 	end
 	local atAuction = AuctionHouseFrame and AuctionHouseFrame:IsShown()
 	local reagents = recipeID and ns.Reagents(recipeID)
-	bar:SetShown(ns.db.auctionSearch and atAuction and reagents ~= nil and #reagents > 0 or false)
+	local shown = ns.db.auctionSearch and atAuction and reagents ~= nil and #reagents > 0 or false
+	if shown and not seeded and recipeID then
+		bar.Count:SetText(tostring(ns.PlannedCrafts(recipeID)))
+		seeded = true
+	elseif not shown then
+		seeded = false
+	end
+	bar:SetShown(shown)
 end
 
 ---@param info TradeSkillRecipeInfo?
 local function OnRecipeSelected(_, info)
 	local id = info and info.recipeID
 	if id ~= recipeID then
-		recipeID = id
-		if bar and id then
-			bar.Count:SetText(tostring(ns.PlannedCrafts(id)))
-		end
+		recipeID, seeded = id, false
 	end
 	Refresh()
 end
@@ -196,6 +212,10 @@ local function OnSearch()
 	local how, item = ns.SearchReagents(recipeID, Count())
 	if how == "none" then
 		ns.Print(L["your bags and bank already hold the reagents for that many."])
+	elseif how == "elsewhere" then
+		ns.Print(L["nothing to search for here: what's missing comes from a vendor or your gathering."])
+	elseif how == "loading" then
+		ns.Print(L["the reagent names are still loading; search again in a moment."])
 	elseif how == "game" and item then
 		local name = C_Item.GetItemNameByID(item.itemID) or string.format(L["item %d"], item.itemID)
 		ns.Print(string.format(L["searching for %s: you need %d more."], name, item.count))
