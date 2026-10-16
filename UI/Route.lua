@@ -209,11 +209,14 @@ local function RankTooltip(tooltip, profession, rank)
 	GameTooltip_AddHighlightLine(tooltip, string.format(L["Raises your skill cap to %d."], rank.cap))
 	if rank.book then
 		GameTooltip_AddNormalLine(tooltip, L["No trainer teaches this rank: a book does."])
+	elseif rank.quest then
+		GameTooltip_AddNormalLine(tooltip, L["No trainer teaches this rank: a quest does."])
+		AddLine(tooltip, L["Quest"], ns.RankQuestName(rank))
 	end
 	local held = ns.RankHeld(rank)
 	if held then
 		GameTooltip_AddNormalLine(tooltip, L["You have this book: read it."])
-	else
+	elseif not rank.quest then
 		AddLine(tooltip, rank.book and L["Price"] or L["Fee"], Money(rank.fee))
 	end
 	RequiresLine(tooltip, profession, rank.reqSkill)
@@ -240,7 +243,7 @@ local function TrainerClick(profession, cap)
 	end
 end
 
--- A waypoint to where a rank is got: its book's vendor, or a trainer.
+-- A waypoint to where a rank is got: its book's vendor, its quest's giver, or a trainer.
 ---@param profession SkillUpProfession
 ---@param rank SkillUpRank
 ---@return fun()
@@ -422,6 +425,8 @@ local function RenderRoute(list, plan)
 			local held = ns.RankHeld(rank)
 			if held then
 				detail = string.format(L["You have it, requires %s (%d)"], profession.name, rank.reqSkill)
+			elseif rank.quest then
+				detail = string.format(L["Quest, requires %s (%d)"], profession.name, rank.reqSkill)
 			else
 				local text = rank.book and L["Price %s, requires %s (%d)"] or L["Fee %s, requires %s (%d)"]
 				detail = string.format(text, Money(rank.fee), profession.name, rank.reqSkill)

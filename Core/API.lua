@@ -190,6 +190,25 @@ local function Book(rank)
 	end or nil
 end
 
+-- A rank only a quest teaches: a train step with the quest's ID, sent to its nearest giver.
+---@param profession SkillUpProfession
+---@param rank SkillUpRank
+---@return SkillUpAPIStep
+---@return (fun(): integer?)?
+local function Quest(profession, rank)
+	local giver = ns.NearestForRank(profession, rank)
+	local step = {
+		kind = "train",
+		text = ns.RankText(rank),
+		detail = Detail(giver, L["Quest"]),
+		questID = rank.quest,
+		nav = giver ~= nil,
+	}
+	return step, giver and function()
+		return (ns.NearestForRank(profession, rank, true))
+	end or nil
+end
+
 -- The route's first few steps, each craft preceded by getting what the bags lack for it.
 ---@param plan SkillUpPlan
 ---@return SkillUpAPIStep[]
@@ -223,6 +242,8 @@ local function Steps(plan)
 			})
 		elseif rank and rank.book then
 			Add(Book(rank)) -- multi-value: the step and its picker
+		elseif rank and rank.quest then
+			Add(Quest(profession, rank)) -- multi-value: the step and its picker
 		elseif rank then
 			Add(Train(profession, ns.RankText(rank), rank.cap, rank.fee)) -- multi-value: the step and its picker
 		elseif training then

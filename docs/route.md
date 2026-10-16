@@ -28,9 +28,9 @@ Each step is one row: the recipe's full-size icon in its stock border, the name 
 
 ### Training
 
-The target can go past your current cap, up to the last rank a trainer or book teaches. The route then adds a step for each rank: *Train Journeyman/Expert/Artisan* with the fee, the skill the trainer wants and, while you are below it, the level, or a book to buy and read.
+The target can go past your current cap, up to the last rank a trainer, book or quest teaches. The route then adds a step for each rank: *Train Journeyman/Expert/Artisan* with the fee, the skill the trainer wants and, while you are below it, the level, a book to buy and read, or a quest to do.
 
-No trainer teaches Expert First Aid or Expert Cooking: you buy a book and read it at 125. The route adds that step, *Buy and read Expert First Aid - Under Wraps at 125*, with the book's price and the nearest vendor that sells it, or only *Read* once you have the book. The price is the game's list price for the book until you see it at a merchant. Artisan comes from a quest the game's data doesn't name, so those routes stop at 225.
+No trainer teaches Expert First Aid or Expert Cooking: you buy a book and read it at 125. The route adds that step, *Buy and read Expert First Aid - Under Wraps at 125*, with the book's price and the nearest vendor that sells it, or only *Read* once you have the book. The price is the game's list price for the book until you see it at a merchant. Artisan First Aid and Artisan Cooking come from a quest at 225 and level 35: *Triage* for First Aid (each side has its own) and *Clamlette Surprise* for Cooking. The route adds *Complete Triage at 225*, and hovering or clicking it points to the quest giver. The quest's name and giver come from Questie; without it the step says *the Artisan quest*.
 
 Fees come from the classic trainer data (CMaNGOS), which also says who trains what. A trainer you have visited quotes its own fees, for recipes and for the ranks it still offers, and those then win.
 

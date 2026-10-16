@@ -6,7 +6,8 @@ local equal = Client.equal
 
 local LINEN, HEAVY, WOOL, CLOTH = 3275, 3276, 3277, 2589
 local known, costs, sources, skipped = {}, {}, {}, {}
-local auctionator, open, craftable, level = false, 129, 99, 20
+local auctionator, open, craftable, level, faction = false, 129, 99, 20, "Alliance"
+local questTitles = {}
 local dropPlans
 local itemNames, requested = {}, {}
 local ns = {
@@ -14,6 +15,9 @@ local ns = {
 	Catalogue = {
 		Recipe = function(recipeID)
 			return sources[recipeID]
+		end,
+		Quest = function(questID)
+			return questTitles[questID] and { title = questTitles[questID], side = "", starters = {} }
 		end,
 	},
 	WhenStale = function(_, drop)
@@ -40,6 +44,9 @@ local ns = {
 	OpenSkillLine = function()
 		return open
 	end,
+	PlayerSide = function()
+		return ({ Alliance = "A", Horde = "H" })[faction]
+	end,
 	PlayerProfessions = function()
 		return { [129] = { name = "First Aid" }, [182] = { name = "Herbalism" } }
 	end,
@@ -58,6 +65,9 @@ local env = setmetatable({
 	ARTISAN = "Artisan",
 	UnitLevel = function()
 		return level
+	end,
+	UnitFactionGroup = function()
+		return faction
 	end,
 	C_Spell = {
 		GetSpellName = function(id)
@@ -133,7 +143,7 @@ equal(ns.RouteBlocked(short), nil, "a plan with crafts isn't blocked")
 equal(ns.PlanRoute(FirstAid(1)), short, "the same skill and target is the same plan")
 equal(Plan(FirstAid(1), 100) ~= short, true, "an invalidated plan is planned again")
 equal(Plan(FirstAid(1), 0).target, 26, "no target, or one already reached, is 25 points on")
-equal(Plan(FirstAid(60), 300).target, 225, "a target stops at the last rank a trainer or book teaches")
+equal(Plan(FirstAid(60), 300).target, 300, "a target goes up to the last rank a trainer, book or quest teaches")
 
 -- A rank is trained between the crafts either side of the skill it needs.
 known[HEAVY], costs[HEAVY] = true, 1
@@ -191,7 +201,34 @@ equal(ns.RankText(book), "Read Expert First Aid - Under Wraps at 125", "a book i
 equal(ns.RankHeld(book), true, "and is held")
 equal(ns.PlanCost(capped), capped.cost - 10000, "so the route no longer pays for it")
 bags[UNDER_WRAPS] = nil
-equal(Plan(FirstAid(200, 0, 225), 300).target, 225, "Artisan comes from a quest the data can't name: the route stops")
+-- Artisan First Aid comes from Triage, one quest a side (classic-db quest_template, #121).
+local MAGEWEAVE, TRIAGE_A, TRIAGE_H = 10840, 6624, 6622
+known[MAGEWEAVE], costs[MAGEWEAVE] = true, 1
+local artisan = Plan(FirstAid(220, 0, 225), 250)
+equal(Kinds(artisan), "craft rank craft", "crafts, the quest, then crafts on")
+local quest = artisan.steps[2].rank
+equal(quest.name, "Artisan", "the rank is Artisan")
+equal(quest.quest, TRIAGE_A, "taught by the Alliance's Triage")
+equal(quest.cap, 300, "raising the cap to 300")
+equal(quest.reqSkill, 225, "at 225")
+equal(quest.level, 35, "from level 35")
+equal(quest.fee, 0, "for no fee")
+equal(artisan.reached, 250, "the route goes on past 225")
+level = 40
+equal(ns.RankText(quest), "Complete the Artisan quest at 225", "named by its rank without Questie")
+questTitles[TRIAGE_A] = "Triage"
+equal(ns.RankText(quest), "Complete Triage at 225", "then by QuestieDB's title")
+level = 20
+equal(ns.RankText(quest), "Complete Triage at 225 (level 35)", "with the level while below it")
+equal(
+	ns.NextCraft(Plan(FirstAid(225, 0, 225), 250)).reason,
+	"Complete Triage first: you're at your cap.",
+	"at the cap, the quest comes before crafting"
+)
+faction = "Horde"
+equal(Plan(FirstAid(220, 0, 225), 250).steps[2].rank.quest, TRIAGE_H, "the Horde take their own Triage")
+faction = "Alliance"
+known[MAGEWEAVE], costs[MAGEWEAVE], questTitles[TRIAGE_A] = nil, nil, nil
 known[HEAVY_WOOL], costs[HEAVY_WOOL], itemNames[UNDER_WRAPS] = nil, nil, nil
 
 -- Every reagent the crafts use, totalled, in the bucket its price puts it in.

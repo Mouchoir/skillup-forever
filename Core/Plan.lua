@@ -32,6 +32,14 @@ function ns.RankBookName(rank)
 	return string.format(L["the %s book"], rank.name)
 end
 
+-- What a rank's quest is called: its QuestieDB title, else "the Artisan quest" (without Questie, or until it is read).
+---@param rank SkillUpRank
+---@return string
+function ns.RankQuestName(rank)
+	local quest = rank.quest and ns.Catalogue and ns.Catalogue.Quest(rank.quest)
+	return quest and quest.title or string.format(L["the %s quest"], rank.name)
+end
+
 -- A rank's book already held (bags or bank, as ns.Have counts): only reading it is left, with nothing to buy.
 ---@param rank SkillUpRank
 ---@return boolean
@@ -65,6 +73,13 @@ function ns.RankText(rank)
 		end
 		return string.format(held and L["Read %s at %d"] or L["Buy and read %s at %d"], name, rank.reqSkill)
 	end
+	if rank.quest then
+		local name = ns.RankQuestName(rank)
+		if rank.level > UnitLevel("player") then
+			return string.format(L["Complete %s at %d (level %d)"], name, rank.reqSkill, rank.level)
+		end
+		return string.format(L["Complete %s at %d"], name, rank.reqSkill)
+	end
 	if rank.level > UnitLevel("player") then
 		return string.format(L["Train %s at %d (level %d)"], rank.name, rank.reqSkill, rank.level)
 	end
@@ -86,8 +101,9 @@ function ns.RouteProfessions()
 	return professions
 end
 
--- The ranks above the current cap, in order, and the highest cap they reach: a trainer's, else
--- a book's (Expert First Aid and Cooking). It stops at a gap: a rank that comes from a quest isn't known.
+-- The ranks above the current cap, in order, and the highest cap they reach: a trainer's, else a book's
+-- (Expert First Aid and Cooking), else a quest's your side can take (Artisan First Aid and Cooking). It stops
+-- at a gap.
 ---@param profession SkillUpContext
 ---@return SkillUpRank[]
 ---@return number
@@ -95,6 +111,17 @@ local function NextRanks(profession)
 	-- What a trainer was seen to charge for a rank, or a merchant for a book, wins over the bundled price.
 	local seen = ns.db.trainerRanks[profession.skillLine] or {}
 	local byCap = {}
+	local quests = ns.RankQuests and ns.RankQuests[profession.skillLine] or {}
+	local side = #quests > 0 and ns.PlayerSide and ns.PlayerSide()
+	for _, rank in ipairs(quests) do
+		local cap, quest, reqSkill, level, questSide = rank[1], rank[2], rank[3], rank[4], rank[5]
+		---@cast cap number
+		-- The generator already picked one quest a side for each rank.
+		if questSide == side then
+			byCap[cap] =
+				{ name = RANK_NAMES[cap], cap = cap, fee = 0, reqSkill = reqSkill, level = level, quest = quest }
+		end
+	end
 	for _, rank in ipairs(ns.RankBooks[profession.skillLine] or {}) do
 		local cap, book = rank[1], rank[2]
 		byCap[cap] = {
@@ -126,7 +153,7 @@ end
 
 -- The chosen target in base skill, per profession; the trainer plans to it too.
 -- A target already reached gives way to the default. Past the cap is fine up to
--- the last rank a trainer or book teaches; the route takes those ranks on the way.
+-- the last rank a trainer, book or quest teaches; the route takes those ranks on the way.
 ---@param profession SkillUpContext
 ---@return number
 local function RouteTarget(profession)
@@ -576,6 +603,7 @@ function ns.NextCraft(plan)
 	elseif profession.capped and plan.ranks[1] then
 		local rank = plan.ranks[1]
 		local reason = rank.book and string.format(L["Read %s first: you're at your cap."], ns.RankBookName(rank))
+			or rank.quest and string.format(L["Complete %s first: you're at your cap."], ns.RankQuestName(rank))
 			or string.format(L["Train %s first: you're at your cap."], rank.name)
 		return { text = L["Craft next"], reason = reason }
 	end

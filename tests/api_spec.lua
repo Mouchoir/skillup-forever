@@ -53,6 +53,8 @@ local c = Client.load({
 			[TELONIS] = { name = "Telonis", spawns = { [141] = { { 50, 50 } } }, side = "AH" },
 		},
 		areas = { [10] = 10, [141] = 11 },
+		-- A rank only a quest teaches (#121): the giver is QuestieDB's.
+		quests = { [7002] = { name = "Leather Lesson", races = 77, starts = { TELONIS } } },
 	},
 })
 local ns, API = c.ns, c.G.SkillUpForever.API
@@ -315,5 +317,30 @@ for _, step in ipairs(Tailoring().steps) do
 	end
 end
 equal(book and book.text, "Read Journeyman's Handbook at 70", "named once the item loads")
+
+-- Past Leatherworking's 150 cap, here no trainer or book teaches Expert: a quest does, one for each side.
+ns.RankQuests = { [165] = { { 225, 7002, 142, 0, "A" }, { 225, 7001, 142, 0, "H" } } }
+ns.db.routeTargets[165] = 170
+ns.Changed("target")
+local quest
+for _, entry in ipairs(API.Professions()) do
+	for _, step in ipairs(entry.skillLineID == 165 and entry.steps or {}) do
+		quest = quest or (step.questID and step)
+	end
+end
+equal(quest and quest.questID, 7002, "a rank from a quest names your side's quest")
+equal(quest and quest.kind, "train", "as a train step")
+equal(quest and quest.text, "Complete Leather Lesson at 142", "by QuestieDB's title")
+equal(quest and quest.detail, "Telonis, Darnassus", "at its nearest giver")
+equal(quest and quest.cost, nil, "for no fee")
+equal(quest and quest.nav, true, "who can be routed to")
+local lwRoute = ns.RouteProfessions()[165]
+local questRank
+for _, step in ipairs(ns.PlanRoute(lwRoute).steps) do
+	questRank = questRank or (step.rank and step.rank.quest and step.rank)
+end
+local giver, label = ns.NearestForRank(lwRoute, questRank)
+equal(giver, TELONIS, "the route page and tracker send you to the quest's giver")
+equal(label, "Quest giver", "labelled as such")
 
 Client.report("api_spec")

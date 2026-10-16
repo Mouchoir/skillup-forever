@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from gen_trainer import ROOT, SEEN_REQUIREMENTS, dump_tables, generate
+from gen_trainer import ROOT, SEEN_REQUIREMENTS, dump_tables, generate, rank_quests
 
 
 class DumpEncodingTests(unittest.TestCase):
@@ -106,3 +106,53 @@ class RequirementTests(unittest.TestCase):
             trainer = [self.trainer(10, order[0]), self.trainer(11, order[1]), self.trainer(13, 50)]
             _, _, _, inferred = generate({5}, trainer, effects, {5: -25})
             self.assertEqual(inferred, {5: 20})
+
+
+class RankQuestTests(unittest.TestCase):
+    # Issue #121: Artisan First Aid comes from Triage (one quest a side), Artisan Cooking from Clamlette Surprise.
+    EFFECTS = [
+        {"SpellID": "10846", "DifficultyID": "0", "Effect": "118", "EffectBasePoints": "3", "EffectMiscValue_0": "129"},
+        {"SpellID": "10847", "DifficultyID": "0", "Effect": "36", "EffectTriggerSpell": "10846"},
+        {"SpellID": "18260", "DifficultyID": "0", "Effect": "118", "EffectBasePoints": "3", "EffectMiscValue_0": "185"},
+        {"SpellID": "18261", "DifficultyID": "0", "Effect": "36", "EffectTriggerSpell": "18260"},
+        {"SpellID": "500", "DifficultyID": "0", "Effect": "36", "EffectTriggerSpell": "501"},
+    ]
+
+    @staticmethod
+    def quest(entry, spell, cast, races, skill="0", required="0", level="35"):
+        return {
+            "entry": str(entry),
+            "RewSpell": str(spell),
+            "RewSpellCast": str(cast),
+            "RequiredRaces": str(races),
+            "RequiredSkill": skill,
+            "RequiredSkillValue": required,
+            "MinLevel": level,
+        }
+
+    def test_quests_that_teach_a_rank(self):
+        quests = [
+            self.quest(6624, 10846, 10847, 77, "129", "225"),
+            self.quest(6622, 0, 10847, 178, "129", "225"),
+            self.quest(6610, 18260, 0, 255, "185", "225"),
+            # A reward spell that teaches no rank, and a quest with none, are not rank quests.
+            self.quest(7000, 500, 0, 0),
+            self.quest(7001, 0, 0, 0),
+        ]
+        self.assertEqual(
+            rank_quests(quests, self.EFFECTS),
+            {
+                129: [(300, 6624, 225, 35, "A"), (300, 6622, 225, 35, "H")],
+                185: [(300, 6610, 225, 35, "A"), (300, 6610, 225, 35, "H")],
+            },
+        )
+
+    def test_the_quest_asking_least_wins_per_side(self):
+        quests = [self.quest(9001, 18260, 0, 0, "185", "250"), self.quest(9000, 0, 18261, 77, "185", "225")]
+        self.assertEqual(
+            rank_quests(quests, self.EFFECTS), {185: [(300, 9000, 225, 35, "A"), (300, 9001, 250, 35, "H")]}
+        )
+
+    def test_a_requirement_at_the_cap_is_refused(self):
+        with self.assertRaises(ValueError):
+            rank_quests([self.quest(1, 18260, 0, 0, "185", "300")], self.EFFECTS)

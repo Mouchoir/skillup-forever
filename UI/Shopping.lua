@@ -442,6 +442,7 @@ function ModuleMixin:OnBlockHeaderClick(block)
 		local npc = first and first.nearest()
 		if npc then
 			local label = first.book and string.format(L["Waypoint to a vendor: %s"], first.book)
+				or first.quest and string.format(L["Waypoint to the quest giver: %s"], first.quest)
 				or L["Waypoint to a trainer"]
 			root:CreateButton(label, function()
 				ns.SetWaypoint((first.nearest(true)) or npc)
@@ -501,6 +502,7 @@ local function TrainingSteps(plan)
 			steps[#steps + 1] = {
 				text = ns.RankText(rank),
 				book = rank.book and ns.RankBookName(rank),
+				quest = rank.quest and ns.RankQuestName(rank),
 				nearest = function(byTravel)
 					return ns.NearestForRank(profession, rank, byTravel)
 				end,

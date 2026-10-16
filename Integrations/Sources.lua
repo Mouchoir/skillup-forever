@@ -9,10 +9,16 @@ local L = ns.L
 local C = ns.Catalogue
 local FACTION_CODES = { Alliance = "A", Horde = "H" }
 
+-- This character's side as the data writes it, "A" or "H"; nil while the client doesn't say.
+---@return 'A'|'H'|nil
+function ns.PlayerSide()
+	return FACTION_CODES[UnitFactionGroup("player") or ""]
+end
+
 ---@param faction string?
 ---@return boolean
 local function OurFaction(faction)
-	return faction == "" or (faction ~= nil and faction == FACTION_CODES[UnitFactionGroup("player")])
+	return faction == "" or (faction ~= nil and faction == ns.PlayerSide())
 end
 
 -- Whether this character can deal with the NPC: one hostile to both sides, or unknown, trades with nobody.
@@ -115,7 +121,7 @@ function ns.SeeVendor(itemIDs)
 	if not (npcID and name and where) then
 		return false
 	end
-	local side = FACTION_CODES[UnitFactionGroup("player")]
+	local side = ns.PlayerSide()
 	return C.SawVendor(
 		npcID,
 		{ name = name, side = side, map = where.map, x = where.x, y = where.y, items = {} },
@@ -422,8 +428,8 @@ function ns.NearestTrainer(profession, cap, byTravel)
 	return ns.NearestNPC(C.Trainers(profession.skillLine, cap), byTravel)
 end
 
--- Where a rank is got: the nearest vendor of its book, else the nearest trainer teaching it, and the
--- tooltip label for that NPC.
+-- Where a rank is got: the nearest vendor of its book, the nearest giver of its quest, else the nearest trainer
+-- teaching it, and the tooltip label for that NPC.
 ---@param profession SkillUpContext
 ---@param rank SkillUpRank
 ---@param byTravel boolean?
@@ -433,6 +439,10 @@ function ns.NearestForRank(profession, rank, byTravel)
 	if rank.book then
 		-- A book you already have is not bought again.
 		return not ns.RankHeld(rank) and ns.NearestVendor(rank.book, byTravel) or nil, L["Nearest vendor"]
+	end
+	if rank.quest then
+		local quest = C.Quest(rank.quest)
+		return quest and ns.NearestNPC(quest.starters, byTravel) or nil, L["Quest giver"]
 	end
 	return ns.NearestTrainer(profession, rank.cap, byTravel), L["Nearest trainer"]
 end

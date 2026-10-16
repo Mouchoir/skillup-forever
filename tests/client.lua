@@ -23,7 +23,7 @@ local function noop() end
 -- database's data. `db` is what it knows, and a spec may change it between reads:
 --   items = { [id] = { vendors, quests, drops, class, teaches } }
 --   npcs = { [id] = { name, spawns = { [area] = { { x, y } } }, zone, side } }, side "A", "H", "AH" or nil
---   quests = { [id] = { name, races } }
+--   quests = { [id] = { name, races, starts } }, starts the NPCs who give it
 --   areas = { [area] = uiMapID }, parents = { [area] = parent area }; contract (2 unless set); a field
 --   named in `without` is left out of the schema. `db.reads` counts the records read.
 function Client.QuestieDB(db)
@@ -76,7 +76,7 @@ function Client.QuestieDB(db)
 		Meta = {
 			ItemMeta = { itemKeys = Keys({ "vendors", "questRewards", "npcDrops", "class", "teachesSpell" }) },
 			NpcMeta = { npcKeys = Keys({ "name", "spawns", "zoneID", "friendlyToFaction" }) },
-			QuestMeta = { questKeys = Keys({ "name", "requiredRaces" }) },
+			QuestMeta = { questKeys = Keys({ "name", "startedBy", "requiredRaces" }) },
 		},
 		Support = {
 			Get = function(name)
@@ -103,6 +103,9 @@ function Client.QuestieDB(db)
 		Quest = Entity(function()
 			return db.quests or {}
 		end, function(row, field)
+			if field == "startedBy" then
+				return { row.starts }
+			end
 			return row[quest[field]]
 		end),
 	}

@@ -107,6 +107,9 @@ publishes it as the notes.
   dungeon bosses; AtlasLoot's rate replaces the bundled one where it has one.
 - WFA-28: which gathering skill yields a reagent (`ns.GatheredBy`): CMaNGOS classic-db node and skinning loot,
   neither database ties an item to a gathering skill.
+- WFA-28: the quest that teaches a profession rank (its reward spell, `ns.RankQuests`): CMaNGOS classic-db
+  `quest_template` RewSpell/RewSpellCast; neither the client nor QuestieDB links a quest to the spell it rewards.
+  The quest's title and giver are QuestieDB's (owner decision 2026-10-16, delegated).
 - WFA-28: a gathering node's required skill (`ns.NodeSkills`): CMaNGOS classic-db `gameobject_template` lock with
   the client's `Lock` DB2; neither database ties a node to a lock (owner decision 2026-10-15).
 

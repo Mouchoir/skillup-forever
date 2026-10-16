@@ -12,9 +12,15 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+- **First Aid and Cooking routes go to 300.** Artisan First Aid and Artisan Cooking come from a quest, not a trainer: Triage for First Aid, with one quest for each side, and Clamlette Surprise for Cooking, both at 225 and level 35. The route now adds that step, "Complete Triage at 225", points you to the quest giver, and carries on past 225 instead of stopping. The quest's name and giver come from Questie; without it the step says "the Artisan quest".
+
 - **SkillUp lets go of the quest tracker when it has nothing to show.** To fit the Forever sections above your quests, SkillUp moves the game's quest tracker. It kept holding it there with no route tracked, *Show tracked professions* off or All Objectives collapsed. Now the tracker goes straight back to where the game, Edit Mode or your UI addon put it, and SkillUp moves it again only once a section has something to show. Thanks to chuujitsuna and another player on CurseForge, who found it stuck mid-screen or over the minimap.
 
 - **Bronze Warhammer is trained by 110.** A player made it at 110 on Forever, where SkillUp's data still asked for Classic's 125, so routes put it off until 125. It now plans it from 110, and `/su trainers` lists it among the guesses a trainer visit confirms. Heavy Sharpening Stone (100) and Patterned Bronze Bracers (95), from the same report, were already right. Thanks to kopuliak.
+
+### For addon authors
+
+- **A rank taught by a quest is a `train` step with a `questID` in `SkillUpForever.API.Professions()`.** It has no cost, and `Navigate` goes to the quest giver. The API version stays 1.
 
 ## [0.11.0] - 2026-10-15
 

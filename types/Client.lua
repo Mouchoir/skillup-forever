@@ -246,6 +246,7 @@ C_Trainer = {}
 ---@class SkillUpTrackerStep
 ---@field text string
 ---@field book string|false|nil A rank's book, by name: got at a vendor, not a trainer.
+---@field quest string|false|nil A rank's quest, by name: got from its giver, not a trainer.
 ---@field nearest fun(byTravel: boolean?): integer?, string The NPC to go to, and its tooltip label.
 
 ---@class SkillUpTrackerBlock : Frame
