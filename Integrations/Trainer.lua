@@ -143,7 +143,8 @@ local function BuildState(services)
 end
 
 -- Every bundled trainer requirement a trainer could prove wrong (#124): those moved from classic-db's by how far
--- Forever moved the recipe's range, and any a trainer showed differently. `shown` is what a trainer showed, nil
+-- Forever moved the recipe's range or down to where players made it (SEEN_REQUIREMENTS in tools/gen_trainer.py),
+-- and any a trainer showed differently. `shown` is what a trainer showed, nil
 -- until this character's profession trainer has been opened since this was recorded; `visited` is whether a
 -- trainer listed the recipe at all.
 ---@return SkillUpTrainerCheck[]

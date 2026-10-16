@@ -1,11 +1,12 @@
 """Reject source decoding errors instead of changing generated names."""
 
 import gzip
+import re
 import tempfile
 import unittest
 from pathlib import Path
 
-from gen_trainer import dump_tables, generate
+from gen_trainer import ROOT, SEEN_REQUIREMENTS, dump_tables, generate
 
 
 class DumpEncodingTests(unittest.TestCase):
@@ -54,6 +55,31 @@ class RequirementTests(unittest.TestCase):
         self.assertEqual(fees[3], (900, 1))
         # Issue #124: a moved requirement keeps classic-db's, so a trainer visit can confirm or correct it.
         self.assertEqual(inferred, {2674: 125, 3: 10})
+
+    # Issue #123: a player made Bronze Warhammer at 110 on Forever, where classic-db (unmoved) says 125.
+    def test_a_requirement_players_saw_lower_comes_down(self):
+        effects = [
+            {"SpellID": str(teach), "DifficultyID": "0", "Effect": "36", "EffectTriggerSpell": str(taught)}
+            for teach, taught in ((10, 9985), (11, 2674), (13, 99))
+        ]
+        effects.append(
+            {"SpellID": "99", "DifficultyID": "0", "Effect": "118", "EffectBasePoints": "1", "EffectMiscValue_0": "164"}
+        )
+        trainer = [self.trainer(10, 125), self.trainer(11, 125), self.trainer(13, 50)]
+        fees, _, _, inferred = generate({9985, 2674}, trainer, effects, {2674: -25}, {9985: 110, 2674: 105})
+        self.assertEqual(fees[9985], (900, 110))
+        # A lower requirement the rule already gives is never raised to what players saw.
+        self.assertEqual(fees[2674], (900, 100))
+        # It is still a guess: /su trainers lists it with classic-db's number for a trainer to confirm.
+        self.assertEqual(inferred, {9985: 125, 2674: 125})
+
+    # The bundled data keeps what players saw: every SEEN_REQUIREMENTS recipe at or below its value, never below 1.
+    def test_bundled_requirements_players_saw_lower_hold(self):
+        text = (ROOT / "Data" / "Trainer.lua").read_text(encoding="utf-8")
+        for recipe, most in SEEN_REQUIREMENTS.items():
+            row = re.search(rf"\n\t\[{recipe}\] = {{ \d+, (\d+) }},", text)
+            self.assertIsNotNone(row, recipe)
+            self.assertTrue(1 <= int(row.group(1)) <= most, recipe)
 
     def test_unmoved_zero_requirement_is_not_inferred(self):
         effects = [
