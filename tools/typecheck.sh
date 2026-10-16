@@ -29,6 +29,7 @@ python3 tools/lint_multivalue.py
 python3 tools/lint_art.py
 python3 tools/lint_secret.py
 python3 tools/check_editorconfig.py
+python3 tools/check_family.py
 # A fresh output path prevents a crashed server from reusing an earlier clean report.
 report_dir=$(mktemp -d)
 trap 'rm -rf "$report_dir"' EXIT
