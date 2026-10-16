@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Check the packager's output before an upload (forever_tools.package): every file the TOC and XML load ships,
-nothing from development does, LICENSE and THIRD_PARTY.md do (with README's `## Credits` and THIRD_PARTY's
+nothing from development does, a licence file and THIRD_PARTY.md do (with README's `## Credits` and THIRD_PARTY's
 `## Ideas and contributors`, WFA-10 and WFA-31), and every spec that runs the addon passes on the packaged files.
 
     printf 'Package check\\n' > .release-notes.md
