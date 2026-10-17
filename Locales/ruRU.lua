@@ -159,8 +159,6 @@ L["No crafted gear for your level and class yet."] =
 	"Пока нет созданного снаряжения для вашего уровня и класса."
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
 	"Пока нет снаряжения, которое вы можете создать. Отметьте флажок выше, чтобы видеть то, что вы создать не можете."
-L["No more secret-number errors on recipe tooltips."] =
-	"Больше никаких ошибок секретных чисел в подсказках рецептов."
 L["No skill data for this recipe yet."] =
 	"Для этого рецепта пока нет данных о навыке."
 L["No trainer teaches this rank: a book does."] =
@@ -293,6 +291,8 @@ L["Suggest my other Forever addons"] = "Предлагать другие мои
 L["Taught by %s trainers."] = "Обучают учителя (%s)."
 L["The place this recipe is taught isn't known yet."] =
 	"Где обучают этому рецепту, пока неизвестно."
+L["The recipe tooltip moves beside the Professions window, clear of the reagents."] =
+	"Подсказка рецепта теперь появляется рядом с окном профессий и не закрывает реагенты."
 L["The rest comes from a vendor or your gathering."] =
 	"Остальное — от торговца или из вашей добычи."
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =

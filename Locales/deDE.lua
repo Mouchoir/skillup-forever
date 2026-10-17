@@ -151,7 +151,6 @@ L["Next to the recipe"] = "Neben dem Rezept"
 L["No crafted gear for your level and class yet."] = "Noch keine hergestellte Ausrüstung für Eure Stufe und Klasse."
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
 	"Noch keine Ausrüstung, die Ihr herstellen könnt. Setzt oben das Häkchen, um Ausrüstung zu sehen, die Ihr nicht herstellen könnt."
-L["No more secret-number errors on recipe tooltips."] = "Keine Fehler mit geheimen Zahlen mehr in Rezept-Tooltips."
 L["No skill data for this recipe yet."] = "Noch keine Fertigkeitsdaten für dieses Rezept."
 L["No trainer teaches this rank: a book does."] = "Kein Lehrer lehrt diesen Rang: ein Buch."
 L["No trainer teaches this rank: a quest does."] = "Kein Lehrer lehrt diesen Rang: eine Quest."
@@ -275,6 +274,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 L["Suggest my other Forever addons"] = "Meine anderen Forever-Addons vorschlagen"
 L["Taught by %s trainers."] = "Gelehrt von Lehrern für %s."
 L["The place this recipe is taught isn't known yet."] = "Wo dieses Rezept gelehrt wird, ist noch unbekannt."
+L["The recipe tooltip moves beside the Professions window, clear of the reagents."] =
+	"Der Rezept-Tooltip erscheint jetzt neben dem Berufsfenster und verdeckt die Reagenzien nicht mehr."
 L["The rest comes from a vendor or your gathering."] = "Der Rest kommt von einem Händler oder aus Eurem Sammeln."
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
 	"Die Route rechnet mit %d, um in 9 von 10 Fällen %d zu erreichen; mit weniger Glück braucht Ihr mehr."

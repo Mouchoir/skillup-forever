@@ -154,8 +154,6 @@ L["Next to the recipe"] = "제조법 옆"
 L["No crafted gear for your level and class yet."] = "아직 레벨과 직업에 맞는 제작 장비가 없습니다."
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
 	"아직 만들 수 있는 장비가 없습니다. 만들 수 없는 장비를 보려면 위의 상자를 선택하세요."
-L["No more secret-number errors on recipe tooltips."] =
-	"제조법 툴팁에서 비밀 숫자 오류가 더 이상 나지 않습니다."
 L["No skill data for this recipe yet."] = "이 제조법의 숙련도 정보가 아직 없습니다."
 L["No trainer teaches this rank: a book does."] = "이 단계는 전문가가 아닌 책으로 배웁니다."
 L["No trainer teaches this rank: a quest does."] = "이 단계는 전문가가 아닌 퀘스트로 배웁니다."
@@ -281,6 +279,8 @@ L["Suggest my other Forever addons"] = "제 다른 Forever 애드온 추천"
 L["Taught by %s trainers."] = "%s 기술 전문가가 가르칩니다."
 L["The place this recipe is taught isn't known yet."] =
 	"이 제조법을 배우는 곳은 아직 알려지지 않았습니다."
+L["The recipe tooltip moves beside the Professions window, clear of the reagents."] =
+	"제조법 툴팁이 이제 전문 기술 창 옆에 나타나 재료를 가리지 않습니다."
 L["The rest comes from a vendor or your gathering."] = "나머지는 상인이나 채집으로 얻습니다."
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
 	"경로는 %d개로 10번 중 9번은 %d에 도달한다고 봅니다. 운이 나쁘면 더 필요합니다."

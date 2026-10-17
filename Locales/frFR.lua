@@ -155,8 +155,6 @@ L["No crafted gear for your level and class yet."] =
 	"Pas encore d'équipement fabriqué pour votre niveau et votre classe." -- mt
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
 	"Pas encore d'équipement que vous pouvez fabriquer. Cochez la case ci-dessus pour voir celui que vous ne pouvez pas fabriquer." -- mt
-L["No more secret-number errors on recipe tooltips."] =
-	"Fini les erreurs de nombres secrets dans les infobulles de recettes." -- mt
 L["No skill data for this recipe yet."] = "Pas encore de données de compétence pour cette recette." -- mt
 L["No trainer teaches this rank: a book does."] = "Aucun maître n'enseigne ce rang : un livre le fait." -- mt
 L["No trainer teaches this rank: a quest does."] = "Aucun maître n'enseigne ce rang : une quête le fait." -- mt
@@ -281,6 +279,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 L["Suggest my other Forever addons"] = "Suggérer mes autres addons Forever" -- mt
 L["Taught by %s trainers."] = "Enseignée par les maîtres de métier (%s)." -- mt
 L["The place this recipe is taught isn't known yet."] = "On ne sait pas encore où cette recette est enseignée." -- mt
+L["The recipe tooltip moves beside the Professions window, clear of the reagents."] =
+	"L'infobulle des recettes s'affiche maintenant à côté de la fenêtre des métiers, sans cacher les composants." -- mt
 L["The rest comes from a vendor or your gathering."] = "Le reste vient d'un marchand ou de votre récolte." -- mt
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
 	"Le parcours compte %d pour atteindre %d 9 fois sur 10 ; avec moins de chance, il en faut plus." -- mt

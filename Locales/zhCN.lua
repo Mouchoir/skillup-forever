@@ -150,7 +150,6 @@ L["Next to the recipe"] = "配方旁边"
 L["No crafted gear for your level and class yet."] = "暂无适合你等级和职业的制造装备。"
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
 	"暂无你能制造的装备。勾选上方的选项以查看你不能制造的装备。"
-L["No more secret-number errors on recipe tooltips."] = "配方提示不再出现秘密数值错误。"
 L["No skill data for this recipe yet."] = "此配方暂无技能数据。"
 L["No trainer teaches this rank: a book does."] = "没有训练师教授此等级：需要书籍。"
 L["No trainer teaches this rank: a quest does."] = "没有训练师教授此等级：需要任务。"
@@ -271,6 +270,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 L["Suggest my other Forever addons"] = "推荐我的其他Forever插件"
 L["Taught by %s trainers."] = "由%s训练师教授。"
 L["The place this recipe is taught isn't known yet."] = "尚不清楚在哪里学习此配方。"
+L["The recipe tooltip moves beside the Professions window, clear of the reagents."] =
+	"配方提示现在显示在专业窗口旁边，不再挡住材料。"
 L["The rest comes from a vendor or your gathering."] = "其余来自商人或你的采集。"
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
 	"路线按%d个计算，十次中有九次能达到%d；运气差时需要更多。"

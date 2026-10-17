@@ -12,6 +12,8 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-10-17
+
 - **The recipe tooltip moves beside the Professions window, clear of the reagents.** It used to open next to the recipe you hovered, over the recipe's details and its reagent list. It now opens to the right of the window, past its side tabs. *Recipe tooltip position* (Settings, Recipe rows) puts it at the cursor or back next to the recipe instead. Thanks to ballara for the idea.
 
 - **No more secret-number errors on recipe tooltips.** Hovering a recipe could raise "attempt to perform arithmetic on a secret number value" in the game's tooltip code, hundreds of times a session, blamed on SkillUp. The recipe tooltip asked that code to fit its skill bar in, and it measures the tooltip, which the game now keeps secret from addons. The tooltip now makes room for the bar itself and reads nothing back. Thanks to syrberus, kopuliak and chuujitsuna for the reports.
