@@ -93,14 +93,15 @@ function ns.AuctionatorAutoscan()
 	return nil
 end
 
--- The auction house reagents a route still needs: what no vendor sells and this character buys.
+-- The auction house reagents a route still needs: what no vendor sells and this character buys. Written only
+-- with Buy reagents on, where a material you gather shows as gathered only while nothing prices it.
 ---@param items SkillUpNeededItem[]
 ---@return SkillUpShoppingItem[]
 local function MissingFromAuction(items)
 	local missing = {}
 	for _, item in ipairs(items) do
 		local count = item.need - ns.Have(item.itemID)
-		if (item.source == "auction" or item.source == "unknown") and count > 0 then
+		if (item.source == "auction" or item.source == "unknown" or item.source == "gather") and count > 0 then
 			missing[#missing + 1] = { itemID = item.itemID, count = count }
 		end
 	end

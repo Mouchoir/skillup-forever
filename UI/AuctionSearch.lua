@@ -47,7 +47,9 @@ function ns.ReagentShortfall(recipeID, count)
 	for _, reagent in ipairs(ns.Reagents(recipeID) or {}) do
 		local missing = reagent.quantity * count - ns.Have(reagent.itemID)
 		local source = ns.PriceSource(reagent.itemID)
-		if missing > 0 and (source == nil or AUCTION_SOURCES[source]) then
+		-- With Buy reagents on, a material you gather is priced as gathered only while nothing prices it: search it.
+		local buying = source == "gather" and ns.CollectMode() == "auction"
+		if missing > 0 and (source == nil or AUCTION_SOURCES[source] or buying) then
 			short[#short + 1] = { itemID = reagent.itemID, count = missing }
 		elseif missing > 0 then
 			elsewhere = elsewhere + 1

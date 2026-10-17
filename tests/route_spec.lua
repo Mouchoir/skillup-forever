@@ -286,6 +286,17 @@ equal(
 	"Nothing on this route is yours to gather, so the switch changes nothing for it.",
 	"the disabled switch's tooltip says why"
 )
+-- Turned on, the switch stays enabled even on a route with nothing to gather, so it can always be turned off
+-- again (#162: it stuck on, disabled, once every recipe was left out of the route).
+page.collectMode = "auction"
+routeTab:Click()
+equal(collect.enabled, true, "a switch that is on stays enabled")
+equal(collect.checked, true, "and shows on")
+collect:Click()
+equal(page.collectMode, "gather", "so a click turns it off")
+routeTab:Click()
+equal(collect.enabled, false, "and off, with nothing to gather, it is disabled again")
+page.collectMode = nil
 equal(routeTab.checked, true, "opening the route selects its tab")
 eventFrame:Event("SKILL_LINES_CHANGED")
 routeTab:SetChecked(false) -- Blizzard handles the same event after the addon.

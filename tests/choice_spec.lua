@@ -88,9 +88,20 @@ c.auction[ORE] = 100
 ns.SetCollectMode("auction")
 equal(ns.Price(ORE).source, "auctionator", "Buy reagents buys gathered materials at the auction house")
 equal(ns.Price(ORE).copper, 100, "at the full auction price")
-ns.SetCollectMode("gather")
+
+-- With nothing to buy it at, ore this character mines is still priced as gathered, so turning Buy reagents on
+-- never leaves the recipes that use it out of the route (#162).
+c.auction[ORE] = nil
+c.AuctionatorScan()
+equal(ns.Price(ORE).source, "gather", "Buy reagents with no price for the ore: it is gathered")
+equal(ns.Price(ORE).copper, 5, "valued at what it sells for, with Value gathered materials on")
 c.SetSetting("valueGathered", false)
+equal(ns.Price(ORE).copper, 0, "and free with it off")
+equal(Plan().crafts[1].recipeID, FROM_ORE, "so the route still crafts from it")
+ns.SetCollectMode("gather")
 equal(ns.Price(ORE).copper, 0, "off again, gathering is free")
+c.auction[ORE] = 100
+c.AuctionatorScan()
 
 --[[ Not this recipe ]]
 

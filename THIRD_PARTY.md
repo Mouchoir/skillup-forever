@@ -46,6 +46,7 @@ Credit for the ideas and reports behind the addon.
 | kopuliak, on CurseForge | Found recipes Forever lets you make earlier than Classic, such as Bronze Warhammer at 110 (#107, #123), the secret-number error on item tooltips (0.10.0) and on recipe tooltips (0.16.0); asked to hide tracked professions (0.9.0) and for Auctionator's latest price (0.9.1) | |
 | chuujitsuna, on CurseForge | Found the quest tracker stuck mid-screen while SkillUp held it (#136), and confirmed the secret-number error, on item and recipe tooltips (#161) | |
 | berserkerlxl, on CurseForge | Asked to value gathered materials at what they'd sell for (0.10.0) | |
+| kurila11478, on CurseForge | Found *Buy reagents* stuck on with an empty route (#162, 0.16.0) | |
 | syrberus, on CurseForge | Reported the secret-number error on recipe tooltips, with the full error (#161, 0.16.0) | |
 
 Thanks also to everyone else who reported a bug or asked for a feature, here or on CurseForge.

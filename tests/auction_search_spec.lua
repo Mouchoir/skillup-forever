@@ -73,6 +73,20 @@ equal(#short, 2, "both auction reagents are short for four, and the vendor's sal
 equal(elsewhere, 1, "the salt is counted as short elsewhere")
 equal(short[1].itemID == LINEN and short[1].count, 3, "eight linen, less the five you hold")
 equal(short[2].itemID == THREAD and short[2].count, 4, "four thread")
+-- A material this character gathers is left out while it gathers; with Buy reagents on and nothing pricing it,
+-- it is priced as gathered so the route keeps it (#162), and still searched for.
+ns.GatheredBy[THREAD] = 186
+c.professions[2] = { name = "Mining", rank = 1, max = 75, id = 186 }
+c.Fire("SKILL_LINES_CHANGED")
+ns.Changed("prices")
+equal(#ns.ReagentShortfall(HEAVY, 4), 1, "thread this character gathers is not searched")
+ns.SetCollectMode("auction")
+equal(ns.PriceSource(THREAD), "gather", "with Buy reagents on and no price, it is priced as gathered")
+equal(#ns.ReagentShortfall(HEAVY, 4), 2, "but searched for")
+ns.SetCollectMode("gather")
+ns.GatheredBy[THREAD], c.professions[2] = nil, nil
+c.Fire("SKILL_LINES_CHANGED")
+ns.Changed("prices")
 c.bags[THREAD] = 10
 equal(#ns.ReagentShortfall(HEAVY, 4), 1, "thread you already hold is not searched")
 

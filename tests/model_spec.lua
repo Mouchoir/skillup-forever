@@ -497,7 +497,15 @@ do
 		return "auction"
 	end
 	runtime.Changed("prices")
-	equal(runtime.PriceSource(5), nil, "auction mode buys a gathered reagent instead of pricing it free")
+	equal(
+		runtime.PriceSource(5),
+		"gather",
+		"auction mode with nothing to buy a gathered reagent at still prices it as gathered"
+	)
+	runtime.db.vendor[5] = 7
+	runtime.Changed("prices")
+	equal(runtime.PriceSource(5), "vendor", "auction mode buys a gathered reagent where it can be bought")
+	runtime.db.vendor[5] = nil
 end
 
 print("model_spec: " .. checks .. " checks passed; " .. rows .. " generated thresholds validated")

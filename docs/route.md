@@ -70,7 +70,7 @@ Beside the route is every reagent it needs, one row each: a full icon, the name 
 
 ### Gathered reagents
 
-*Buy reagents* in the route page chooses where a reagent another of your professions could gather comes from: off, it costs nothing, so the route uses it and the list says *gather*; on, it is bought and priced at a vendor or the auction house like any other reagent. The choice is saved for this character. When the route has nothing your professions gather, the switch is disabled and its tooltip says so.
+*Buy reagents* in the route page chooses where a reagent another of your professions could gather comes from: off, it costs nothing, so the route uses it and the list says *gather*; on, it is bought and priced at a vendor or the auction house like any other reagent. One that neither has a price for (no Auctionator, or an auction house it hasn't scanned) is still priced as gathered, so the route keeps the recipes that use it, and it stays on the Auctionator list and in the auction house search. The choice is saved for this character. When the route has nothing your professions gather, the switch is disabled and its tooltip says so, but never while it is on, so you can always turn it off.
 
 Gathering is free time, but the materials are not: you could sell them instead. Turn on *Value gathered materials at what they'd sell for* (Settings, Prices) and a gathered material, with *Buy reagents* off, costs what selling it would bring: its Auctionator price after the auction house's 5% cut, or its vendor sell price if that is more. The route then weighs that cost like any other, so it leaves valuable ore for a vendor-reagent recipe when that is cheaper, and the reagent's tooltip says which price it used. A material with neither price stays free.
 

@@ -690,9 +690,11 @@ local function CollectChanges(reagents)
 	return false
 end
 
--- Grey the label with the box, so a switch that changes nothing reads as off.
+-- Grey the label with the box, so a switch that changes nothing reads as off. A switch that is on always stays
+-- enabled, so it can be turned off again (#162).
 ---@param enabled boolean
 local function SetCollectEnabled(enabled)
+	enabled = enabled or ns.CollectMode() == "auction"
 	page.Collect:SetEnabled(enabled)
 	page.CollectLabel:SetTextColor((enabled and NORMAL_FONT_COLOR or GRAY_FONT_COLOR):GetRGB())
 end
