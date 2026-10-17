@@ -279,14 +279,14 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 L["Suggest my other Forever addons"] = "Suggérer mes autres addons Forever" -- mt
 L["Taught by %s trainers."] = "Enseignée par les maîtres de métier (%s)." -- mt
 L["The place this recipe is taught isn't known yet."] = "On ne sait pas encore où cette recette est enseignée." -- mt
-L["The recipe tooltip moves beside the Professions window, clear of the reagents."] =
-	"L'infobulle des recettes s'affiche maintenant à côté de la fenêtre des métiers, sans cacher les composants." -- mt
 L["The rest comes from a vendor or your gathering."] = "Le reste vient d'un marchand ou de votre récolte." -- mt
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
 	"Le parcours compte %d pour atteindre %d 9 fois sur 10 ; avec moins de chance, il en faut plus." -- mt
 L["The source of this recipe isn't known."] = "La source de cette recette est inconnue." -- mt
 L["The text is selected. Press Ctrl+C (Cmd+C on a Mac) to copy it, then paste it into your bug report."] =
 	"Le texte est sélectionné : Ctrl+C (Cmd+C sur Mac) pour le copier, puis collez-le dans votre rapport de bug." -- mt
+L["The tracker sections now move clear of Questie's quest list."] =
+	"Les sections du suivi s'écartent désormais de la liste de quêtes de Questie." -- mt
 L["These reagents have no vendor price. Auction prices need Auctionator."] =
 	"Ces composants n'ont pas de prix chez les marchands. Les prix aux enchères nécessitent Auctionator." -- mt
 L["This addon"] = "Cet addon" -- mt

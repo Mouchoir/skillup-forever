@@ -291,8 +291,6 @@ L["Suggest my other Forever addons"] = "Предлагать другие мои
 L["Taught by %s trainers."] = "Обучают учителя (%s)."
 L["The place this recipe is taught isn't known yet."] =
 	"Где обучают этому рецепту, пока неизвестно."
-L["The recipe tooltip moves beside the Professions window, clear of the reagents."] =
-	"Подсказка рецепта теперь появляется рядом с окном профессий и не закрывает реагенты."
 L["The rest comes from a vendor or your gathering."] =
 	"Остальное — от торговца или из вашей добычи."
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
@@ -300,6 +298,8 @@ L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] 
 L["The source of this recipe isn't known."] = "Источник этого рецепта неизвестен."
 L["The text is selected. Press Ctrl+C (Cmd+C on a Mac) to copy it, then paste it into your bug report."] =
 	"Текст выделен. Нажмите Ctrl+C (Cmd+C на Mac), чтобы скопировать его, и вставьте в сообщение об ошибке."
+L["The tracker sections now move clear of Questie's quest list."] =
+	"Разделы отслеживания теперь не перекрываются списком заданий Questie."
 L["These reagents have no vendor price. Auction prices need Auctionator."] =
 	"У этих реагентов нет цены у торговца. Для цен аукциона нужен Auctionator."
 L["This addon"] = "Эта модификация"

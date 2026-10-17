@@ -274,14 +274,14 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 L["Suggest my other Forever addons"] = "Meine anderen Forever-Addons vorschlagen"
 L["Taught by %s trainers."] = "Gelehrt von Lehrern für %s."
 L["The place this recipe is taught isn't known yet."] = "Wo dieses Rezept gelehrt wird, ist noch unbekannt."
-L["The recipe tooltip moves beside the Professions window, clear of the reagents."] =
-	"Der Rezept-Tooltip erscheint jetzt neben dem Berufsfenster und verdeckt die Reagenzien nicht mehr."
 L["The rest comes from a vendor or your gathering."] = "Der Rest kommt von einem Händler oder aus Eurem Sammeln."
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
 	"Die Route rechnet mit %d, um in 9 von 10 Fällen %d zu erreichen; mit weniger Glück braucht Ihr mehr."
 L["The source of this recipe isn't known."] = "Die Quelle dieses Rezepts ist unbekannt."
 L["The text is selected. Press Ctrl+C (Cmd+C on a Mac) to copy it, then paste it into your bug report."] =
 	"Der Text ist markiert. Drückt Strg+C (Cmd+C auf dem Mac) zum Kopieren und fügt ihn dann in Euren Fehlerbericht ein."
+L["The tracker sections now move clear of Questie's quest list."] =
+	"Die Trackerabschnitte weichen jetzt der Questliste von Questie aus."
 L["These reagents have no vendor price. Auction prices need Auctionator."] =
 	"Diese Reagenzien haben keinen Händlerpreis. Auktionspreise brauchen Auctionator."
 L["This addon"] = "Dieses Addon"

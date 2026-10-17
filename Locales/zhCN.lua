@@ -270,14 +270,14 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 L["Suggest my other Forever addons"] = "推荐我的其他Forever插件"
 L["Taught by %s trainers."] = "由%s训练师教授。"
 L["The place this recipe is taught isn't known yet."] = "尚不清楚在哪里学习此配方。"
-L["The recipe tooltip moves beside the Professions window, clear of the reagents."] =
-	"配方提示现在显示在专业窗口旁边，不再挡住材料。"
 L["The rest comes from a vendor or your gathering."] = "其余来自商人或你的采集。"
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
 	"路线按%d个计算，十次中有九次能达到%d；运气差时需要更多。"
 L["The source of this recipe isn't known."] = "此配方的来源未知。"
 L["The text is selected. Press Ctrl+C (Cmd+C on a Mac) to copy it, then paste it into your bug report."] =
 	"文本已选中。按Ctrl+C（Mac上为Cmd+C）复制，然后粘贴到你的错误报告中。"
+L["The tracker sections now move clear of Questie's quest list."] =
+	"追踪栏现在会避开 Questie 的任务列表。"
 L["These reagents have no vendor price. Auction prices need Auctionator."] =
 	"这些材料没有商人价格。拍卖价需要Auctionator。"
 L["This addon"] = "本插件"

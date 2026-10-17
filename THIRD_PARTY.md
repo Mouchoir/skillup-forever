@@ -49,5 +49,6 @@ Credit for the ideas and reports behind the addon.
 | ballara, on CurseForge | Asked for the recipe tooltip to stop covering the reagents: it moved beside the window, with a setting for where it goes (#163, 0.16.0) | |
 | kurila11478, on CurseForge | Found *Buy reagents* stuck on with an empty route (#162, 0.16.0) | |
 | syrberus, on CurseForge | Reported the secret-number error on recipe tooltips, with the full error (#161, 0.16.0) | |
+| deathmvp1 and berserkerlxl, on CurseForge | Found Questie's quest list covering the Forever tracker sections, which now move clear of it (cjber/shortest-path-forever#214) | |
 
 Thanks also to everyone else who reported a bug or asked for a feature, here or on CurseForge.

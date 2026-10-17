@@ -279,14 +279,14 @@ L["Suggest my other Forever addons"] = "제 다른 Forever 애드온 추천"
 L["Taught by %s trainers."] = "%s 기술 전문가가 가르칩니다."
 L["The place this recipe is taught isn't known yet."] =
 	"이 제조법을 배우는 곳은 아직 알려지지 않았습니다."
-L["The recipe tooltip moves beside the Professions window, clear of the reagents."] =
-	"제조법 툴팁이 이제 전문 기술 창 옆에 나타나 재료를 가리지 않습니다."
 L["The rest comes from a vendor or your gathering."] = "나머지는 상인이나 채집으로 얻습니다."
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
 	"경로는 %d개로 10번 중 9번은 %d에 도달한다고 봅니다. 운이 나쁘면 더 필요합니다."
 L["The source of this recipe isn't known."] = "이 제조법의 출처는 알려지지 않았습니다."
 L["The text is selected. Press Ctrl+C (Cmd+C on a Mac) to copy it, then paste it into your bug report."] =
 	"텍스트가 선택되었습니다. Ctrl+C(Mac은 Cmd+C)로 복사한 뒤 버그 보고서에 붙여 넣으세요."
+L["The tracker sections now move clear of Questie's quest list."] =
+	"이제 추적기 항목이 Questie 퀘스트 목록을 가리지 않도록 비켜 표시됩니다."
 L["These reagents have no vendor price. Auction prices need Auctionator."] =
 	"이 재료들은 상점 가격이 없습니다. 경매 가격은 Auctionator가 필요합니다."
 L["This addon"] = "이 애드온"
