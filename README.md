@@ -16,7 +16,7 @@ From 48 to 60 the rows re-sort by cost per skill-up, and Handstitched Leather Br
 
 <p align="center"><img src="https://raw.githubusercontent.com/cjber/skillup-forever/main/docs/screenshots/window.png" width="640" alt="The Leatherworking window with skill-up chance and cost per skill-up on each recipe row, and a tooltip showing reagent prices and cost per skill-up"></p>
 
-Each row shows its chance and cost, with the tooltip breaking it down per reagent. This character skins, so Light Leather is free.
+Each row shows its chance and cost; the tooltip beside the window prices each reagent. This character skins, so Light Leather is free.
 
 <p align="center"><img src="https://raw.githubusercontent.com/cjber/skillup-forever/main/docs/screenshots/tooltip.png" width="640" alt="A recipe tooltip with the orange, yellow, green and grey thresholds on a bar, your skill marked, and each reagent's price and cost per skill-up"></p>
 
@@ -130,7 +130,7 @@ Run `luajit tests/bench.lua` to measure loading, route rebuilds, event bursts an
 
 ## Credits
 
-Thresholds come from the game via [wago.tools](https://wago.tools), trainer fees, drop chances and gathered reagents from [CMaNGOS classic-db](https://github.com/cmangos/classic-db) (GPL-3.0), and vendor reagents from [LibPeriodicTable-3.1](https://github.com/doadin/libperiodictable-3-1) (LGPL-2.1). Some features were inspired by [Polestar](https://github.com/fitzforge/polestar) by Fitz, such as the skill colour on gathering nodes; no code was copied. Fitz is welcome to use our code. Thanks to Brainc3ll for French lines, kopuliak, chuujitsuna, berserkerlxl, syrberus, kurila11478 and everyone listed in [THIRD_PARTY.md](THIRD_PARTY.md).
+Thresholds come from the game via [wago.tools](https://wago.tools), trainer fees, drop chances and gathered reagents from [CMaNGOS classic-db](https://github.com/cmangos/classic-db) (GPL-3.0), and vendor reagents from [LibPeriodicTable-3.1](https://github.com/doadin/libperiodictable-3-1) (LGPL-2.1). Some features were inspired by [Polestar](https://github.com/fitzforge/polestar) by Fitz, such as the skill colour on gathering nodes; no code was copied. Fitz is welcome to use our code. Thanks to Brainc3ll for French lines, kopuliak, chuujitsuna, berserkerlxl, syrberus, kurila11478, ballara and everyone listed in [THIRD_PARTY.md](THIRD_PARTY.md).
 
 ## Licence
 

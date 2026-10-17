@@ -49,6 +49,7 @@ L["Annotate trainer recipes"] = "標註訓練師配方"
 L["Another craft makes this recipe, not yours."] = "此配方由其他專業技能製造，而不是你的。"
 L["Another crafter"] = "其他製造者"
 L["At the %d cap: no trainer teaches the next rank."] = "已達上限%d：沒有訓練師教授下一等級。"
+L["At the cursor"] = "滑鼠位置"
 L["AtlasLoot is installed but not running: enable it in the AddOns list, or update it if out of date."] =
 	"AtlasLoot已安裝但未執行：請在插件列表中啟用，或在過期時更新。"
 L["Attach to quest tracker"] = "附著到任務追蹤器"
@@ -60,6 +61,7 @@ L["Auctionator's scan when the auction house opens is off: turn it on in Auction
 	"Auctionator在開啟拍賣場時的掃描已關閉：請在Auctionator的「Basic Options」中開啟。"
 L["Auctionator, %s"] = "Auctionator，%s"
 L["Back"] = "背部"
+L["Beside the Professions window"] = "專業技能視窗旁邊"
 L["Buy"] = "購買"
 L["Buy %d %s"] = "購買%d個%s"
 L["Buy %s for %s?"] = "購買%s，花費%s？"
@@ -144,6 +146,7 @@ L["Need %d more %s"] = "還需要%d個%s"
 L["Need a %s in your bags."] = "背包中需要%s。"
 L["Needs %s %d"] = "需要%s %d"
 L["Net per craft"] = "每次製造淨成本"
+L["Next to the recipe"] = "配方旁邊"
 L["No crafted gear for your level and class yet."] = "暫無適合你等級和職業的製造裝備。"
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
 	"暫無你能製造的裝備。勾選上方的選項以查看你不能製造的裝備。"
@@ -204,6 +207,7 @@ L["Reagents for"] = "材料用於"
 L["Reagents in hand"] = "材料已備齊"
 L["Reagents still needed"] = "仍需的材料"
 L["Recipe rows"] = "配方列"
+L["Recipe tooltip position"] = "配方提示位置"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"可以繼續提升的商人、任務和掉落配方："
 L["Required skill, skill-up chance and cost on profession trainer recipes, and which one is best to train next for your route."] =
@@ -306,6 +310,8 @@ L["Waypoint to the quest giver: %s"] = "前往任務給予者的導航點：%s"
 L["What hovering an item says about your professions: how much of it your tracked routes need (hold Shift for every recipe that uses it), every such recipe and its colour, or nothing."] =
 	"滑鼠停在物品上時顯示的專業技能資訊：你追蹤的路線需要多少（按住Shift查看所有使用它的配方）、所有此類配方及其顏色，或不顯示。"
 L["What's new after an update"] = "更新後的新內容"
+L["Where the tooltip goes when you hover a recipe. Beside the window, it stays clear of the reagents."] =
+	"滑鼠指向配方時提示顯示的位置。放在視窗旁邊就不會擋住材料。"
 L["While the auction house is open, the Professions window offers a search for the selected recipe's reagents: as many as the crafts you choose still need after your bags and bank. Auctionator's shopping list carries the quantities; without it, each click puts the next reagent in the search box."] =
 	"拍賣場開啟時，專業技能視窗可以搜尋所選配方的材料：數量為扣除背包和銀行後，你選擇的製造次數仍需要的數量。Auctionator的購物清單會帶上數量；沒有它時，每次點擊會把下一個材料填入搜尋框。"
 L["With Shortest Path Forever, a click leads you there."] = "有Shortest Path Forever時，點擊即可帶你前往。"

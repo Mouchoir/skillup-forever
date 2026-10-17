@@ -136,6 +136,7 @@
 ---@field SORT_OPTIONS string[][]
 ---@field CRAFT_VALUE_OPTIONS string[][]
 ---@field REAGENT_TOOLTIP_OPTIONS string[][]
+---@field RECIPE_TOOLTIP_OPTIONS string[][]
 ---@field TITLE string
 ---@field L table<string, string> English phrase to the client locale's translation, else the phrase
 ---@field COLORS table<string, ColorMixin>
@@ -169,6 +170,7 @@
 ---@field showRowText boolean
 ---@field showSkill boolean
 ---@field showTooltip boolean
+---@field recipeTooltip 'window'|'cursor'|'row'
 ---@field showCost boolean
 ---@field craftValue 'none'|'vendor'|'auction'
 ---@field valueGathered boolean

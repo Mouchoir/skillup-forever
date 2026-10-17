@@ -32,13 +32,13 @@ local G, ns = c.G, c.ns
 -- The game's tooltip: it keeps its lines, the font string each line is drawn in and its script hooks. A read
 -- of its geometry, line count or spacing fails the spec: those are what came back secret.
 local lines, hooks = {}, {}
-local minimumWidth
+local minimumWidth, owner, points
 local tooltip = setmetatable({
 	GetName = function()
 		return "GameTooltip"
 	end,
-	SetOwner = function(self)
-		lines = {}
+	SetOwner = function(self, frame, anchor)
+		owner, points, lines = { frame, anchor }, {}, {}
 		for _, hook in ipairs(hooks.OnTooltipCleared or {}) do
 			hook(self)
 		end
@@ -49,6 +49,9 @@ local tooltip = setmetatable({
 	end,
 	AddDoubleLine = function(self, left)
 		self:AddLine(left)
+	end,
+	SetPoint = function(_, ...)
+		points[#points + 1] = { ... }
 	end,
 	SetMinimumWidth = function(_, width)
 		minimumWidth = width
@@ -91,6 +94,9 @@ G.C_Texture = {
 		return nil
 	end,
 }
+-- The Professions window and its first side tab, on the window's right edge.
+local overviewTab = {}
+G.ProfessionsFrame = { ProfessionsOverviewTab = overviewTab }
 G.Professions = {
 	GetProfessionInfo = function()
 		return { skillLevel = 20, maxSkillLevel = 75, displayName = "First Aid" }
@@ -154,5 +160,23 @@ equal(#hooks.OnTooltipCleared, 1, "the tooltip's clearing is hooked once, howeve
 -- Cleared for something else, the tooltip loses the bar.
 tooltip:SetOwner({}, "ANCHOR_RIGHT")
 equal(bar:IsShown(), false, "a cleared tooltip hides the bar")
+
+-- Where the tooltip goes (#163): beside the window by default, past its side tabs, so it never covers the
+-- reagents; at the cursor; or next to the recipe row, as before.
+equal(ns.db.recipeTooltip, "window", "the tooltip goes beside the window by default")
+ns.ShowRecipeTooltip(ns, row, { recipeInfo = recipe })
+equal(owner[1], row, "the row owns it, so leaving the row hides it")
+equal(owner[2], "ANCHOR_NONE", "placed by hand")
+equal(#points, 1, "at one point")
+equal(points[1][1], "TOPLEFT", "its top left")
+equal(points[1][2], overviewTab, "beside the first side tab")
+equal(points[1][3], "TOPRIGHT", "on its right")
+c.SetSetting("recipeTooltip", "cursor")
+ns.ShowRecipeTooltip(ns, row, { recipeInfo = recipe })
+equal(owner[2], "ANCHOR_CURSOR", "at the cursor")
+equal(#points, 0, "with no point of its own")
+c.SetSetting("recipeTooltip", "row")
+ns.ShowRecipeTooltip(ns, row, { recipeInfo = recipe })
+equal(owner[1] == row and owner[2], "ANCHOR_RIGHT", "or next to the recipe row")
 
 Client.report("recipe_tooltip_spec")

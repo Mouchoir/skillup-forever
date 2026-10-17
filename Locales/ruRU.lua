@@ -53,6 +53,7 @@ L["Another craft makes this recipe, not yours."] =
 L["Another crafter"] = "Другой ремесленник"
 L["At the %d cap: no trainer teaches the next rank."] =
 	"Предел %d: ни один учитель не обучает следующему рангу."
+L["At the cursor"] = "У курсора"
 L["AtlasLoot is installed but not running: enable it in the AddOns list, or update it if out of date."] =
 	"AtlasLoot установлен, но не работает: включите его в списке модификаций или обновите, если он устарел."
 L["Attach to quest tracker"] = "Прикрепить к списку заданий"
@@ -64,6 +65,7 @@ L["Auctionator's scan when the auction house opens is off: turn it on in Auction
 	"Сканирование Auctionator при открытии аукциона выключено: включите его в Auctionator, «Basic Options»."
 L["Auctionator, %s"] = "Auctionator, %s"
 L["Back"] = "Спина"
+L["Beside the Professions window"] = "Рядом с окном профессий"
 L["Buy"] = "Купить"
 L["Buy %d %s"] = "Купить %d %s"
 L["Buy %s for %s?"] = "Купить %s за %s?"
@@ -152,6 +154,7 @@ L["Need %d more %s"] = "Нужно еще %d %s"
 L["Need a %s in your bags."] = "Нужен предмет в сумках: %s."
 L["Needs %s %d"] = "Требуется %s %d"
 L["Net per craft"] = "Итого за создание"
+L["Next to the recipe"] = "Рядом с рецептом"
 L["No crafted gear for your level and class yet."] =
 	"Пока нет созданного снаряжения для вашего уровня и класса."
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
@@ -223,6 +226,7 @@ L["Reagents for"] = "Реагенты для"
 L["Reagents in hand"] = "Реагенты собраны"
 L["Reagents still needed"] = "Еще нужны реагенты"
 L["Recipe rows"] = "Строки рецептов"
+L["Recipe tooltip position"] = "Положение подсказки рецепта"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"Рецепты от торговцев, заданий и добычи, с которыми можно продолжить:"
 L["Required skill, skill-up chance and cost on profession trainer recipes, and which one is best to train next for your route."] =
@@ -330,6 +334,8 @@ L["Waypoint to the quest giver: %s"] = "Точка маршрута к тому,
 L["What hovering an item says about your professions: how much of it your tracked routes need (hold Shift for every recipe that uses it), every such recipe and its colour, or nothing."] =
 	"Что показывает подсказка предмета о ваших профессиях: сколько его нужно отслеживаемым маршрутам (удерживайте SHIFT, чтобы видеть все рецепты с ним), все такие рецепты и их цвет, или ничего."
 L["What's new after an update"] = "Что нового после обновления"
+L["Where the tooltip goes when you hover a recipe. Beside the window, it stays clear of the reagents."] =
+	"Где появляется подсказка при наведении на рецепт. Рядом с окном она не закрывает реагенты."
 L["While the auction house is open, the Professions window offers a search for the selected recipe's reagents: as many as the crafts you choose still need after your bags and bank. Auctionator's shopping list carries the quantities; without it, each click puts the next reagent in the search box."] =
 	"Пока открыт аукцион, окно профессий предлагает поиск реагентов выбранного рецепта: столько, сколько еще нужно для выбранного числа созданий с учетом сумок и банка. Список покупок Auctionator передает количество; без него каждый щелчок вставляет следующий реагент в поле поиска."
 L["With Shortest Path Forever, a click leads you there."] =

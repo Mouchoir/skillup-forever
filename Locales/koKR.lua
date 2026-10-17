@@ -52,6 +52,7 @@ L["Another craft makes this recipe, not yours."] =
 L["Another crafter"] = "다른 제작자"
 L["At the %d cap: no trainer teaches the next rank."] =
 	"최대 %d: 다음 단계를 가르치는 전문가가 없습니다."
+L["At the cursor"] = "커서 위치"
 L["AtlasLoot is installed but not running: enable it in the AddOns list, or update it if out of date."] =
 	"AtlasLoot가 설치되었지만 실행 중이 아닙니다: 애드온 목록에서 켜거나, 오래된 버전이면 업데이트하세요."
 L["Attach to quest tracker"] = "퀘스트 추적기에 붙이기"
@@ -63,6 +64,7 @@ L["Auctionator's scan when the auction house opens is off: turn it on in Auction
 	'경매장을 열 때 Auctionator 검색이 꺼져 있습니다: Auctionator의 "Basic Options"에서 켜세요.'
 L["Auctionator, %s"] = "Auctionator, %s"
 L["Back"] = "등"
+L["Beside the Professions window"] = "전문 기술 창 옆"
 L["Buy"] = "구매"
 L["Buy %d %s"] = "%d개 구매: %s"
 L["Buy %s for %s?"] = "%s을(를) %s에 구매하시겠습니까?"
@@ -148,6 +150,7 @@ L["Need %d more %s"] = "%d개 더 필요: %s"
 L["Need a %s in your bags."] = "가방에 %s이(가) 필요합니다."
 L["Needs %s %d"] = "%s %d 필요"
 L["Net per craft"] = "제작당 순비용"
+L["Next to the recipe"] = "제조법 옆"
 L["No crafted gear for your level and class yet."] = "아직 레벨과 직업에 맞는 제작 장비가 없습니다."
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
 	"아직 만들 수 있는 장비가 없습니다. 만들 수 없는 장비를 보려면 위의 상자를 선택하세요."
@@ -213,6 +216,7 @@ L["Reagents for"] = "재료:"
 L["Reagents in hand"] = "재료 준비됨"
 L["Reagents still needed"] = "아직 필요한 재료"
 L["Recipe rows"] = "제조법 행"
+L["Recipe tooltip position"] = "제조법 툴팁 위치"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"계속 올리는 데 쓸 수 있는 상인, 퀘스트, 전리품 제조법:"
 L["Required skill, skill-up chance and cost on profession trainer recipes, and which one is best to train next for your route."] =
@@ -316,6 +320,8 @@ L["Waypoint to the quest giver: %s"] = "퀘스트 NPC로 웨이포인트: %s"
 L["What hovering an item says about your professions: how much of it your tracked routes need (hold Shift for every recipe that uses it), every such recipe and its colour, or nothing."] =
 	"아이템에 마우스를 올렸을 때 전문 기술 정보를 표시하는 방식: 추적 중인 경로의 필요량 (Shift를 누르면 그 재료를 쓰는 모든 제조법), 해당 제조법 전체와 색상, 또는 표시 안 함."
 L["What's new after an update"] = "업데이트 후 새로운 점"
+L["Where the tooltip goes when you hover a recipe. Beside the window, it stays clear of the reagents."] =
+	"제조법에 마우스를 올렸을 때 툴팁이 나타나는 위치입니다. 창 옆에 두면 재료를 가리지 않습니다."
 L["While the auction house is open, the Professions window offers a search for the selected recipe's reagents: as many as the crafts you choose still need after your bags and bank. Auctionator's shopping list carries the quantities; without it, each click puts the next reagent in the search box."] =
 	"경매장이 열려 있으면 전문 기술 창에서 선택한 제조법의 재료를 검색할 수 있습니다: 가방과 은행을 뺀 뒤 선택한 제작 횟수에 아직 필요한 만큼입니다. Auctionator 구매 목록이 수량을 담고, 없으면 클릭할 때마다 다음 재료가 검색창에 들어갑니다."
 L["With Shortest Path Forever, a click leads you there."] =

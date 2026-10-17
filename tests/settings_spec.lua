@@ -155,7 +155,14 @@ local ns = {
 		end,
 	},
 	db = {},
-	DEFAULTS = { craftValue = "vendor", reagentTooltip = "route", sortMode = "default", showRowText = true },
+	DEFAULTS = {
+		craftValue = "vendor",
+		reagentTooltip = "route",
+		recipeTooltip = "window",
+		sortMode = "default",
+		showRowText = true,
+	},
+	RECIPE_TOOLTIP_OPTIONS = { { "window", "Beside" }, { "cursor", "Cursor" }, { "row", "Row" } },
 	REAGENT_TOOLTIP_OPTIONS = { { "off", "Off" }, { "route", "Route" }, { "full", "Every recipe" } },
 	SORT_OPTIONS = { { "default", "Default" }, { "skill", "Skill" }, { "chance", "Chance" }, { "cost", "Cost" } },
 	CRAFT_VALUE_OPTIONS = { { "none", "None" }, { "vendor", "Vendor" }, { "auction", "Auction" } },
@@ -201,7 +208,10 @@ end
 
 -- Every subpage's rows, then the index's button to it, in the order the groups appear.
 local groups = {
-	{ "Recipe rows", "checkbox:showRowText checkbox:showSkill checkbox:showTooltip checkbox:showCost" },
+	{
+		"Recipe rows",
+		"checkbox:showRowText checkbox:showSkill checkbox:showTooltip slider:recipeTooltip checkbox:showCost",
+	},
 	{ "Prices", "slider:craftValue checkbox:valueGathered" },
 	{
 		"Route and trainer",
@@ -250,12 +260,13 @@ assert(Row("valueGathered").initializer.tooltip:find("vendor sell price if that 
 assert(Row("showRowText").initializer.tooltip:find("Skill%-up chance"))
 Row("showRowText").initializer.setting.changed()
 assert(refreshed == 1, "a change is reported once")
-for _, key in ipairs({ "craftValue", "sortMode", "reagentTooltip" }) do
+for _, key in ipairs({ "craftValue", "sortMode", "reagentTooltip", "recipeTooltip" }) do
 	local row = Row(key)
 	local options = ns[({
 		craftValue = "CRAFT_VALUE_OPTIONS",
 		sortMode = "SORT_OPTIONS",
 		reagentTooltip = "REAGENT_TOOLTIP_OPTIONS",
+		recipeTooltip = "RECIPE_TOOLTIP_OPTIONS",
 	})[key]]
 	assert(row.initializer.setting:GetValue() == row.initializer.setting.default, "saved default restored")
 	for index, option in ipairs(options) do

@@ -109,6 +109,14 @@ function ns.RegisterSettings()
 			L["Orange, yellow, green and grey thresholds when hovering a recipe."]
 		)
 
+		Choice(
+			rows,
+			"recipeTooltip",
+			L["Recipe tooltip position"],
+			ns.RECIPE_TOOLTIP_OPTIONS,
+			L["Where the tooltip goes when you hover a recipe. Beside the window, it stays clear of the reagents."]
+		)
+
 		Checkbox(
 			rows,
 			"showCost",

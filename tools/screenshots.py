@@ -1502,11 +1502,15 @@ def professions_frame(ui):
     return canvas, hovered
 
 
+def beside_window(ui):
+    """UI/Tooltip.lua's default recipe tooltip place: its TOPLEFT at the overview side tab's TOPRIGHT, (4, 0)."""
+    return FRAME_MARGIN + FRAME_W + ui.atlas("common-sidetab").width + 4, FRAME_MARGIN + 60
+
+
 def window_scene(ui):
-    frame, (hx, hy, hw, _) = professions_frame(ui)
+    frame, _ = professions_frame(ui)
     tip = recipe_tooltip(ui, HOVERED)
-    # SetOwner(row, "ANCHOR_RIGHT"): the tooltip's BOTTOMLEFT at the row's TOPRIGHT.
-    return scene(ui, [(frame, 0, 0), (tip, hx + hw, hy - tip.height)])
+    return scene(ui, [(frame, 0, 0), (tip, *beside_window(ui))])
 
 
 # ------------------------------------------------------------------------------- scenes from the Lua's output
@@ -1993,9 +1997,9 @@ def render_demo():
     states = []
     for skill in DEMO_SKILLS:
         SKILL = skill
-        frame, (hx, hy, hw, _) = professions_frame(ui)
+        frame, _ = professions_frame(ui)
         tip = recipe_tooltip(ui, HOVERED)
-        states.append([(frame, 0, 0), (tip, hx + hw, hy - tip.height)])
+        states.append([(frame, 0, 0), (tip, *beside_window(ui))])
     SKILL = DEMO_SKILLS[0]
     # One frame for every skill: the union of what any state draws, so nothing jumps between states.
     boxes = []

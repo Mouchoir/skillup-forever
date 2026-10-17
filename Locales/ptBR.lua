@@ -50,6 +50,7 @@ L["Annotate trainer recipes"] = "Anotar receitas do instrutor"
 L["Another craft makes this recipe, not yours."] = "Outra profissão cria esta receita, não a sua."
 L["Another crafter"] = "Outro artesão"
 L["At the %d cap: no trainer teaches the next rank."] = "No limite de %d: nenhum instrutor ensina o próximo nível."
+L["At the cursor"] = "No cursor"
 L["AtlasLoot is installed but not running: enable it in the AddOns list, or update it if out of date."] =
 	"O AtlasLoot está instalado, mas não está ativo: ative-o na lista de AddOns ou atualize-o se estiver desatualizado."
 L["Attach to quest tracker"] = "Fixar no rastreador de missões"
@@ -61,6 +62,7 @@ L["Auctionator's scan when the auction house opens is off: turn it on in Auction
 	'O escaneamento do Auctionator ao abrir a casa de leilões está desligado: ative-o no Auctionator, "Basic Options".'
 L["Auctionator, %s"] = "Auctionator, %s"
 L["Back"] = "Costas"
+L["Beside the Professions window"] = "Ao lado da janela de profissões"
 L["Buy"] = "Comprar"
 L["Buy %d %s"] = "Comprar %d %s"
 L["Buy %s for %s?"] = "Comprar %s por %s?"
@@ -145,6 +147,7 @@ L["Need %d more %s"] = "Faltam %d %s"
 L["Need a %s in your bags."] = "Você precisa de %s nas bolsas."
 L["Needs %s %d"] = "Requer %s %d"
 L["Net per craft"] = "Líquido por criação"
+L["Next to the recipe"] = "Ao lado da receita"
 L["No crafted gear for your level and class yet."] = "Ainda não há equipamento criado para seu nível e classe."
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
 	"Ainda não há equipamento que você possa criar. Marque a caixa acima para ver o que você não pode criar."
@@ -207,6 +210,7 @@ L["Reagents for"] = "Reagentes para"
 L["Reagents in hand"] = "Reagentes em mãos"
 L["Reagents still needed"] = "Reagentes que faltam"
 L["Recipe rows"] = "Linhas de receita"
+L["Recipe tooltip position"] = "Posição da dica de receita"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"Receitas de comerciantes, missões e saques que permitiriam continuar:"
 L["Required skill, skill-up chance and cost on profession trainer recipes, and which one is best to train next for your route."] =
@@ -309,6 +313,8 @@ L["Waypoint to the quest giver: %s"] = "Ponto de referência até o recrutador: 
 L["What hovering an item says about your professions: how much of it your tracked routes need (hold Shift for every recipe that uses it), every such recipe and its colour, or nothing."] =
 	"O que passar o cursor sobre um item diz sobre suas profissões: quanto dele suas rotas rastreadas precisam (segure Shift para todas as receitas que o usam), cada uma dessas receitas e sua cor, ou nada."
 L["What's new after an update"] = "Novidades após uma atualização"
+L["Where the tooltip goes when you hover a recipe. Beside the window, it stays clear of the reagents."] =
+	"Onde a dica aparece ao passar o cursor sobre uma receita. Ao lado da janela, ela não cobre os reagentes."
 L["While the auction house is open, the Professions window offers a search for the selected recipe's reagents: as many as the crafts you choose still need after your bags and bank. Auctionator's shopping list carries the quantities; without it, each click puts the next reagent in the search box."] =
 	"Com a casa de leilões aberta, a janela de profissões oferece uma busca pelos reagentes da receita selecionada: tantos quanto as criações escolhidas ainda precisam depois das bolsas e do banco. A lista de compras do Auctionator leva as quantidades; sem ela, cada clique coloca o próximo reagente na caixa de busca."
 L["With Shortest Path Forever, a click leads you there."] =

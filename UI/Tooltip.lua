@@ -294,7 +294,17 @@ function ns.ShowRecipeTooltip(_, row, data)
 	local d = ns.Describe(recipeInfo, ctx)
 
 	local tooltip = GameTooltip
-	tooltip:SetOwner(row, "ANCHOR_RIGHT")
+	local where = ns.db.recipeTooltip
+	if where == "cursor" then
+		tooltip:SetOwner(row, "ANCHOR_CURSOR")
+	elseif where == "row" then
+		tooltip:SetOwner(row, "ANCHOR_RIGHT")
+	else
+		-- Beside the window, past the side tabs on its right edge and level with the first: by the row, the
+		-- tooltip covered the reagents (#163).
+		tooltip:SetOwner(row, "ANCHOR_NONE")
+		tooltip:SetPoint("TOPLEFT", ProfessionsFrame.ProfessionsOverviewTab or ProfessionsFrame, "TOPRIGHT", 4, 0)
+	end
 	GameTooltip_SetTitle(tooltip, recipeInfo.name)
 	local t = d.thresholds
 	if t and ctx then

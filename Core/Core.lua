@@ -7,6 +7,7 @@ local DEFAULTS = {
 	showRowText = true,
 	showSkill = false,
 	showTooltip = true,
+	recipeTooltip = "window", -- where the recipe tooltip goes: beside the Professions window, at the cursor, by the row
 	showCost = true,
 	craftValue = "vendor",
 	valueGathered = false, -- a reagent you gather costs what it would sell for, not nothing
@@ -50,6 +51,12 @@ ns.CRAFT_VALUE_OPTIONS = {
 	{ "none", L["Don't count it"] },
 	{ "vendor", L["Vendor sell price"] },
 	{ "auction", L["Auction price if higher"] },
+}
+-- Beside the window by default: next to the recipe row, the tooltip covered the reagents (#163).
+ns.RECIPE_TOOLTIP_OPTIONS = {
+	{ "window", L["Beside the Professions window"] },
+	{ "cursor", L["At the cursor"] },
+	{ "row", L["Next to the recipe"] },
 }
 ns.REAGENT_TOOLTIP_OPTIONS = {
 	{ "off", OFF },
@@ -118,6 +125,7 @@ local function LoadDB()
 		craftValue = ns.CRAFT_VALUE_OPTIONS,
 		sortMode = ns.SORT_OPTIONS,
 		reagentTooltip = ns.REAGENT_TOOLTIP_OPTIONS,
+		recipeTooltip = ns.RECIPE_TOOLTIP_OPTIONS,
 	}) do
 		local valid = false
 		for _, option in ipairs(options) do
