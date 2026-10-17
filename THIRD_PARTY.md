@@ -44,11 +44,12 @@ Credit for the ideas and reports behind the addon.
 | [Polestar](https://github.com/fitzforge/polestar) by Fitz | The ideas for Expert and Artisan First Aid and Cooking from books and quests (#121) and the skill colour on gathering nodes and skinnable mobs (#122). From cjber/adventure-guide-forever's issues: `/su report` with its copy box and caught errors (#156), the issue forms (#157), the zip check (#158), `tools/doctor.py` (#160), the stale-screenshot check (#161), this file (#162), the "For addon authors" changelog subsection (#163) and `.editorconfig` (#165). | GPL-3.0. Inspired only; no code was copied. Fitz is welcome to use our code. |
 | Brainc3ll | The French lines reused from Legacy Forever's translation (its #99) in `Locales/frFR.lua` | Unmarked lines; the rest of the file is machine translated |
 | kopuliak, on CurseForge | Found recipes Forever lets you make earlier than Classic, such as Bronze Warhammer at 110 (#107, #123), the secret-number error on item tooltips (0.10.0) and on recipe tooltips (0.16.0); asked to hide tracked professions (0.9.0) and for Auctionator's latest price (0.9.1) | |
-| chuujitsuna, on CurseForge | Found the quest tracker stuck mid-screen while SkillUp held it (#136), and confirmed the secret-number error, on item and recipe tooltips (#161) | |
+| Chuujitsuna, on CurseForge | Found the quest tracker stuck mid-screen while SkillUp held it (#136), and confirmed the secret-number error, on item and recipe tooltips (#161) | |
 | berserkerlxl, on CurseForge | Asked to value gathered materials at what they'd sell for (0.10.0) | |
-| ballara, on CurseForge | Asked for the recipe tooltip to stop covering the reagents: it moved beside the window, with a setting for where it goes (#163, 0.16.0) | |
+| SilentGentlemanSG, on CurseForge | Reported buying 68 bleach and over 100 thread with one stray click on *Buy tracked reagents*, which led to the merchant's buy button asking first and *Show the buy button at merchants* (0.10.0) | |
+| BallaRa, on CurseForge | Asked for the recipe tooltip to stop covering the reagents: it moved beside the window, with a setting for where it goes (#163, 0.16.0) | |
 | kurila11478, on CurseForge | Found *Buy reagents* stuck on with an empty route (#162, 0.16.0) | |
-| syrberus, on CurseForge | Reported the secret-number error on recipe tooltips, with the full error (#161, 0.16.0) | |
+| Syrberus, on CurseForge | Reported the secret-number error on recipe tooltips, with the full error (#161, 0.16.0) | |
 | deathmvp1 and berserkerlxl, on CurseForge | Found Questie's quest list covering the Forever tracker sections, which now move clear of it (cjber/shortest-path-forever#214) | |
 
 Thanks also to everyone else who reported a bug or asked for a feature, here or on CurseForge.
