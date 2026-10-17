@@ -96,7 +96,6 @@ L["Craft next"] = "Fabriquer la suivante" -- mt
 L["Crafted gear"] = "Équipement fabriqué" -- mt
 L["Crafts"] = "Fabrications" -- mt
 L["Crafts %d now."] = "En fabrique %d maintenant." -- mt
-L["Data checked against Forever 1.60.1.70450."] = "Données vérifiées avec Forever 1.60.1.70450." -- mt
 L["Don't count it"] = "Ne pas compter" -- mt
 L["Don't suggest this again"] = "Ne plus me le suggérer" -- mt
 L["Drag to move"] = "Glisser pour déplacer"
@@ -153,6 +152,8 @@ L["No crafted gear for your level and class yet."] =
 	"Pas encore d'équipement fabriqué pour votre niveau et votre classe." -- mt
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
 	"Pas encore d'équipement que vous pouvez fabriquer. Cochez la case ci-dessus pour voir celui que vous ne pouvez pas fabriquer." -- mt
+L["No more secret-number errors on recipe tooltips."] =
+	"Fini les erreurs de nombres secrets dans les infobulles de recettes." -- mt
 L["No skill data for this recipe yet."] = "Pas encore de données de compétence pour cette recette." -- mt
 L["No trainer teaches this rank: a book does."] = "Aucun maître n'enseigne ce rang : un livre le fait." -- mt
 L["No trainer teaches this rank: a quest does."] = "Aucun maître n'enseigne ce rang : une quête le fait." -- mt

@@ -1184,7 +1184,7 @@ def source_text(p):
 
 def recipe_tooltip_lines(ui, recipe_id):
     """UI/Tooltip.lua ShowRecipeTooltip + AddCost for a learned recipe at SKILL. Returns the lines and the index
-    of the first blank line GameTooltip_InsertFrame added for the bar."""
+    of the first blank line AddBar added for the bar."""
     d = describe(recipe_id)
     t = d["thresholds"]
     lines = [
@@ -1227,11 +1227,11 @@ BAR_WIDTH, MIN_LABEL_GAP = 250, 18  # UI/Tooltip.lua
 BAR_SCALE = BAR_WIDTH / 439
 BAR_HEIGHT = 18 * BAR_SCALE
 BAR_FRAME_HEIGHT = BAR_HEIGHT + 30
-BAR_PADDING = 4  # GameTooltip_InsertFrame(tooltip, bar, 4)
+BAR_PADDING = 4  # UI/Tooltip.lua BAR_PADDING
 
 
 def bar_blank_lines():
-    """GameTooltip_InsertFrame: enough blank GameTooltipText lines to hold the frame and its padding."""
+    """UI/Tooltip.lua BAR_LINES: enough blank GameTooltipText lines to hold the frame and its padding."""
     text_height = FONTS["GameTooltipText"].height
     return math.ceil(round(BAR_FRAME_HEIGHT + BAR_PADDING) / (text_height + TOOLTIP_LINE_GAP))
 

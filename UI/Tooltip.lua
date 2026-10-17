@@ -12,6 +12,11 @@ local BAND_TEXTURE = "Interface\\TargetingFrame\\UI-StatusBar"
 -- Forever's rested-XP pip, taller than it is wide.
 local MARKER_ATLAS = "ui-hud-experiencebar-frame-pip-camelot"
 local MARKER_HEIGHT = BAR_HEIGHT * 1.3
+-- The bar frame's height, its gap below the line above, and the blank lines that make room for both:
+-- GameTooltipText is 12 high with 2 between lines, as GameTooltip_InsertFrame counts them.
+local BAR_FRAME_HEIGHT = BAR_HEIGHT + 30
+local BAR_PADDING = 4
+local BAR_LINES = math.ceil(math.floor(BAR_FRAME_HEIGHT + BAR_PADDING + 0.5) / (12 + 2))
 
 ---@type SkillUpBar
 local bar
@@ -20,7 +25,7 @@ local bar
 -- own aspect.
 local function CreateBar()
 	local frame = CreateFrame("Frame", nil, UIParent) --[[@as SkillUpBar]]
-	frame:SetSize(BAR_WIDTH, BAR_HEIGHT + 30)
+	frame:SetSize(BAR_WIDTH, BAR_FRAME_HEIGHT)
 
 	local track = CreateFrame("Frame", nil, frame)
 	track:SetPoint("TOPLEFT")
@@ -52,7 +57,23 @@ local function CreateBar()
 	ns.Art.Fit(frame.marker, MARKER_ATLAS, MARKER_HEIGHT, MARKER_HEIGHT)
 
 	frame.you = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	frame:Hide()
 	return frame
+end
+
+-- The tooltips the bar has been put into, whose clearing hides it again.
+---@type table<GameTooltip, true>
+local hooked = {}
+
+-- Cleared for anything else, the tooltip no longer has the bar's blank lines.
+---@param tooltip GameTooltip
+local function HideBar(tooltip)
+	if not ns.Usable(tooltip) then
+		return
+	end
+	if bar then
+		bar:Hide()
+	end
 end
 
 -- Lays the four colour bands out over [orange, grey + tail]; the tail keeps the
@@ -97,6 +118,30 @@ local function LayoutBar(t, skill)
 	bar.you:ClearAllPoints()
 	bar.you:SetPoint("TOP", bar, "TOPLEFT", math.min(math.max(mx, 24), BAR_WIDTH - 24), -height - 16)
 	return bar
+end
+
+-- Puts the bar into the tooltip below line `after`. Blizzard's GameTooltip_InsertFrame measures the tooltip to
+-- do this, and from our recipe-list handler those measurements are secret, so its arithmetic errored and the
+-- error was blamed on SkillUp (#161). Here nothing reads the tooltip: the blank lines are our own, counted from
+-- constants, and the bar hangs from the first of them, a line whose number we know.
+---@param tooltip GameTooltip
+---@param after integer the lines the tooltip has so far
+---@param t number[]
+---@param skill number
+local function AddBar(tooltip, after, t, skill)
+	local frame = LayoutBar(t, skill)
+	for _ = 1, BAR_LINES do
+		GameTooltip_AddBlankLineToTooltip(tooltip)
+	end
+	frame:SetParent(tooltip)
+	frame:ClearAllPoints()
+	frame:SetPoint("TOPLEFT", _G[tooltip:GetName() .. "TextLeft" .. (after + 1)], "TOPLEFT", 0, -BAR_PADDING)
+	tooltip:SetMinimumWidth(BAR_WIDTH)
+	frame:Show()
+	if not hooked[tooltip] then
+		hooked[tooltip] = true
+		tooltip:HookScript("OnTooltipCleared", HideBar)
+	end
 end
 
 ---@param copper number
@@ -255,7 +300,8 @@ function ns.ShowRecipeTooltip(_, row, data)
 	if t and ctx then
 		local reqColor = ctx.skill < t[1] and RED_FONT_COLOR or HIGHLIGHT_FONT_COLOR
 		GameTooltip_AddColoredLine(tooltip, string.format(L["Skill range starts at %d"], t[1]), reqColor)
-		GameTooltip_InsertFrame(tooltip, LayoutBar(t, ctx.skill), 4)
+		-- The title and the line above: SetOwner cleared the tooltip.
+		AddBar(tooltip, 2, t, ctx.skill)
 		if d.chance then
 			GameTooltip_AddColoredLine(
 				tooltip,

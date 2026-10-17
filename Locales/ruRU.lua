@@ -99,7 +99,6 @@ L["Craft next"] = "Создать следующее"
 L["Crafted gear"] = "Созданное снаряжение"
 L["Crafts"] = "Созданий"
 L["Crafts %d now."] = "Создает %d сейчас."
-L["Data checked against Forever 1.60.1.70450."] = "Данные сверены с Forever 1.60.1.70450."
 L["Don't count it"] = "Не учитывать"
 L["Don't suggest this again"] = "Больше не предлагать"
 L["Drag to move"] = "Перетащите, чтобы переместить"
@@ -157,6 +156,8 @@ L["No crafted gear for your level and class yet."] =
 	"Пока нет созданного снаряжения для вашего уровня и класса."
 L["No crafted gear you can make yet. Tick the box above to see gear you cannot make."] =
 	"Пока нет снаряжения, которое вы можете создать. Отметьте флажок выше, чтобы видеть то, что вы создать не можете."
+L["No more secret-number errors on recipe tooltips."] =
+	"Больше никаких ошибок секретных чисел в подсказках рецептов."
 L["No skill data for this recipe yet."] =
 	"Для этого рецепта пока нет данных о навыке."
 L["No trainer teaches this rank: a book does."] =

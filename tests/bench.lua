@@ -84,7 +84,6 @@ c.G.GameTooltip_AddNormalLine = noop
 c.G.GameTooltip_AddDisabledLine = noop
 c.G.GameTooltip_AddColoredLine = noop
 c.G.GameTooltip_SetTitle = noop
-c.G.GameTooltip_InsertFrame = noop
 c.G.IsShiftKeyDown = function()
 	return false
 end
