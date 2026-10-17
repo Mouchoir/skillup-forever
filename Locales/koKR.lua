@@ -96,6 +96,7 @@ L["Craft next"] = "다음 제작"
 L["Crafted gear"] = "제작 장비"
 L["Crafts"] = "제작 횟수"
 L["Crafts %d now."] = "지금 %d개 제작합니다."
+L["Data checked against Forever 1.60.1.70450."] = "Forever 1.60.1.70450 기준으로 데이터를 확인했습니다."
 L["Don't count it"] = "반영 안 함"
 L["Don't suggest this again"] = "다시 제안하지 않기"
 L["Drag to move"] = "끌어서 이동"
@@ -120,7 +121,6 @@ L["Have (bags and bank)"] = "보유 (가방과 은행)"
 L["Head"] = "머리"
 L["Herb and ore node tooltips show the skill they need and its colour at yours (English client only). Skinnable corpses show ? until the skinning rule is confirmed on Forever."] =
 	"약초와 광맥 툴팁에 필요한 숙련도와 내 숙련도 기준 색상을 표시합니다 (영어 클라이언트 전용). 무두질 가능한 시체는 Forever에서 무두질 규칙이 확인될 때까지 ?로 표시됩니다."
-L["In your language."] = "이제 한국어로 표시됩니다."
 L["Install AtlasLoot to see the recipes vendors, quests and drops would add."] =
 	"상인, 퀘스트, 전리품으로 얻을 제조법을 보려면 AtlasLoot를 설치하세요."
 L["Install Questie and AtlasLoot to see where recipes, vendors and trainers are."] =

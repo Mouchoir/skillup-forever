@@ -93,6 +93,7 @@ L["Craft next"] = "Als Nächstes herstellen"
 L["Crafted gear"] = "Hergestellte Ausrüstung"
 L["Crafts"] = "Herstellungen"
 L["Crafts %d now."] = "Stellt jetzt %d her."
+L["Data checked against Forever 1.60.1.70450."] = "Daten mit Forever 1.60.1.70450 abgeglichen."
 L["Don't count it"] = "Nicht anrechnen"
 L["Don't suggest this again"] = "Nicht mehr vorschlagen"
 L["Drag to move"] = "Ziehen zum Verschieben"
@@ -117,7 +118,6 @@ L["Have (bags and bank)"] = "Vorhanden (Taschen und Bank)"
 L["Head"] = "Kopf"
 L["Herb and ore node tooltips show the skill they need and its colour at yours (English client only). Skinnable corpses show ? until the skinning rule is confirmed on Forever."] =
 	"Tooltips von Kräutern und Erzvorkommen zeigen die nötige Fertigkeit und ihre Farbe bei Eurer (nur im englischen Client). Kürschnerbare Leichen zeigen ?, bis die Kürschnerregel auf Forever bestätigt ist."
-L["In your language."] = "Jetzt auf Deutsch."
 L["Install AtlasLoot to see the recipes vendors, quests and drops would add."] =
 	"Installiert AtlasLoot, um die Rezepte von Händlern, Quests und Beute zu sehen."
 L["Install Questie and AtlasLoot to see where recipes, vendors and trainers are."] =

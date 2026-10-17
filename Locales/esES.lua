@@ -96,6 +96,7 @@ L["Craft next"] = "Crear la siguiente"
 L["Crafted gear"] = "Equipo creado"
 L["Crafts"] = "Creaciones"
 L["Crafts %d now."] = "Crea %d ahora."
+L["Data checked against Forever 1.60.1.70450."] = "Datos comprobados con Forever 1.60.1.70450."
 L["Don't count it"] = "No contarlo"
 L["Don't suggest this again"] = "No volver a sugerir"
 L["Drag to move"] = "Arrastra para mover"
@@ -120,7 +121,6 @@ L["Have (bags and bank)"] = "Tienes (bolsas y banco)"
 L["Head"] = "Cabeza"
 L["Herb and ore node tooltips show the skill they need and its colour at yours (English client only). Skinnable corpses show ? until the skinning rule is confirmed on Forever."] =
 	"Las descripciones de hierbas y vetas muestran la habilidad que requieren y su color según la tuya (solo cliente en inglés). Los cadáveres desollables muestran ? hasta que se confirme la regla de desuello en Forever."
-L["In your language."] = "Ahora en español."
 L["Install AtlasLoot to see the recipes vendors, quests and drops would add."] =
 	"Instala AtlasLoot para ver las recetas que añadirían vendedores, misiones y botines."
 L["Install Questie and AtlasLoot to see where recipes, vendors and trainers are."] =

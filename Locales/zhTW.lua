@@ -93,6 +93,7 @@ L["Craft next"] = "製造下一個"
 L["Crafted gear"] = "製造裝備"
 L["Crafts"] = "製造次數"
 L["Crafts %d now."] = "現在製造%d個。"
+L["Data checked against Forever 1.60.1.70450."] = "已按 Forever 1.60.1.70450 核對資料。"
 L["Don't count it"] = "不計入"
 L["Don't suggest this again"] = "不再推薦"
 L["Drag to move"] = "拖曳以移動"
@@ -117,7 +118,6 @@ L["Have (bags and bank)"] = "已有（背包和銀行）"
 L["Head"] = "頭部"
 L["Herb and ore node tooltips show the skill they need and its colour at yours (English client only). Skinnable corpses show ? until the skinning rule is confirmed on Forever."] =
 	"草藥和礦脈的滑鼠提示會顯示所需技能及其相對你技能的顏色（僅限英文用戶端）。可剝皮的屍體在Forever上的剝皮規則確認前顯示?。"
-L["In your language."] = "現已支援繁體中文。"
 L["Install AtlasLoot to see the recipes vendors, quests and drops would add."] =
 	"安裝AtlasLoot以查看商人、任務和掉落可提供的配方。"
 L["Install Questie and AtlasLoot to see where recipes, vendors and trainers are."] =
