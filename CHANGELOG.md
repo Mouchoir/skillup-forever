@@ -12,8 +12,6 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
-- **The route's shopping list no longer breaks on a tool priced at the auction house.** A tool the route needs and your bags lack, priced through Auctionator, stopped the reagent list with a Lua error each time it drew. It now shows as *AH*, like the reagents bought there.
-
 ## [0.17.0] - 2026-10-18
 
 - **Recipe rows can show what one craft costs or earns.** *Money on recipe rows* (Settings, Recipe rows) switches the row from cost per skill-up to net per craft, and per craft also prices recipes that no longer give skill, so you can spot ones worth crafting anyway. Costs now lead with a red `-`, as profits already led with a green `+`. Thanks to trias6657 for the idea.
