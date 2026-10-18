@@ -126,6 +126,7 @@
 ---@field AnnounceUpdate fun()
 ---@field WHATS_NEW string
 ---@field FormatNet fun(copper: number, profit: boolean): string
+---@field FormatSigned fun(copper: number, profit: boolean): string
 ---@field PriceAge fun(price: SkillUpPrice): number?
 ---@field PriceAgeText fun(price: SkillUpPrice): string
 ---@field PriceSourceText fun(price: SkillUpPrice): string
@@ -137,6 +138,7 @@
 ---@field CRAFT_VALUE_OPTIONS string[][]
 ---@field REAGENT_TOOLTIP_OPTIONS string[][]
 ---@field RECIPE_TOOLTIP_OPTIONS string[][]
+---@field ROW_COST_OPTIONS string[][]
 ---@field TITLE string
 ---@field L table<string, string> English phrase to the client locale's translation, else the phrase
 ---@field COLORS table<string, ColorMixin>
@@ -171,6 +173,7 @@
 ---@field showSkill boolean
 ---@field showTooltip boolean
 ---@field recipeTooltip 'window'|'cursor'|'row'
+---@field rowCost 'skillup'|'craft'
 ---@field showCost boolean
 ---@field craftValue 'none'|'vendor'|'auction'
 ---@field valueGathered boolean

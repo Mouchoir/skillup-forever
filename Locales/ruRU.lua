@@ -147,6 +147,7 @@ L["Levelling route"] = "Маршрут прокачки"
 L["Made at"] = "Создается у"
 L["Main hand"] = "Правая рука"
 L["Missing reagents for this step."] = "Для этого шага не хватает реагентов."
+L["Money on recipe rows"] = "Деньги в строках рецептов"
 L["Nearest trainer"] = "Ближайший учитель"
 L["Nearest vendor"] = "Ближайший торговец"
 L["Neck"] = "Шея"
@@ -191,7 +192,10 @@ L["Open %s to craft from here."] = "Откройте %s, чтобы создав
 L["Open recipe"] = "Открыть рецепт"
 L["Orange, yellow, green and grey thresholds when hovering a recipe."] =
 	"Пороги оранжевого, желтого, зеленого и серого цвета при наведении на рецепт."
+L["Per craft"] = "За создание"
 L["Per skill-up"] = "За очко навыка"
+L["Per skill-up is the cost of one skill point. Per craft is what one craft costs or earns, shown on recipes that no longer give skill too."] =
+	"За единицу навыка — стоимость одного очка навыка. За создание — сколько стоит или приносит одно создание, в том числе для рецептов, которые больше не повышают навык."
 L["Picks quests for your level and plans them into one journey."] =
 	"Подбирает задания по вашему уровню и объединяет их в один маршрут."
 L["Plans the cheapest route to your next profession rank."] =
@@ -224,6 +228,8 @@ L["Reagents for"] = "Реагенты для"
 L["Reagents in hand"] = "Реагенты собраны"
 L["Reagents still needed"] = "Еще нужны реагенты"
 L["Recipe rows"] = "Строки рецептов"
+L["Recipe rows can show what one craft costs or earns."] =
+	"Строки рецептов могут показывать, сколько стоит или приносит одно создание."
 L["Recipe tooltip position"] = "Положение подсказки рецепта"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"Рецепты от торговцев, заданий и добычи, с которыми можно продолжить:"
@@ -298,8 +304,6 @@ L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] 
 L["The source of this recipe isn't known."] = "Источник этого рецепта неизвестен."
 L["The text is selected. Press Ctrl+C (Cmd+C on a Mac) to copy it, then paste it into your bug report."] =
 	"Текст выделен. Нажмите Ctrl+C (Cmd+C на Mac), чтобы скопировать его, и вставьте в сообщение об ошибке."
-L["The tracker sections now move clear of Questie's quest list."] =
-	"Разделы отслеживания теперь не перекрываются списком заданий Questie."
 L["These reagents have no vendor price. Auction prices need Auctionator."] =
 	"У этих реагентов нет цены у торговца. Для цен аукциона нужен Auctionator."
 L["This addon"] = "Эта модификация"

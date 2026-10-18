@@ -158,6 +158,15 @@ function ns.FormatNet(copper, profit)
 	return (profit and "|cff40ff40+|r" or "") .. Money(copper)
 end
 
+-- A recipe's own money, on its row and tooltip: a profit leads with a green "+", a cost with a red "-"
+-- (RED_FONT_COLOR's ff2020).
+---@param copper number
+---@param profit boolean
+---@return string
+function ns.FormatSigned(copper, profit)
+	return (profit and "|cff40ff40+|r" or "|cffff2020-|r") .. Money(copper)
+end
+
 local DAY = 86400
 
 -- Seconds since an auction price was seen. Auctionator reports whole days, and
@@ -277,7 +286,7 @@ local function AddCost(tooltip, recipeID, d)
 	local perSkillUp = d.perSkillUp
 	if perSkillUp then
 		local label = perSkillUp < 0 and L["Profit per skill-up"] or L["Per skill-up"]
-		tooltip:AddDoubleLine(label, ns.FormatNet(math.abs(perSkillUp), perSkillUp < 0), 1, 0.82, 0, 1, 1, 1)
+		tooltip:AddDoubleLine(label, ns.FormatSigned(math.abs(perSkillUp), perSkillUp < 0), 1, 0.82, 0, 1, 1, 1)
 	end
 end
 

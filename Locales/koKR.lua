@@ -143,6 +143,7 @@ L["Levelling route"] = "숙련도 경로"
 L["Made at"] = "제작 장소"
 L["Main hand"] = "주장비"
 L["Missing reagents for this step."] = "이 단계에 필요한 재료가 부족합니다."
+L["Money on recipe rows"] = "제조법 줄의 금액"
 L["Nearest trainer"] = "가장 가까운 전문가"
 L["Nearest vendor"] = "가장 가까운 상인"
 L["Neck"] = "목"
@@ -182,7 +183,10 @@ L["Open %s to craft from here."] = "여기서 제작하려면 %s을(를) 여세�
 L["Open recipe"] = "제조법 열기"
 L["Orange, yellow, green and grey thresholds when hovering a recipe."] =
 	"제조법에 마우스를 올리면 주황, 노랑, 초록, 회색 구간을 표시합니다."
+L["Per craft"] = "제작당"
 L["Per skill-up"] = "숙련도 1당"
+L["Per skill-up is the cost of one skill point. Per craft is what one craft costs or earns, shown on recipes that no longer give skill too."] =
+	"숙련도당은 숙련도 1점을 올리는 비용입니다. 제작당은 한 번 제작할 때 드는 비용이나 수익이며, 더 이상 숙련도가 오르지 않는 제조법에도 표시됩니다."
 L["Picks quests for your level and plans them into one journey."] =
 	"레벨에 맞는 퀘스트를 골라 하나의 여정으로 계획합니다."
 L["Plans the cheapest route to your next profession rank."] =
@@ -214,6 +218,8 @@ L["Reagents for"] = "재료:"
 L["Reagents in hand"] = "재료 준비됨"
 L["Reagents still needed"] = "아직 필요한 재료"
 L["Recipe rows"] = "제조법 행"
+L["Recipe rows can show what one craft costs or earns."] =
+	"이제 제조법 줄에 한 번 제작할 때의 비용이나 수익을 표시할 수 있습니다."
 L["Recipe tooltip position"] = "제조법 툴팁 위치"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"계속 올리는 데 쓸 수 있는 상인, 퀘스트, 전리품 제조법:"
@@ -285,8 +291,6 @@ L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] 
 L["The source of this recipe isn't known."] = "이 제조법의 출처는 알려지지 않았습니다."
 L["The text is selected. Press Ctrl+C (Cmd+C on a Mac) to copy it, then paste it into your bug report."] =
 	"텍스트가 선택되었습니다. Ctrl+C(Mac은 Cmd+C)로 복사한 뒤 버그 보고서에 붙여 넣으세요."
-L["The tracker sections now move clear of Questie's quest list."] =
-	"이제 추적기 항목이 Questie 퀘스트 목록을 가리지 않도록 비켜 표시됩니다."
 L["These reagents have no vendor price. Auction prices need Auctionator."] =
 	"이 재료들은 상점 가격이 없습니다. 경매 가격은 Auctionator가 필요합니다."
 L["This addon"] = "이 애드온"

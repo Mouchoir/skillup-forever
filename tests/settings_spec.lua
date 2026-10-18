@@ -159,10 +159,12 @@ local ns = {
 		craftValue = "vendor",
 		reagentTooltip = "route",
 		recipeTooltip = "window",
+		rowCost = "skillup",
 		sortMode = "default",
 		showRowText = true,
 	},
 	RECIPE_TOOLTIP_OPTIONS = { { "window", "Beside" }, { "cursor", "Cursor" }, { "row", "Row" } },
+	ROW_COST_OPTIONS = { { "skillup", "Per skill-up" }, { "craft", "Per craft" } },
 	REAGENT_TOOLTIP_OPTIONS = { { "off", "Off" }, { "route", "Route" }, { "full", "Every recipe" } },
 	SORT_OPTIONS = { { "default", "Default" }, { "skill", "Skill" }, { "chance", "Chance" }, { "cost", "Cost" } },
 	CRAFT_VALUE_OPTIONS = { { "none", "None" }, { "vendor", "Vendor" }, { "auction", "Auction" } },
@@ -210,7 +212,7 @@ end
 local groups = {
 	{
 		"Recipe rows",
-		"checkbox:showRowText checkbox:showSkill checkbox:showTooltip slider:recipeTooltip checkbox:showCost",
+		"checkbox:showRowText checkbox:showSkill checkbox:showTooltip slider:recipeTooltip checkbox:showCost slider:rowCost",
 	},
 	{ "Prices", "slider:craftValue checkbox:valueGathered" },
 	{
@@ -260,13 +262,14 @@ assert(Row("valueGathered").initializer.tooltip:find("vendor sell price if that 
 assert(Row("showRowText").initializer.tooltip:find("Skill%-up chance"))
 Row("showRowText").initializer.setting.changed()
 assert(refreshed == 1, "a change is reported once")
-for _, key in ipairs({ "craftValue", "sortMode", "reagentTooltip", "recipeTooltip" }) do
+for _, key in ipairs({ "craftValue", "sortMode", "reagentTooltip", "recipeTooltip", "rowCost" }) do
 	local row = Row(key)
 	local options = ns[({
 		craftValue = "CRAFT_VALUE_OPTIONS",
 		sortMode = "SORT_OPTIONS",
 		reagentTooltip = "REAGENT_TOOLTIP_OPTIONS",
 		recipeTooltip = "RECIPE_TOOLTIP_OPTIONS",
+		rowCost = "ROW_COST_OPTIONS",
 	})[key]]
 	assert(row.initializer.setting:GetValue() == row.initializer.setting.default, "saved default restored")
 	for index, option in ipairs(options) do

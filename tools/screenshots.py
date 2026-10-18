@@ -1163,7 +1163,7 @@ def money(copper):
 
 
 def format_row(d):
-    """Core/Core.lua ns.FormatRow with the default settings (showSkill off, showCost on)."""
+    """Core/Core.lua ns.FormatRow with the default settings (showSkill off, showCost on, rowCost per skill-up)."""
     if not d["thresholds"]:
         return "?"
     if d["chance"] is None:
@@ -1171,7 +1171,9 @@ def format_row(d):
     parts = [f"{math.floor(d['chance'] * 100 + 0.5)}%"]
     if d["perSkillUp"] is not None:
         per = d["perSkillUp"]
-        parts.append(("|cff40ff40+|r" if per < 0 else "") + coin_texture_string(round_money(abs(per)), COIN_HEIGHT))
+        parts.append(
+            ("|cff40ff40+|r" if per < 0 else "|cffff2020-|r") + coin_texture_string(round_money(abs(per)), COIN_HEIGHT)
+        )
     return " · ".join(parts)
 
 
@@ -1217,7 +1219,7 @@ def recipe_tooltip_lines(ui, recipe_id):
             TooltipLine(
                 "Profit per skill-up" if per < 0 else "Per skill-up",
                 gold,
-                ("|cff40ff40+|r" if per < 0 else "") + money(abs(per)),
+                ("|cff40ff40+|r" if per < 0 else "|cffff2020-|r") + money(abs(per)),
             )
         )
     return lines, bar_line

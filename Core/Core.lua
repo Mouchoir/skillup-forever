@@ -9,6 +9,7 @@ local DEFAULTS = {
 	showTooltip = true,
 	recipeTooltip = "window", -- where the recipe tooltip goes: beside the Professions window, at the cursor, by the row
 	showCost = true,
+	rowCost = "skillup", -- what a recipe row's money is: "skillup" (cost per skill-up) or "craft" (net per craft)
 	craftValue = "vendor",
 	valueGathered = false, -- a reagent you gather costs what it would sell for, not nothing
 	sortMode = "blizzard",
@@ -58,6 +59,11 @@ ns.RECIPE_TOOLTIP_OPTIONS = {
 	{ "cursor", L["At the cursor"] },
 	{ "row", L["Next to the recipe"] },
 }
+-- Per craft also prices recipes that no longer give skill, to show which are worth crafting anyway.
+ns.ROW_COST_OPTIONS = {
+	{ "skillup", L["Per skill-up"] },
+	{ "craft", L["Per craft"] },
+}
 ns.REAGENT_TOOLTIP_OPTIONS = {
 	{ "off", OFF },
 	{ "route", L["Tracked routes (Shift for all)"] },
@@ -66,7 +72,7 @@ ns.REAGENT_TOOLTIP_OPTIONS = {
 ns.TITLE = "SkillUp Forever"
 -- The chat line after an update: one sentence for the release being tagged, the bold lead of one of its
 -- CHANGELOG.md bullets (tests/core_spec.lua holds it to the newest entry).
-ns.WHATS_NEW = L["The tracker sections now move clear of Questie's quest list."]
+ns.WHATS_NEW = L["Recipe rows can show what one craft costs or earns."]
 
 -- Classic difficulty colours, matching the retail recipe list's own palette.
 ns.COLORS = {
@@ -496,9 +502,10 @@ function ns.FormatRow(d)
 		parts[#parts + 1] = tostring(d.thresholds[1])
 	end
 	parts[#parts + 1] = string.format("%d%%", math.floor(d.chance * 100 + 0.5))
-	local perSkillUp = d.perSkillUp
-	if ns.db.showCost and perSkillUp then
-		parts[#parts + 1] = ns.FormatNet(ns.Model.RoundMoney(math.abs(perSkillUp)), perSkillUp < 0)
+	-- A negative amount is a profit, a positive one a cost.
+	local amount = ns.db.rowCost == "craft" and d.net or d.perSkillUp
+	if ns.db.showCost and amount then
+		parts[#parts + 1] = ns.FormatSigned(ns.Model.RoundMoney(math.abs(amount)), amount < 0)
 	end
 	return table.concat(parts, " · ")
 end

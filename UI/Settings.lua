@@ -123,6 +123,14 @@ function ns.RegisterSettings()
 			L["Show cost per skill-up"],
 			L["Reagent cost divided by skill-up chance, on recipe rows and in the tooltip. Common vendor reagents are priced from the start and updated at merchants you visit, reagents you gather are free unless you value them under Prices, and auction prices need Auctionator."]
 		)
+
+		Choice(
+			rows,
+			"rowCost",
+			L["Money on recipe rows"],
+			ns.ROW_COST_OPTIONS,
+			L["Per skill-up is the cost of one skill point. Per craft is what one craft costs or earns, shown on recipes that no longer give skill too."]
+		)
 	end)
 
 	Section(L["Prices"], function(rows)

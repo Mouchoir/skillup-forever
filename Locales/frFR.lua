@@ -143,6 +143,7 @@ L["Levelling route"] = "Parcours de progression" -- mt
 L["Made at"] = "Fabriqué à" -- mt
 L["Main hand"] = "Main droite" -- mt
 L["Missing reagents for this step."] = "Composants manquants pour cette étape." -- mt
+L["Money on recipe rows"] = "Argent sur les lignes de recettes" -- mt
 L["Nearest trainer"] = "Maître le plus proche" -- mt
 L["Nearest vendor"] = "Marchand le plus proche" -- mt
 L["Neck"] = "Cou" -- mt
@@ -183,7 +184,10 @@ L["Open %s to craft from here."] = "Ouvrez %s pour fabriquer d'ici." -- mt
 L["Open recipe"] = "Ouvrir la recette" -- mt
 L["Orange, yellow, green and grey thresholds when hovering a recipe."] =
 	"Seuils orange, jaune, vert et gris au survol d'une recette." -- mt
+L["Per craft"] = "Par fabrication" -- mt
 L["Per skill-up"] = "Par point de compétence" -- mt
+L["Per skill-up is the cost of one skill point. Per craft is what one craft costs or earns, shown on recipes that no longer give skill too."] =
+	"Par point de compétence : le coût d'un point. Par fabrication : ce qu'une fabrication coûte ou rapporte, affiché aussi sur les recettes qui ne font plus progresser." -- mt
 L["Picks quests for your level and plans them into one journey."] =
 	"Choisit des quêtes de votre niveau et les enchaîne en un seul trajet." -- mt
 L["Plans the cheapest route to your next profession rank."] =
@@ -215,6 +219,8 @@ L["Reagents for"] = "Composants pour" -- mt
 L["Reagents in hand"] = "Composants en main" -- mt
 L["Reagents still needed"] = "Composants encore requis" -- mt
 L["Recipe rows"] = "Lignes de recettes" -- mt
+L["Recipe rows can show what one craft costs or earns."] =
+	"Les lignes de recettes peuvent afficher ce qu'une fabrication coûte ou rapporte." -- mt
 L["Recipe tooltip position"] = "Position de l'infobulle des recettes" -- mt
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"Recettes de marchands, de quêtes et de butin qui permettraient de continuer :" -- mt
@@ -285,8 +291,6 @@ L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] 
 L["The source of this recipe isn't known."] = "La source de cette recette est inconnue." -- mt
 L["The text is selected. Press Ctrl+C (Cmd+C on a Mac) to copy it, then paste it into your bug report."] =
 	"Le texte est sélectionné : Ctrl+C (Cmd+C sur Mac) pour le copier, puis collez-le dans votre rapport de bug." -- mt
-L["The tracker sections now move clear of Questie's quest list."] =
-	"Les sections du suivi s'écartent désormais de la liste de quêtes de Questie." -- mt
 L["These reagents have no vendor price. Auction prices need Auctionator."] =
 	"Ces composants n'ont pas de prix chez les marchands. Les prix aux enchères nécessitent Auctionator." -- mt
 L["This addon"] = "Cet addon" -- mt

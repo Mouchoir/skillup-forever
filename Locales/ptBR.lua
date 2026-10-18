@@ -140,6 +140,7 @@ L["Levelling route"] = "Rota de evolução"
 L["Made at"] = "Criado em"
 L["Main hand"] = "Mão principal"
 L["Missing reagents for this step."] = "Faltam reagentes para esta etapa."
+L["Money on recipe rows"] = "Dinheiro nas linhas de receitas"
 L["Nearest trainer"] = "Instrutor mais próximo"
 L["Nearest vendor"] = "Comerciante mais próximo"
 L["Neck"] = "Pescoço"
@@ -177,7 +178,10 @@ L["Open %s to craft from here."] = "Abra %s para criar daqui."
 L["Open recipe"] = "Abrir receita"
 L["Orange, yellow, green and grey thresholds when hovering a recipe."] =
 	"Limiares laranja, amarelo, verde e cinza ao passar o cursor sobre uma receita."
+L["Per craft"] = "Por criação"
 L["Per skill-up"] = "Por ponto de perícia"
+L["Per skill-up is the cost of one skill point. Per craft is what one craft costs or earns, shown on recipes that no longer give skill too."] =
+	"Por ponto de perícia é o custo de um ponto. Por criação é quanto uma criação custa ou rende, mostrado também em receitas que não dão mais perícia."
 L["Picks quests for your level and plans them into one journey."] =
 	"Escolhe missões para o seu nível e as planeja em uma só jornada."
 L["Plans the cheapest route to your next profession rank."] =
@@ -209,6 +213,8 @@ L["Reagents for"] = "Reagentes para"
 L["Reagents in hand"] = "Reagentes em mãos"
 L["Reagents still needed"] = "Reagentes que faltam"
 L["Recipe rows"] = "Linhas de receita"
+L["Recipe rows can show what one craft costs or earns."] =
+	"As linhas de receitas podem mostrar quanto uma criação custa ou rende."
 L["Recipe tooltip position"] = "Posição da dica de receita"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"Receitas de comerciantes, missões e saques que permitiriam continuar:"
@@ -279,8 +285,6 @@ L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] 
 L["The source of this recipe isn't known."] = "A origem desta receita é desconhecida."
 L["The text is selected. Press Ctrl+C (Cmd+C on a Mac) to copy it, then paste it into your bug report."] =
 	"O texto está selecionado. Pressione Ctrl+C (Cmd+C no Mac) para copiá-lo e cole-o no seu relatório de erro."
-L["The tracker sections now move clear of Questie's quest list."] =
-	"As seções do rastreador agora ficam fora da lista de missões do Questie."
 L["These reagents have no vendor price. Auction prices need Auctionator."] =
 	"Estes reagentes não têm preço de comerciante. Preços de leilão precisam do Auctionator."
 L["This addon"] = "Este AddOn"

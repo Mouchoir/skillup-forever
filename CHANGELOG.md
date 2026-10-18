@@ -12,6 +12,10 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-10-18
+
+- **Recipe rows can show what one craft costs or earns.** *Money on recipe rows* (Settings, Recipe rows) switches the row from cost per skill-up to net per craft, and per craft also prices recipes that no longer give skill, so you can spot ones worth crafting anyway. Costs now lead with a red `-`, as profits already led with a green `+`. Thanks to trias6657 for the idea.
+
 - More players credited: THIRD_PARTY.md now thanks SilentGentlemanSG, whose stray click on *Buy tracked reagents* led to the button asking first in 0.10.0.
 
 ## [0.16.1] - 2026-10-17

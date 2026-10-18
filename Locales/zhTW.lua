@@ -139,6 +139,7 @@ L["Levelling route"] = "升級路線"
 L["Made at"] = "製造地點"
 L["Main hand"] = "主手"
 L["Missing reagents for this step."] = "此步驟缺少材料。"
+L["Money on recipe rows"] = "配方列中的金額"
 L["Nearest trainer"] = "最近的訓練師"
 L["Nearest vendor"] = "最近的商人"
 L["Neck"] = "頸部"
@@ -175,7 +176,10 @@ L["Open %s to craft from here."] = "開啟%s以便在此製造。"
 L["Open recipe"] = "開啟配方"
 L["Orange, yellow, green and grey thresholds when hovering a recipe."] =
 	"滑鼠停在配方上時顯示橙、黃、綠、灰的分界點。"
+L["Per craft"] = "每次製作"
 L["Per skill-up"] = "每點技能"
+L["Per skill-up is the cost of one skill point. Per craft is what one craft costs or earns, shown on recipes that no longer give skill too."] =
+	"每點技能是提升一點技能的成本。每次製作是一次製作的成本或收益，不再提升技能的配方也會顯示。"
 L["Picks quests for your level and plans them into one journey."] =
 	"挑選適合你等級的任務，並規劃成一段旅程。"
 L["Plans the cheapest route to your next profession rank."] = "規劃升到下一個專業等級最省錢的路線。"
@@ -206,6 +210,8 @@ L["Reagents for"] = "材料用於"
 L["Reagents in hand"] = "材料已備齊"
 L["Reagents still needed"] = "仍需的材料"
 L["Recipe rows"] = "配方列"
+L["Recipe rows can show what one craft costs or earns."] =
+	"配方列現在可以顯示一次製作的成本或收益。"
 L["Recipe tooltip position"] = "配方提示位置"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"可以繼續提升的商人、任務和掉落配方："
@@ -276,8 +282,6 @@ L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] 
 L["The source of this recipe isn't known."] = "此配方的來源不明。"
 L["The text is selected. Press Ctrl+C (Cmd+C on a Mac) to copy it, then paste it into your bug report."] =
 	"文字已選取。按Ctrl+C（Mac上為Cmd+C）複製，然後貼到你的錯誤回報中。"
-L["The tracker sections now move clear of Questie's quest list."] =
-	"追蹤欄現在會避開 Questie 的任務列表。"
 L["These reagents have no vendor price. Auction prices need Auctionator."] =
 	"這些材料沒有商人價格。拍賣價需要Auctionator。"
 L["This addon"] = "本插件"
