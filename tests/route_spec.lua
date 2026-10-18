@@ -286,6 +286,15 @@ equal(
 	"Nothing on this route is yours to gather, so the switch changes nothing for it.",
 	"the disabled switch's tooltip says why"
 )
+-- Left on, the switch is never greyed, even with nothing to gather: greyed while on, it was stuck on (#162).
+page.collectMode = "auction"
+routeTab:Click()
+equal(collect.enabled, true, "a switch left on stays enabled with nothing to gather")
+equal(collect.checked, true, "and shows it is on")
+collect:Click()
+equal(page.collectMode, "gather", "so a click turns it off")
+equal(collect.enabled, false, "and, off, it greys again")
+page.collectMode = nil
 equal(routeTab.checked, true, "opening the route selects its tab")
 eventFrame:Event("SKILL_LINES_CHANGED")
 routeTab:SetChecked(false) -- Blizzard handles the same event after the addon.

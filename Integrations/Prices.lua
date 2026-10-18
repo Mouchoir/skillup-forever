@@ -92,14 +92,11 @@ local function SaleValue(itemID)
 	return sell, sell and "vendor" or nil
 end
 
--- In gather mode, what another of your professions gathers costs nothing, or, with *Value gathered
--- materials* on, what it would sell for. A material neither price is known for stays free.
+-- What another of your professions gathers costs nothing, or, with *Value gathered materials* on, what it
+-- would sell for. A material neither price is known for stays free.
 ---@param itemID integer
 ---@return SkillUpPrice?
 local function Gathered(itemID)
-	if ns.CollectMode() ~= "gather" then
-		return nil
-	end
 	local skillLine = ns.GatheredBy[itemID]
 	if not skillLine then
 		return nil
@@ -127,7 +124,7 @@ function ns.Price(itemID)
 	if cached == nil then
 		local vendor = ns.db.vendor[itemID] or ns.VendorPrices[itemID]
 		local ah = AuctionPrice(itemID)
-		cached = Gathered(itemID)
+		cached = ns.CollectMode() == "gather" and Gathered(itemID)
 		if cached then
 			priceCache[itemID] = cached
 			return cached
@@ -136,7 +133,9 @@ function ns.Price(itemID)
 		elseif ah then
 			cached = ah
 		else
-			cached = false
+			-- Buy reagents with nowhere to buy it (no vendor, and no auction price yet): you can still gather
+			-- it, so it is priced as gathered rather than leaving every recipe that uses it out of the route (#162).
+			cached = Gathered(itemID) or false
 		end
 		priceCache[itemID] = cached
 	end

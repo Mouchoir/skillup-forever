@@ -88,6 +88,19 @@ c.auction[ORE] = 100
 ns.SetCollectMode("auction")
 equal(ns.Price(ORE).source, "auctionator", "Buy reagents buys gathered materials at the auction house")
 equal(ns.Price(ORE).copper, 100, "at the full auction price")
+-- With nowhere to buy the ore yet (no vendor sells it, no auction price), it is priced as gathered, so its recipe
+-- stays on the route: left unpriced, a route of only such recipes came out empty (#162).
+c.auction[ORE] = nil
+c.AuctionatorScan()
+equal((ns.Price(ORE) or {}).source, "gather", "Buy reagents gathers what nobody sells yet")
+equal(ns.Price(ORE).copper, 5, "valued as gathering values it")
+ns.SetSkipped(FROM_FLUX, true)
+equal(Plan().unpriced, 0, "no recipe is left out for it")
+equal(Plan().crafts[1] and Plan().crafts[1].recipeID, FROM_ORE, "and the route still crafts from the ore")
+ns.SetSkipped(FROM_FLUX, false)
+c.auction[ORE] = 100
+c.AuctionatorScan()
+equal(ns.Price(ORE).source, "auctionator", "once the auction house prices it, it is bought again")
 ns.SetCollectMode("gather")
 c.SetSetting("valueGathered", false)
 equal(ns.Price(ORE).copper, 0, "off again, gathering is free")

@@ -730,7 +730,7 @@ local function Render()
 	page.RouteList:Begin()
 	page.ReagentList:Begin()
 	if not profession then
-		SetCollectEnabled(false)
+		SetCollectEnabled(ns.CollectMode() == "auction")
 		page.Vendor:Hide()
 		page.vendorItems = {}
 		page.RouteList:Message(L["Learn a crafting profession to plan a route."])
@@ -745,7 +745,8 @@ local function Render()
 		page.Target:SetText(tostring(plan.target))
 	end
 	local reagents = ns.RouteReagents(plan)
-	SetCollectEnabled(CollectChanges(reagents))
+	-- Never greyed while on, or a route with nothing to gather would leave it stuck on (#162).
+	SetCollectEnabled(ns.CollectMode() == "auction" or CollectChanges(reagents))
 	RenderRoute(page.RouteList, plan)
 	local priceStatus, priceColor = AuctionPriceStatus(reagents)
 	if priceStatus ~= "" then

@@ -12,6 +12,8 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+- **Buy reagents can be turned off again, and no longer empties the route.** With *Buy reagents* on, a reagent you gather was priced only at a vendor or the auction house, so without an Auctionator price every recipe using it was left out. When that was every recipe, the route came out empty, and the switch greyed itself out because nothing left on the route was yours to gather, so it couldn't be unticked. Now the switch is never greyed while it's on, and a reagent you gather that nobody sells yet is priced as gathering prices it, until Auctionator has seen it. Thanks to kurila11478 for reporting it.
+
 ## [0.15.1] - 2026-10-17
 
 - **Data checked against Forever 1.60.1.70450.** The bundled data is unchanged apart from its build pin.
