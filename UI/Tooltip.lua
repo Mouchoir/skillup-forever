@@ -12,6 +12,12 @@ local BAND_TEXTURE = "Interface\\TargetingFrame\\UI-StatusBar"
 -- Forever's rested-XP pip, taller than it is wide.
 local MARKER_ATLAS = "ui-hud-experiencebar-frame-pip-camelot"
 local MARKER_HEIGHT = BAR_HEIGHT * 1.3
+-- The bar frame's height (the track and the two rows of labels under it), and the gap above it.
+local BAR_FRAME_HEIGHT = BAR_HEIGHT + 30
+local BAR_PADDING = 4
+-- The blank tooltip lines the bar sits on, counted from GameTooltip's default 12-pixel text and 2-pixel spacing.
+-- Fixed here: the tooltip's own line height and line count can be secret while our code runs (#161).
+local BAR_LINES = math.ceil(math.floor(BAR_FRAME_HEIGHT + BAR_PADDING + 0.5) / 14)
 
 ---@type SkillUpBar
 local bar
@@ -20,7 +26,15 @@ local bar
 -- own aspect.
 local function CreateBar()
 	local frame = CreateFrame("Frame", nil, UIParent) --[[@as SkillUpBar]]
-	frame:SetSize(BAR_WIDTH, BAR_HEIGHT + 30)
+	frame:SetSize(BAR_WIDTH, BAR_FRAME_HEIGHT)
+	frame:Hide()
+	-- Parented to the tooltip it hides with it; a tooltip cleared for something else drops it too.
+	GameTooltip:HookScript("OnTooltipCleared", function(tooltip)
+		if not ns.Usable(tooltip) then
+			return
+		end
+		frame:Hide()
+	end)
 
 	local track = CreateFrame("Frame", nil, frame)
 	track:SetPoint("TOPLEFT")
@@ -97,6 +111,23 @@ local function LayoutBar(t, skill)
 	bar.you:ClearAllPoints()
 	bar.you:SetPoint("TOP", bar, "TOPLEFT", math.min(math.max(mx, 24), BAR_WIDTH - 24), -height - 16)
 	return bar
+end
+
+-- Puts the bar on the blank lines after line `after` of GameTooltip. Blizzard's GameTooltip_InsertFrame does
+-- this from the tooltip's own line count, which errors as a secret number when our code runs it (#161), so
+-- the lines are added and counted here, and the bar is anchored to the first by its name.
+---@param tooltip GameTooltip
+---@param after integer the lines the tooltip holds, as this file added them
+---@param frame SkillUpBar
+local function PlaceBar(tooltip, after, frame)
+	for _ = 1, BAR_LINES do
+		tooltip:AddLine(" ")
+	end
+	frame:SetParent(tooltip)
+	frame:ClearAllPoints()
+	frame:SetPoint("TOPLEFT", _G["GameTooltipTextLeft" .. (after + 1)], "TOPLEFT", 0, -BAR_PADDING)
+	tooltip:SetMinimumWidth(BAR_WIDTH)
+	frame:Show()
 end
 
 ---@param copper number
@@ -255,7 +286,8 @@ function ns.ShowRecipeTooltip(_, row, data)
 	if t and ctx then
 		local reqColor = ctx.skill < t[1] and RED_FONT_COLOR or HIGHLIGHT_FONT_COLOR
 		GameTooltip_AddColoredLine(tooltip, string.format(L["Skill range starts at %d"], t[1]), reqColor)
-		GameTooltip_InsertFrame(tooltip, LayoutBar(t, ctx.skill), 4)
+		-- The title and the skill range line: two lines.
+		PlaceBar(tooltip, 2, LayoutBar(t, ctx.skill))
 		if d.chance then
 			GameTooltip_AddColoredLine(
 				tooltip,

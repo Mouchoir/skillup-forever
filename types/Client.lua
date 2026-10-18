@@ -209,10 +209,6 @@ function GameTooltip_AddHighlightLine(tooltip, text) end
 ---@param tooltip GameTooltip
 ---@param text string
 function GameTooltip_AddInstructionLine(tooltip, text) end
----@param tooltip GameTooltip
----@param frame Frame
----@param padding? number
-function GameTooltip_InsertFrame(tooltip, frame, padding) end
 function GameTooltip_Hide() end
 
 ---@param link string

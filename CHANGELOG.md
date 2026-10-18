@@ -12,6 +12,8 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+- **No more secret number error on recipe tooltips.** Hovering a recipe in the Professions window could raise "attempt to perform arithmetic on a secret number value" from the game's tooltip code, once per hover, blamed on SkillUp. The game's helper that SkillUp used to fit its skill bar into the tooltip reads the tooltip's line count, which the game keeps secret from addons, so SkillUp now makes room for the bar itself. Thanks to syrberus for the report and the full error, and to kopuliak and chuujitsuna, who saw it first.
+
 ## [0.15.1] - 2026-10-17
 
 - **Data checked against Forever 1.60.1.70450.** The bundled data is unchanged apart from its build pin.
