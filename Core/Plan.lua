@@ -536,7 +536,7 @@ function ns.RouteReagents(plan)
 	end
 	-- A carried tool the route needs goes in once, after the reagents, so its place is stable.
 	for _, itemID in ipairs(ns.MissingToolItems and ns.MissingToolItems(plan) or {}) do
-		items[#items + 1] = { itemID = itemID, need = 1, source = ns.PriceSource(itemID) or "unknown" }
+		items[#items + 1] = { itemID = itemID, need = 1, source = ns.Model.ShoppingSource(ns.PriceSource(itemID)) }
 	end
 	return items
 end

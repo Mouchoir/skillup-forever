@@ -69,6 +69,13 @@ local reagents = ns.RouteReagents(plan)
 equal(reagents[#reagents].itemID, HAMMER, "it joins the shopping list")
 equal(reagents[#reagents].need, 1, "needed once for the whole route")
 equal(reagents[#reagents].source, "unknown", "an unpriced tool keeps the unknown bucket")
+-- Priced at the auction house, the tool takes the auction bucket the list draws, as a reagent does.
+c.auction[HAMMER] = 500
+c.AuctionatorScan()
+reagents = ns.RouteReagents(plan)
+equal(reagents[#reagents].source, "auction", "an auction-priced tool is in the auction bucket")
+c.auction[HAMMER] = nil
+c.AuctionatorScan()
 
 -- A linked or guild window shows someone else's recipes; its learned flags never overwrite ours.
 c.known[BANDAGE] = nil

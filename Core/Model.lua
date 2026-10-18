@@ -376,6 +376,13 @@ Model.SHOPPING_SOURCES = { "gather", "vendor", "auction", "unknown" }
 ---@type table<SkillUpPriceSource, SkillUpShoppingSource>
 local BUCKET = { gather = "gather", vendor = "vendor", auctionator = "auction" }
 
+-- The shopping list's bucket for a price source: what every item in the list carries as its source.
+---@param source SkillUpPriceSource?
+---@return SkillUpShoppingSource
+function Model.ShoppingSource(source)
+	return source and BUCKET[source] or "unknown"
+end
+
 ---@param needed table<integer, number>
 ---@param sourceOf fun(itemID: integer): SkillUpPriceSource?
 ---@return table<string, SkillUpShoppingItem[]>
@@ -386,8 +393,7 @@ function Model.BucketNeeded(needed, sourceOf)
 	end
 	for itemID, count in pairs(needed) do
 		if count > 0 then
-			local source = sourceOf(itemID)
-			local bucket = list[source and BUCKET[source] or "unknown"]
+			local bucket = list[Model.ShoppingSource(sourceOf(itemID))]
 			bucket[#bucket + 1] = { itemID = itemID, count = count }
 		end
 	end
