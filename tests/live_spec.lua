@@ -263,4 +263,55 @@ equal(split.steps[1].craft.crafts, 1, "the craft below the rank is one craft")
 equal(split.steps[2].rank.name, "Journeyman", "with the rank next")
 equal(split.steps[3].craft.crafts, 13, "and the crafts past it carry the rest")
 
+--[[ A scan that finds nothing new leaves the plan alone. ]]
+
+-- The client lists recipes the bundle has no thresholds for (Forever's own, numbered past a million) and
+-- recipes whose grey it reports as 0. Neither keeps a live grey, so neither is a change on the next scan.
+local NEW_RECIPE, HEAVY_BANDAGE = 1263001, 3276
+local c6 = Client.load()
+local ns6 = c6.ns
+c6.professions = { { name = "First Aid", rank = 1, max = 75, id = 129 } }
+c6.known[BANDAGE] = true
+c6.items[1251] = { sell = 0 }
+ns6.db.vendor[CLOTH] = 10
+c6.live[BANDAGE] = { info = { learned = true, maxTrivialLevel = 200, numSkillUps = 1, relativeDifficulty = 1 } }
+c6.live[NEW_RECIPE] = { info = { learned = true, maxTrivialLevel = 300, numSkillUps = 1, relativeDifficulty = 1 } }
+c6.live[HEAVY_BANDAGE] = { info = { learned = false, maxTrivialLevel = 0, numSkillUps = 1, relativeDifficulty = 1 } }
+equal(ns6.Thresholds[NEW_RECIPE], nil, "the new recipe has no bundled thresholds")
+c6.Fire("TRADE_SKILL_LIST_UPDATE")
+c6.Advance(0)
+local profession6 = ns6.PlayerProfessions()[129]
+c6.Fire("TRADE_SKILL_LIST_UPDATE")
+local planned = ns6.PlanRoute(profession6)
+c6.Advance(0)
+equal(ns6.PlanRoute(profession6) == planned, true, "a scan that finds nothing new keeps the plan")
+c6.live[NEW_RECIPE].info.maxTrivialLevel = 310
+c6.Fire("TRADE_SKILL_LIST_UPDATE")
+planned = ns6.PlanRoute(profession6)
+c6.Advance(0)
+equal(ns6.PlanRoute(profession6) == planned, true, "nor does a grey the recipe never used")
+c6.live[BANDAGE].info.maxTrivialLevel = 210
+c6.Fire("TRADE_SKILL_LIST_UPDATE")
+planned = ns6.PlanRoute(profession6)
+c6.Advance(0)
+equal(ns6.PlanRoute(profession6) ~= planned, true, "a live grey that moved drops the plan")
+
+-- Switching profession tabs keeps every plan. The window's own schematic for a recipe priced from the bundle
+-- drops them, once.
+planned = ns6.PlanRoute(profession6)
+c6.Fire("TRADE_SKILL_DATA_SOURCE_CHANGED")
+c6.Fire("TRADE_SKILL_SHOW")
+c6.Fire("TRADE_SKILL_LIST_UPDATE")
+c6.Advance(0)
+equal(ns6.PlanRoute(profession6) == planned, true, "switching profession tabs keeps the plan")
+c6.schematics[BANDAGE] = { reagents = { { CLOTH, 1 } }, output = 1251 }
+c6.Fire("TRADE_SKILL_LIST_UPDATE")
+local withLive = ns6.PlanRoute(profession6)
+equal(withLive ~= planned, true, "a schematic the window brings for a bundled recipe drops the plan with its event")
+c6.Advance(0)
+equal(ns6.PlanRoute(profession6) == withLive, true, "and the scan after it finds nothing more")
+c6.Fire("TRADE_SKILL_LIST_UPDATE")
+c6.Advance(0)
+equal(ns6.PlanRoute(profession6) == withLive, true, "once")
+
 Client.report("live_spec")

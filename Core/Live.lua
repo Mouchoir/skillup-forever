@@ -132,8 +132,10 @@ local function Scan()
 	if not C_TradeSkillUI.GetAllRecipeIDs then
 		return false
 	end
-	local changed = false
-	for _, recipeID in ipairs(C_TradeSkillUI.GetAllRecipeIDs()) do
+	local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
+	-- A schematic the window's events came too early for: the client had it only a frame later.
+	local changed = ns.LiveSchematicsArrived(recipeIDs)
+	for _, recipeID in ipairs(recipeIDs) do
 		local info = C_TradeSkillUI.GetRecipeInfo(recipeID)
 		if info then
 			changed = ns.NoteLearnedRecipe(recipeID, info.learned) or changed
@@ -150,7 +152,10 @@ local function Scan()
 			else
 				live.thresholds = nil
 			end
-			changed = changed or oldGrey ~= grey or live.skillUps ~= skillUps
+			-- Compared with the grey kept, not the client's: one the bundle can't use (a recipe it lacks, or a
+			-- grey of 0) is kept as none on every scan, and so is no change.
+			local newGrey = live.thresholds and live.thresholds[4]
+			changed = changed or oldGrey ~= newGrey or live.skillUps ~= skillUps
 			live.skillUps = skillUps
 			ns.LiveRecipes[recipeID] = live
 		end
