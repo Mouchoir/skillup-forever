@@ -40,7 +40,9 @@ local STALE = {
 	-- The profession window opened, moved to another profession or redrew its list: what shows it follows,
 	-- from plans kept as they are. What the window holds that the plans lack, its scan reports as recipes.
 	window = { api = true, route = true, tracker = true, gear = true, auctionSearch = true },
-	skill = { plans = true, api = true, route = true, tracker = true },
+	-- A skill line moved: often a weapon or defense skill-up in combat, nothing a plan reads. A plan is keyed by
+	-- its profession's skill, bonus and cap, so a profession's own skill-up rebuilds that one plan on its next ask.
+	skill = { api = true, route = true, tracker = true },
 	-- A profession learned or dropped changes what counts as gathered, so what things cost.
 	professions = {
 		prices = true,

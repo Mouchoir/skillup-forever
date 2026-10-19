@@ -102,7 +102,8 @@ for _, case in ipairs({
 	{ "NEW_RECIPE_LEARNED", "schematics plans api | route tracker" },
 	{ "TRADE_SKILL_SHOW", "api | route tracker" },
 	{ "TRADE_SKILL_LIST_UPDATE", "api | route tracker" },
-	{ "SKILL_LINES_CHANGED", "plans api | route tracker" },
+	-- A weapon or defense skill-up: nothing the plans read.
+	{ "SKILL_LINES_CHANGED", "api | route tracker" },
 	{ "BAG_UPDATE_DELAYED", "api | route tracker" },
 	{ "PLAYER_LEVEL_UP", "api | route tracker" },
 	{ "ZONE_CHANGED_NEW_AREA", "api | " },
@@ -114,6 +115,17 @@ for _, case in ipairs({
 	equal(c.Listeners(case[1]), 1, case[1] .. " arrives on one frame")
 	equal(Stale(Event(case[1])), case[2], case[1])
 end
+
+-- A profession's own skill-up rebuilds its plan through the plan's key, from the new skill.
+equal(
+	Stale(function()
+		c.professions[1].rank = 51
+		c.Fire("SKILL_LINES_CHANGED")
+	end),
+	"plans api | route tracker",
+	"a profession's own skill-up"
+)
+equal(ns.PlanRoute(Tailoring()).profession.skill, 51, "the rebuilt plan starts from the new skill")
 
 -- A recipe learned with no recipe list update after it (the window closed) still reaches the plan.
 local function Plans(recipeID)
