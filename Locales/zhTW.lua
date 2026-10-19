@@ -210,8 +210,6 @@ L["Reagents for"] = "材料用於"
 L["Reagents in hand"] = "材料已備齊"
 L["Reagents still needed"] = "仍需的材料"
 L["Recipe rows"] = "配方列"
-L["Recipe rows can show what one craft costs or earns."] =
-	"配方列現在可以顯示一次製作的成本或收益。"
 L["Recipe tooltip position"] = "配方提示位置"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"可以繼續提升的商人、任務和掉落配方："
@@ -275,6 +273,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 	"從成本中減去製造物品的售價。拍賣價需要Auctionator，已扣除5%手續費，且不一定能賣出。"
 L["Suggest my other Forever addons"] = "推薦我的其他Forever插件"
 L["Taught by %s trainers."] = "由%s訓練師教授。"
+L["The levelling route tab makes room for other profession tabs."] =
+	"升級路線分頁為其他專業分頁騰出位置。"
 L["The place this recipe is taught isn't known yet."] = "尚不清楚在哪裡學習此配方。"
 L["The rest comes from a vendor or your gathering."] = "其餘來自商人或你的採集。"
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =

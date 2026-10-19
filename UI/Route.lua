@@ -1066,13 +1066,37 @@ function ns.ShowRecipe(recipeID)
 end
 
 -- Directly under the last profession tab Forever shows, in the same tab art.
+---@param anchor Frame
+---@return Frame?
+local function OccupiedSlot(anchor)
+	local left, targetTop = anchor:GetLeft(), anchor:GetBottom()
+	if type(left) ~= "number" or type(targetTop) ~= "number" then
+		return nil
+	end
+	targetTop = targetTop - 2
+	for _, sibling in ipairs({ ProfessionsFrame:GetChildren() }) do
+		if sibling ~= tab and sibling:IsShown() then
+			local siblingLeft, siblingTop = sibling:GetLeft(), sibling:GetTop()
+			if type(siblingLeft) == "number" and type(siblingTop) == "number" then
+				if math.abs(siblingLeft - left) < 1 and math.abs(siblingTop - targetTop) < 1 then
+					return sibling
+				end
+			end
+		end
+	end
+end
+
 local function PlaceTab()
+	---@type Frame
 	local last = ProfessionsFrame.ProfessionsOverviewTab
 	for _, professionTab in ipairs(ProfessionsFrame.rightProfessionTabs or {}) do
 		if professionTab:IsShown() then
 			last = professionTab
 		end
 	end
+	-- Addons such as All The Things can already occupy the next tab slot without joining Blizzard's tab array.
+	-- Use their visible tab as the anchor so the route remains reachable below it.
+	last = OccupiedSlot(last) or last
 	tab:ClearAllPoints()
 	tab:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -2)
 end

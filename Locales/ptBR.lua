@@ -213,8 +213,6 @@ L["Reagents for"] = "Reagentes para"
 L["Reagents in hand"] = "Reagentes em mãos"
 L["Reagents still needed"] = "Reagentes que faltam"
 L["Recipe rows"] = "Linhas de receita"
-L["Recipe rows can show what one craft costs or earns."] =
-	"As linhas de receitas podem mostrar quanto uma criação custa ou rende."
 L["Recipe tooltip position"] = "Posição da dica de receita"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"Receitas de comerciantes, missões e saques que permitiriam continuar:"
@@ -278,6 +276,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 	"Subtrai do custo o valor de venda do item criado. Preços de leilão precisam do Auctionator, são após a taxa de 5% e podem não vender."
 L["Suggest my other Forever addons"] = "Sugerir meus outros AddOns Forever"
 L["Taught by %s trainers."] = "Ensinada por instrutores de %s."
+L["The levelling route tab makes room for other profession tabs."] =
+	"A aba da rota de nivelamento abre espaço para outras abas de profissão."
 L["The place this recipe is taught isn't known yet."] = "Ainda não se sabe onde esta receita é ensinada."
 L["The rest comes from a vendor or your gathering."] = "O resto vem de um comerciante ou da sua coleta."
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =

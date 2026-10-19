@@ -247,10 +247,44 @@ for _, file in ipairs({
 	setfenv(assert(loadfile(file)), pageEnv)("SkillUpForever", page)
 end
 local tabs = {}
+local children = {}
+local function SideTab(left, top)
+	local frame = Stub()
+	frame.left, frame.top, frame.width, frame.height = left, top, 32, 32
+	frame.GetLeft = function(self)
+		return self.left
+	end
+	frame.GetTop = function(self)
+		return self.top
+	end
+	frame.GetBottom = function(self)
+		return self.top - self.height
+	end
+	frame.SetPoint = function(self, point, relativeTo, relativePoint, x, y)
+		self.point = { point, relativeTo, relativePoint, x, y }
+		self.left = relativeTo:GetLeft() + (x or 0)
+		self.top = relativeTo:GetBottom() + (y or 0)
+	end
+	frame.ClearAllPoints = function(self)
+		self.point = nil
+	end
+	frame:Show()
+	return frame
+end
+local professionTab = SideTab(100, 600)
+local occupiedTab = SideTab(100, professionTab:GetBottom() - 2)
+children[#children + 1] = professionTab
+children[#children + 1] = occupiedTab
+pageEnv.ProfessionsFrame.ProfessionsOverviewTab = Stub()
+pageEnv.ProfessionsFrame.rightProfessionTabs = { professionTab }
+pageEnv.ProfessionsFrame.GetChildren = function()
+	return unpack(children)
+end
 local collect, vendor, buttons = nil, nil, {}
 pageEnv.CreateFrame = function(_, _, _, template)
-	local frame = Stub()
+	local frame = template == "LargeSideTabButtonTemplate" and SideTab(0, 0) or Stub()
 	tabs[#tabs + 1] = frame
+	children[#children + 1] = frame
 	if template == "UICheckButtonTemplate" then
 		collect = frame
 	elseif template == "UIPanelButtonTemplate" then
@@ -272,6 +306,7 @@ pageEnv.Professions = {
 }
 page.AttachRoute()
 local routeTab = tabs[#tabs] -- the side tab, the last frame the page creates
+equal(routeTab.point[2], occupiedTab, "the route tab moves below a third-party tab already using its slot")
 routeTab:Click()
 local reagentList = lists[2]
 equal(reagentList.rows[1] and reagentList.rows[1].text, "item 2589", "an unpriced reagent is listed")

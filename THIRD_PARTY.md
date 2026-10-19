@@ -50,6 +50,7 @@ Credit for the ideas and reports behind the addon.
 | BallaRa, on CurseForge | Asked for the recipe tooltip to stop covering the reagents: it moved beside the window, with a setting for where it goes (#163, 0.16.0) | |
 | kurila11478, on CurseForge | Found *Buy reagents* stuck on with an empty route (#162, 0.16.0) | |
 | trias6657, on CurseForge | Asked for net per craft on recipe rows, also on recipes that give no skill, and a red minus on costs | |
+| Bolthorr, on CurseForge | Reported the levelling route tab colliding with All The Things' profession tab (#179) | |
 | Syrberus, on CurseForge | Reported the secret-number error on recipe tooltips, with the full error (#161, 0.16.0) | |
 | deathmvp1 and berserkerlxl, on CurseForge | Found Questie's quest list covering the Forever tracker sections, which now move clear of it (cjber/shortest-path-forever#214) | |
 

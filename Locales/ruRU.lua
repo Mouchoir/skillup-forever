@@ -228,8 +228,6 @@ L["Reagents for"] = "Реагенты для"
 L["Reagents in hand"] = "Реагенты собраны"
 L["Reagents still needed"] = "Еще нужны реагенты"
 L["Recipe rows"] = "Строки рецептов"
-L["Recipe rows can show what one craft costs or earns."] =
-	"Строки рецептов могут показывать, сколько стоит или приносит одно создание."
 L["Recipe tooltip position"] = "Положение подсказки рецепта"
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"Рецепты от торговцев, заданий и добычи, с которыми можно продолжить:"
@@ -295,6 +293,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 	"Вычитает из стоимости цену продажи созданного предмета. Для цен аукциона нужен Auctionator, они указаны за вычетом 5% комиссии, и предмет может не продаться."
 L["Suggest my other Forever addons"] = "Предлагать другие мои модификации Forever"
 L["Taught by %s trainers."] = "Обучают учителя (%s)."
+L["The levelling route tab makes room for other profession tabs."] =
+	"Вкладка маршрута прокачки освобождает место для других вкладок профессий."
 L["The place this recipe is taught isn't known yet."] =
 	"Где обучают этому рецепту, пока неизвестно."
 L["The rest comes from a vendor or your gathering."] =

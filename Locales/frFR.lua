@@ -219,8 +219,6 @@ L["Reagents for"] = "Composants pour" -- mt
 L["Reagents in hand"] = "Composants en main" -- mt
 L["Reagents still needed"] = "Composants encore requis" -- mt
 L["Recipe rows"] = "Lignes de recettes" -- mt
-L["Recipe rows can show what one craft costs or earns."] =
-	"Les lignes de recettes peuvent afficher ce qu'une fabrication coûte ou rapporte." -- mt
 L["Recipe tooltip position"] = "Position de l'infobulle des recettes" -- mt
 L["Recipes from vendors, quests and drops that would carry it on:"] =
 	"Recettes de marchands, de quêtes et de butin qui permettraient de continuer :" -- mt
@@ -284,6 +282,8 @@ L["Subtract what the crafted item sells for from its cost. Auction prices need A
 	"Soustrait de son coût ce que l'objet fabriqué rapporte à la vente. Les prix aux enchères nécessitent Auctionator, s'entendent après la commission de 5 % et ne garantissent pas la vente." -- mt
 L["Suggest my other Forever addons"] = "Suggérer mes autres addons Forever" -- mt
 L["Taught by %s trainers."] = "Enseignée par les maîtres de métier (%s)." -- mt
+L["The levelling route tab makes room for other profession tabs."] =
+	"L'onglet d'itinéraire de progression laisse la place aux autres onglets de métier." -- mt
 L["The place this recipe is taught isn't known yet."] = "On ne sait pas encore où cette recette est enseignée." -- mt
 L["The rest comes from a vendor or your gathering."] = "Le reste vient d'un marchand ou de votre récolte." -- mt
 L["The route asks for %d to reach %d in 9 runs of 10; a worse run needs more."] =
