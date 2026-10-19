@@ -12,6 +12,8 @@ optional `### For addon authors` subsection after a version's player bullets.
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-10-19
+
 - **The levelling route tab makes room for other profession tabs.** When another addon already uses the next tab slot, ours sits below it instead of being hidden underneath. Thanks to Bolthorr for reporting the collision.
 
 ## [0.17.0] - 2026-10-18
