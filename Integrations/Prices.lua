@@ -4,6 +4,10 @@ local addonName, ns = ...
 -- [recipeID] = live schematic, else bundled data, else false.
 ---@type table<integer, SkillUpSchematic|false>
 local recipes = {}
+-- [recipeID] = true while recipes holds the bundled data or false for it: the client had no schematic of its
+-- own then, as it has none for a profession whose window is closed.
+---@type table<integer, true>
+local fromBundle = {}
 ---@type table<integer, integer[]>?
 local reagentIndex
 ---@type table<integer, SkillUpPrice|false>
@@ -151,53 +155,76 @@ function ns.PriceSource(itemID)
 	return price and price.source
 end
 
--- Basic reagents only: optional and finishing slots don't have to be filled.
+-- The client's own schematic, basic reagents only: optional and finishing slots don't have to be filled.
+-- Nil when it has none with reagents, as for a recipe outside the open profession.
+---@param recipeID integer
+---@return SkillUpSchematic?
+local function LiveRecipe(recipeID)
+	local schematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, false)
+	if not (schematic and schematic.reagentSlotSchematics) then
+		return nil
+	end
+	---@type SkillUpSchematic
+	local recipe = { reagents = {} }
+	for _, slot in ipairs(schematic.reagentSlotSchematics) do
+		local first = slot.reagents and slot.reagents[1]
+		if slot.reagentType == Enum.CraftingReagentType.Basic then
+			if
+				not (
+					first
+					and first.itemID
+					and first.itemID > 0
+					and slot.quantityRequired
+					and slot.quantityRequired > 0
+				)
+			then
+				return nil
+			end
+			recipe.reagents[#recipe.reagents + 1] = { itemID = first.itemID, quantity = slot.quantityRequired }
+		end
+	end
+	if schematic.outputItemID and schematic.outputItemID > 0 then
+		local quantity = ((schematic.quantityMin or 1) + (schematic.quantityMax or schematic.quantityMin or 1)) / 2
+		if quantity <= 0 then
+			return nil
+		end
+		recipe.output = { itemID = schematic.outputItemID, quantity = quantity }
+	end
+	if #recipe.reagents == 0 then
+		return nil
+	end
+	return recipe
+end
+
 ---@param recipeID integer
 ---@return SkillUpSchematic?
 local function Recipe(recipeID)
 	---@type SkillUpSchematic|false|nil
 	local recipe = recipes[recipeID]
 	if recipe == nil then
-		local schematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, false)
-		if schematic and schematic.reagentSlotSchematics then
-			recipe = { reagents = {} }
-			for _, slot in ipairs(schematic.reagentSlotSchematics) do
-				local first = slot.reagents and slot.reagents[1]
-				if slot.reagentType == Enum.CraftingReagentType.Basic then
-					if
-						not (
-							first
-							and first.itemID
-							and first.itemID > 0
-							and slot.quantityRequired
-							and slot.quantityRequired > 0
-						)
-					then
-						recipe = nil
-						break
-					end
-					recipe.reagents[#recipe.reagents + 1] = { itemID = first.itemID, quantity = slot.quantityRequired }
-				end
-			end
-			if recipe and schematic.outputItemID and schematic.outputItemID > 0 then
-				local quantity = ((schematic.quantityMin or 1) + (schematic.quantityMax or schematic.quantityMin or 1))
-					/ 2
-				if quantity > 0 then
-					recipe.output = { itemID = schematic.outputItemID, quantity = quantity }
-				else
-					recipe = nil
-				end
-			end
-		end
+		recipe = LiveRecipe(recipeID)
 		-- An empty live schematic is what a recipe outside the open profession can
 		-- look like: use the bundled reagents, or leave the cost unknown, never free.
-		local bundled = ns.RecipeData and ns.RecipeData[recipeID]
-		if not recipe or #recipe.reagents == 0 then
-			recipe = bundled or false
+		if not recipe then
+			recipe = ns.RecipeData and ns.RecipeData[recipeID] or false
+			fromBundle[recipeID] = true
 		end
 		recipes[recipeID] = recipe
 	end
 	return recipe or nil
+end
+
+-- Whether any of these recipes, taken from the bundle while the client had no schematic for it, has one of
+-- its own now: its profession's window is open.
+---@param recipeIDs integer[]
+---@return boolean
+function ns.LiveSchematicsArrived(recipeIDs)
+	for _, recipeID in ipairs(recipeIDs) do
+		if fromBundle[recipeID] and LiveRecipe(recipeID) then
+			return true
+		end
+	end
+	return false
 end
 
 ---@param recipeID integer
@@ -455,7 +482,12 @@ function ns.InitPrices()
 		ns.db.vendor = {}
 	end
 	ns.WhenStale("schematics", function()
-		recipes = {}
+		-- A schematic the client gave stays: switching profession tabs must not send every other profession
+		-- back to the bundle, to be read again when its tab opens. What came from the bundle goes.
+		for recipeID in pairs(fromBundle) do
+			recipes[recipeID] = nil
+		end
+		fromBundle = {}
 		ResetCraftCosts()
 		ResetMakers()
 	end)
@@ -467,6 +499,17 @@ function ns.InitPrices()
 	ns.WhenEvent("SKILL_LINES_CHANGED", function()
 		return ProfessionsChanged() and "professions" or nil
 	end)
+	-- The open window's own schematics for recipes priced from the bundle while it was closed join the window's
+	-- event as a recipe change, so what draws the window draws it from them. A window with nothing new is no change.
+	local function WindowSchematics()
+		if not C_TradeSkillUI.GetAllRecipeIDs then
+			return nil
+		end
+		return ns.LiveSchematicsArrived(C_TradeSkillUI.GetAllRecipeIDs()) and "recipes" or nil
+	end
+	for _, event in ipairs({ "TRADE_SKILL_SHOW", "TRADE_SKILL_DATA_SOURCE_CHANGED", "TRADE_SKILL_LIST_UPDATE" }) do
+		ns.WhenEvent(event, WindowSchematics)
+	end
 	ns.WhenEvent("MERCHANT_SHOW", RecordMerchant)
 	ns.WhenEvent("MERCHANT_UPDATE", RecordMerchant)
 	ns.WhenEvent("GET_ITEM_INFO_RECEIVED", function()

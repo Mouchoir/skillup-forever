@@ -4,7 +4,7 @@
 local Client = dofile("tests/client.lua")
 local equal = Client.equal
 
-local SHIRT, CLOTH, SHIRT_ITEM, BOLT = 1, 10, 11, 12
+local SHIRT, CLOTH, SHIRT_ITEM, BOLT, CLOAK = 1, 10, 11, 12, 13
 local c = Client.load({
 	data = {
 		Thresholds = { [SHIRT] = { 1, 60, 70, 80 }, [BOLT] = { 1, 90, 100, 110 } },
@@ -35,11 +35,26 @@ for _, view in ipairs({ "tracker", "routeTab", "recipeList", "trainer", "route" 
 	end)
 end
 
--- Each cache hands back the table it kept until it is dropped.
+-- The schematic cache keeps what the window gave for good; what it took for a recipe the window has no
+-- schematic for (CLOAK) is what it drops, to ask the client again.
+local cloakReads = 0
+local realSchematic = c.G.C_TradeSkillUI.GetRecipeSchematic
+c.G.C_TradeSkillUI.GetRecipeSchematic = function(recipeID, ...)
+	if recipeID == CLOAK then
+		cloakReads = cloakReads + 1
+	end
+	return realSchematic(recipeID, ...)
+end
+local function CloakReads()
+	ns.Reagents(CLOAK)
+	return cloakReads
+end
+
+-- Each cache hands back the table it kept until it is dropped; the schematic cache, how often it asked.
 local CACHES = { "schematics", "prices", "plans", "api" }
 local function Kept()
 	return {
-		schematics = ns.Reagents(SHIRT),
+		schematics = CloakReads(),
 		prices = ns.Price(CLOTH),
 		plans = ns.PlanRoute(Tailoring()),
 		api = c.G.SkillUpForever.API.Professions(),
@@ -82,10 +97,11 @@ c.Fire("BAG_UPDATE_DELAYED")
 equal(Stale(Event("ITEM_DATA_LOAD_RESULT")), " | route tracker", "item data nothing waited on")
 
 for _, case in ipairs({
-	{ "TRADE_SKILL_DATA_SOURCE_CHANGED", "schematics plans api | route tracker" },
+	-- The window's own events redraw what shows it and keep the plans: its scan reports what changed in them.
+	{ "TRADE_SKILL_DATA_SOURCE_CHANGED", "api | route tracker" },
 	{ "NEW_RECIPE_LEARNED", "schematics plans api | route tracker" },
-	{ "TRADE_SKILL_SHOW", "schematics plans api | route tracker" },
-	{ "TRADE_SKILL_LIST_UPDATE", "schematics plans api | route tracker" },
+	{ "TRADE_SKILL_SHOW", "api | route tracker" },
+	{ "TRADE_SKILL_LIST_UPDATE", "api | route tracker" },
 	{ "SKILL_LINES_CHANGED", "plans api | route tracker" },
 	{ "BAG_UPDATE_DELAYED", "api | route tracker" },
 	{ "PLAYER_LEVEL_UP", "api | route tracker" },

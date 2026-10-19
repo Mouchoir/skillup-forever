@@ -25,8 +25,9 @@ local ORDER = {
 
 ---@type table<SkillUpChange, table<SkillUpStale, true>>
 local STALE = {
-	-- What a profession's recipes are or need: its window opened, its list or data source changed,
-	-- or a recipe was learned. The plan is built from all of it.
+	-- What a profession's recipes are or need: a recipe learned, or the open window's scan finding a learned
+	-- flag, a live grey, skill points or a schematic the plans were built without. The plan is built from all
+	-- of it.
 	recipes = {
 		schematics = true,
 		plans = true,
@@ -36,6 +37,9 @@ local STALE = {
 		gear = true,
 		auctionSearch = true,
 	},
+	-- The profession window opened, moved to another profession or redrew its list: what shows it follows,
+	-- from plans kept as they are. What the window holds that the plans lack, its scan reports as recipes.
+	window = { api = true, route = true, tracker = true, gear = true, auctionSearch = true },
 	skill = { plans = true, api = true, route = true, tracker = true },
 	-- A profession learned or dropped changes what counts as gathered, so what things cost.
 	professions = {
@@ -78,10 +82,10 @@ local STALE = {
 
 ---@type table<string, SkillUpChange>
 local EVENTS = {
-	TRADE_SKILL_DATA_SOURCE_CHANGED = "recipes",
+	TRADE_SKILL_DATA_SOURCE_CHANGED = "window",
 	NEW_RECIPE_LEARNED = "recipes",
-	TRADE_SKILL_SHOW = "recipes",
-	TRADE_SKILL_LIST_UPDATE = "recipes",
+	TRADE_SKILL_SHOW = "window",
+	TRADE_SKILL_LIST_UPDATE = "window",
 	SKILL_LINES_CHANGED = "skill",
 	BAG_UPDATE_DELAYED = "bags",
 	ITEM_DATA_LOAD_RESULT = "items",

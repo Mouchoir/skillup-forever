@@ -31,6 +31,7 @@
 ---@field RowColor fun(d: SkillUpDescription): ColorMixin
 ---@field Price fun(itemID: integer): SkillUpPrice?
 ---@field PriceSource fun(itemID: integer): SkillUpPriceSource?
+---@field LiveSchematicsArrived fun(recipeIDs: integer[]): boolean
 ---@field Reagents fun(recipeID: integer): SkillUpReagent[]?
 ---@field UsedIn fun(itemID: integer): integer[]
 ---@field CraftCost fun(recipeID: integer): number?, SkillUpValue?, number?
@@ -352,7 +353,7 @@ SkillUpForeverDB = nil
 ---@field count number
 
 -- What a writer or a game event says changed, and the caches and views Core/Changes.lua keeps fresh.
----@alias SkillUpChange 'recipes'|'skill'|'professions'|'prices'|'bags'|'items'|'names'|'level'|'zone'|'merchant'|'fees'|'sources'|'target'|'tracking'|'settings'
+---@alias SkillUpChange 'recipes'|'window'|'skill'|'professions'|'prices'|'bags'|'items'|'names'|'level'|'zone'|'merchant'|'fees'|'sources'|'target'|'tracking'|'settings'
 ---@alias SkillUpStale 'schematics'|'prices'|'plans'|'api'|'route'|'recipeList'|'tracker'|'trainer'|'routeTab'|'gear'|'tooltip'|'auctionSearch'
 ---@alias SkillUpPriceSource 'vendor'|'auctionator'|'gather'
 ---@alias SkillUpCollectMode 'gather'|'auction'

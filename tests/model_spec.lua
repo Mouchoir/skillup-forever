@@ -463,26 +463,30 @@ do
 	runtime.ItemSellPrices[2] = 10
 	equal(runtime.UsedIn(1)[1], 10, "runtime reverse index")
 	equal(#runtime.UsedIn(99), 0, "runtime absent item returns empty array")
-	live[10] = { reagentSlotSchematics = { { reagentType = 1, quantityRequired = 4, reagents = { { itemID = 1 } } } } }
-	equal(runtime.Reagents(10)[1].quantity, 2, "bundled fallback is held until profession data changes")
-	onEvent(frame, "TRADE_SKILL_LIST_UPDATE")
-	equal(runtime.Reagents(10)[1].quantity, 4, "live schematic replaces the fallback after an update")
-	equal(runtime.NetCost(10), 20, "live non-item output replaces bundled item")
-	live[10] = nil
-	onEvent(frame, "TRADE_SKILL_LIST_UPDATE")
-	equal(runtime.Reagents(10)[1].quantity, 2, "profession update invalidates live cache")
+	-- The client's schematic replaces the bundled fallback once the open window's scan reports it, and stays.
 	live[10] = { reagentSlotSchematics = {} }
-	onEvent(frame, "TRADE_SKILL_LIST_UPDATE")
 	equal(runtime.Reagents(10), runtime.RecipeData[10].reagents, "empty live schematic uses bundled reagents")
 	equal(costing(10).cost, 10, "empty live schematic preserves bundled cost")
+	equal(runtime.LiveSchematicsArrived({ 10 }), false, "an empty live schematic is no news")
 	live[10] = {
 		reagentSlotSchematics = {
 			{ reagentType = 1, quantityRequired = 4, reagents = { { itemID = 1 } } },
 			{ reagentType = 1, quantityRequired = 1 },
 		},
 	}
-	onEvent(frame, "TRADE_SKILL_LIST_UPDATE")
+	equal(runtime.LiveSchematicsArrived({ 10 }), false, "nor are incomplete live reagents")
 	equal(runtime.Reagents(10)[1].quantity, 2, "incomplete live reagents use bundled fallback")
+	live[10] = { reagentSlotSchematics = { { reagentType = 1, quantityRequired = 4, reagents = { { itemID = 1 } } } } }
+	onEvent(frame, "TRADE_SKILL_LIST_UPDATE")
+	equal(runtime.Reagents(10)[1].quantity, 2, "a list update alone keeps the fallback: the window's scan decides")
+	equal(runtime.LiveSchematicsArrived({ 10 }), true, "the scan finds the live schematic")
+	runtime.Changed("recipes")
+	equal(runtime.Reagents(10)[1].quantity, 4, "live schematic replaces the fallback once the scan reports it")
+	equal(runtime.NetCost(10), 20, "live non-item output replaces bundled item")
+	equal(runtime.LiveSchematicsArrived({ 10 }), false, "and is no news twice")
+	live[10] = nil
+	runtime.Changed("recipes")
+	equal(runtime.Reagents(10)[1].quantity, 4, "a live schematic stays once its window is closed")
 	live[99] = { reagentSlotSchematics = { { reagentType = 1, quantityRequired = 1, reagents = { { itemID = 99 } } } } }
 	equal(runtime.Reagents(99)[1].itemID, 99, "previous recipe miss is not cached forever")
 	equal(runtime.NetCost(99), nil, "unpriced live reagent prevents net cost")
