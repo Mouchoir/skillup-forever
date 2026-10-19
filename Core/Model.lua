@@ -153,19 +153,48 @@ function Model.CoveredCrafts(thresholds, from, to, skillUps)
 		return 0
 	end
 	local ups = math.max(skillUps or 1, 1)
-	-- odds[points]: the chance that many points are in hand after the crafts counted so far.
-	local odds = { [0] = 1 }
+	-- One point, as every recipe is ranked at each skill: the odds that it is in hand and that it is still to
+	-- come, which the count below keeps in tables, worked out in the same order.
+	if needed == 1 then
+		local chance = Model.Chance(thresholds, from)
+		if chance and chance > 0 then
+			local inHand, toCome, crafts = 0, 1, 0
+			while inHand < Model.CONFIDENCE do
+				crafts = crafts + 1
+				inHand, toCome = inHand + toCome * chance, toCome * (1 - chance)
+			end
+			return crafts
+		end
+	end
+	-- A point's chance, and what a craft there gains, are the same for every craft counted: false where a
+	-- craft gains nothing.
+	local chances, gains = {}, {}
+	for points = 0, needed - 1 do
+		local chance = Model.Chance(thresholds, from + points)
+		if chance and chance > 0 then
+			chances[points] = chance
+			-- A craft never grants more points than the recipe has left before grey.
+			gains[points] = math.min(ups, needed - points, math.max(thresholds[4] - (from + points), 1))
+		else
+			chances[points] = false
+		end
+	end
+	-- odds[points]: the chance that many points are in hand after the crafts counted so far. Two tables
+	-- take turns, so a long run of crafts leaves no garbage.
+	local odds, next_ = { [0] = 1 }, {}
 	local crafts = 0
 	while (odds[needed] or 0) < Model.CONFIDENCE do
 		crafts = crafts + 1
-		local next_ = { [needed] = odds[needed] or 0 }
+		for points in pairs(next_) do
+			next_[points] = nil
+		end
+		next_[needed] = odds[needed] or 0
 		for points = 0, needed - 1 do
 			local inHand = odds[points]
 			if inHand then
-				local chance = Model.Chance(thresholds, from + points)
-				if chance and chance > 0 then
-					-- A craft never grants more points than the recipe has left before grey.
-					local gained = math.min(ups, needed - points, math.max(thresholds[4] - (from + points), 1))
+				local chance = chances[points]
+				if chance then
+					local gained = gains[points]
 					next_[points] = (next_[points] or 0) + inHand * (1 - chance)
 					next_[points + gained] = (next_[points + gained] or 0) + inHand * chance
 				else
@@ -173,7 +202,7 @@ function Model.CoveredCrafts(thresholds, from, to, skillUps)
 				end
 			end
 		end
-		odds = next_
+		odds, next_ = next_, odds
 	end
 	return crafts
 end
@@ -208,93 +237,233 @@ function Model.CostPerPoint(cost, thresholds, skill, skillUps)
 	return cost * Model.CoveredCrafts(thresholds, skill, skill + ups, ups) / ups
 end
 
+-- A recipe's place in a route's order at a skill: what a point there costs, nil when a craft there gains none,
+-- and the chance that breaks a tie. A profit ranks as free: a falling chance would otherwise favour near-grey
+-- crafts that take many times the crafts per point.
+---@param recipe SkillUpCandidate
+---@param skill number
+---@return number?
+---@return number?
+local function Rank(recipe, skill)
+	local key = Model.CostPerPoint(math.max(recipe.netCost, 0), recipe.thresholds, skill, recipe.skillUps)
+	return key, Model.Chance(recipe.thresholds, skill)
+end
+
+-- Whether a recipe ranked `key` and `chance` goes before the best so far: a cheaper point, then a better
+-- chance, then the lower recipe ID. A tie keeps the best so far.
+---@param recipe SkillUpCandidate
+---@param key number?
+---@param chance number?
+---@param best SkillUpCandidate|false|nil
+---@param bestKey number?
+---@param bestChance number?
+---@return boolean
+local function Beats(recipe, key, chance, best, bestKey, bestChance)
+	return key ~= nil
+		and (
+			not best
+			or key < bestKey
+			or (key == bestKey and chance > bestChance)
+			or (key == bestKey and chance == bestChance and recipe.recipeID < best.recipeID)
+		)
+end
+
+-- What a route is planned from: a snapshot's recipes, and the ones a training search adds to the end of
+-- them. Training re-plans once per candidate, so what each re-plan would work out again is kept: a recipe's
+-- rank at a skill, the crafts a step takes, and the list's best recipe at each skill, which a recipe joining
+-- the end updates. A route over the list plus one more recipe on its end then picks, at each skill, the list's
+-- best or that recipe, whichever goes first: what ranking the whole longer list picks, as a tie keeps the
+-- earlier. Nothing is kept past the search that made it, so a threshold changed later is never read from it.
+---@param snapshot SkillUpSnapshot
+---@return SkillUpPlanner
+local function Planner(snapshot)
+	local from, target = snapshot.skill, snapshot.target
+	local priced, thresholds, costOf = {}, {}, {}
+	local excluded = { unpriced = 0, recipes = {} }
+	-- [recipe][skill]: its rank there, the key false where it gains nothing.
+	local keys, chances = {}, {}
+	-- [skill]: the list's best recipe there, false for none, and its rank.
+	local bests, bestKeys, bestChances = {}, {}, {}
+	-- [thresholds][from][to][skillUps]: Model.CoveredCrafts.
+	local covered = {}
+
+	---@param recipe SkillUpCandidate
+	---@param skill number
+	---@return number?
+	---@return number?
+	local function RankAt(recipe, skill)
+		local byKey, byChance = keys[recipe], chances[recipe]
+		if not byKey then
+			byKey, byChance = {}, {}
+			keys[recipe], chances[recipe] = byKey, byChance
+		end
+		local key = byKey[skill]
+		if key == nil then
+			local chance
+			key, chance = Rank(recipe, skill)
+			byKey[skill], byChance[skill] = key or false, chance
+			return key, chance
+		end
+		return key or nil, byChance[skill]
+	end
+
+	---@param skill number
+	---@return SkillUpCandidate|false
+	---@return number?
+	---@return number?
+	local function BestAt(skill)
+		local best = bests[skill]
+		if best == nil then
+			local bestKey, bestChance
+			best = false
+			for _, recipe in ipairs(priced) do
+				local key, chance = RankAt(recipe, skill)
+				if Beats(recipe, key, chance, best, bestKey, bestChance) then
+					best, bestKey, bestChance = recipe, key, chance
+				end
+			end
+			bests[skill], bestKeys[skill], bestChances[skill] = best, bestKey, bestChance
+		end
+		return best, bestKeys[skill], bestChances[skill]
+	end
+
+	---@param t number[]
+	---@param fromSkill number
+	---@param toSkill number
+	---@param skillUps integer?
+	---@return number
+	local function Covered(t, fromSkill, toSkill, skillUps)
+		local ups = math.max(skillUps or 1, 1)
+		covered[t] = covered[t] or {}
+		local byFrom = covered[t]
+		byFrom[fromSkill] = byFrom[fromSkill] or {}
+		local byTo = byFrom[fromSkill]
+		byTo[toSkill] = byTo[toSkill] or {}
+		local byUps = byTo[toSkill]
+		byUps[ups] = byUps[ups] or Model.CoveredCrafts(t, fromSkill, toSkill, ups)
+		return byUps[ups]
+	end
+
+	-- A recipe joins the end of the list.
+	---@param recipe SkillUpCandidate
+	local function Add(recipe)
+		if recipe.netCost == nil then
+			-- A grey recipe could not help even with a price, so it keeps nothing out.
+			if recipe.thresholds[4] > from then
+				excluded.unpriced = excluded.unpriced + 1
+				excluded.recipes[excluded.unpriced] = recipe.recipeID
+			end
+			return
+		end
+		priced[#priced + 1] = recipe
+		thresholds[recipe.recipeID] = recipe.thresholds
+		costOf[recipe.recipeID] = recipe.netCost
+		for skill, best in pairs(bests) do
+			local key, chance = RankAt(recipe, skill)
+			if Beats(recipe, key, chance, best, bestKeys[skill], bestChances[skill]) then
+				bests[skill], bestKeys[skill], bestChances[skill] = recipe, key, chance
+			end
+		end
+	end
+
+	-- The route the list takes, or with `extra` on its end: Model.PlanRoute's, with what the list leaves out.
+	-- Then each skill it picked a recipe at, in order.
+	---@param extra SkillUpCandidate?
+	---@return SkillUpRoute
+	---@return number[]
+	local function Route(extra)
+		if extra and extra.netCost == nil then
+			extra = nil
+		end
+		local route = { segments = {}, expectedCost = 0, reachedSkill = from, excluded = excluded }
+		local picked = {}
+		while route.reachedSkill < target do
+			local skill = route.reachedSkill
+			picked[#picked + 1] = skill
+			local best, bestKey, bestChance = BestAt(skill)
+			if extra then
+				local key, chance = RankAt(extra, skill)
+				if Beats(extra, key, chance, best, bestKey, bestChance) then
+					best = extra
+				end
+			end
+			if not best then
+				route.stopReason = "no_recipe"
+				break
+			end
+			local gain = Model.Gain(best.thresholds, skill, best.skillUps, target - skill)
+			if gain <= 0 then
+				route.stopReason = "no_recipe"
+				break
+			end
+			local segment = route.segments[#route.segments]
+			if not segment or segment.recipeID ~= best.recipeID then
+				segment = { recipeID = best.recipeID, fromSkill = skill, toSkill = skill, skillUps = best.skillUps }
+				route.segments[#route.segments + 1] = segment
+			end
+			segment.toSkill = skill + gain
+			route.reachedSkill = skill + gain
+		end
+		-- Each step carries the crafts and cost that reach its target in nine runs of ten, from the last
+		-- recipe in the list with its ID.
+		for _, segment in ipairs(route.segments) do
+			local recipeID = segment.recipeID
+			local t, cost = thresholds[recipeID], costOf[recipeID]
+			if extra and extra.recipeID == recipeID then
+				t, cost = extra.thresholds, extra.netCost
+			end
+			segment.crafts = Covered(t, segment.fromSkill, segment.toSkill, segment.skillUps)
+			route.expectedCost = route.expectedCost + cost * segment.crafts
+		end
+		return route, picked
+	end
+
+	-- Whether `extra` on the end of the list changes the route the list takes, which picked at the skills in
+	-- `picked`: only by going first at one of them, or by an ID the list already has, whose crafts are then
+	-- counted from it. A recipe with no price is never picked.
+	---@param extra SkillUpCandidate
+	---@param picked number[]
+	---@return boolean
+	local function Changes(extra, picked)
+		if extra.netCost == nil then
+			return false
+		elseif costOf[extra.recipeID] ~= nil then
+			return true
+		end
+		for _, skill in ipairs(picked) do
+			local best, bestKey, bestChance = BestAt(skill)
+			local key, chance = RankAt(extra, skill)
+			if Beats(extra, key, chance, best, bestKey, bestChance) then
+				return true
+			end
+		end
+		return false
+	end
+
+	for _, recipe in ipairs(snapshot.recipes) do
+		Add(recipe)
+	end
+	return { Add = Add, Route = Route, Changes = Changes }
+end
+
 -- Inputs are already filtered to learned recipes of one profession, with prices
 -- frozen by the caller. Inventory affects shopping, never recipe selection.
 ---@param snapshot SkillUpSnapshot
 ---@return SkillUpRoute
 function Model.PlanRoute(snapshot)
-	local route = {
-		segments = {},
-		expectedCost = 0,
-		reachedSkill = snapshot.skill,
-		excluded = { unpriced = 0, recipes = {} },
-	}
-	local priced, thresholds, costOf = {}, {}, {}
-	for _, recipe in ipairs(snapshot.recipes) do
-		if recipe.netCost == nil then
-			-- A grey recipe could not help even with a price, so it keeps nothing out.
-			if recipe.thresholds[4] > snapshot.skill then
-				route.excluded.unpriced = route.excluded.unpriced + 1
-				route.excluded.recipes[route.excluded.unpriced] = recipe.recipeID
-			end
-		else
-			priced[#priced + 1] = recipe
-			thresholds[recipe.recipeID] = recipe.thresholds
-			costOf[recipe.recipeID] = recipe.netCost
-		end
-	end
-	while route.reachedSkill < snapshot.target do
-		local skill = route.reachedSkill
-		-- A profit ranks as free: a falling chance would otherwise favour near-grey
-		-- crafts that take many times the crafts per point.
-		local best, bestKey, bestChance
-		for _, recipe in ipairs(priced) do
-			local chance = Model.Chance(recipe.thresholds, skill)
-			local key = Model.CostPerPoint(math.max(recipe.netCost, 0), recipe.thresholds, skill, recipe.skillUps)
-			if
-				key
-				and (
-					not best
-					or key < bestKey
-					or (key == bestKey and chance > bestChance)
-					or (key == bestKey and chance == bestChance and recipe.recipeID < best.recipeID)
-				)
-			then
-				best, bestKey, bestChance = recipe, key, chance
-			end
-		end
-		if not best then
-			route.stopReason = "no_recipe"
-			break
-		end
-		local gain = Model.Gain(best.thresholds, skill, best.skillUps, snapshot.target - skill)
-		if gain <= 0 then
-			route.stopReason = "no_recipe"
-			break
-		end
-		local segment = route.segments[#route.segments]
-		if not segment or segment.recipeID ~= best.recipeID then
-			segment = { recipeID = best.recipeID, fromSkill = skill, toSkill = skill, skillUps = best.skillUps }
-			route.segments[#route.segments + 1] = segment
-		end
-		segment.toSkill = skill + gain
-		route.reachedSkill = skill + gain
-	end
-	-- Each step carries the crafts and cost that reach its target in nine runs of ten.
-	for _, segment in ipairs(route.segments) do
-		segment.crafts =
-			Model.CoveredCrafts(thresholds[segment.recipeID], segment.fromSkill, segment.toSkill, segment.skillUps)
-		route.expectedCost = route.expectedCost + costOf[segment.recipeID] * segment.crafts
-	end
-	return route
+	return (Planner(snapshot).Route())
 end
 
 -- Reach comes first when the learned route is blocked; compare costs only for
 -- equal endpoints. Each candidate is a separate purchase, charged exactly once.
----@param snapshot SkillUpSnapshot
+---@param planner SkillUpPlanner
 ---@param services SkillUpService[]
 ---@return {recipeID: integer, savings: number, reachedSkill: number}?
-function Model.RecommendTraining(snapshot, services)
-	local baseline = Model.PlanRoute(snapshot)
-	local recipes = {}
-	for index, recipe in ipairs(snapshot.recipes) do
-		recipes[index] = recipe
-	end
-	local candidate = { skill = snapshot.skill, target = snapshot.target, recipes = recipes }
+local function Recommend(planner, services)
+	local baseline, picked = planner.Route()
 	local best
 	for _, service in ipairs(services) do
-		recipes[#snapshot.recipes + 1] = service
-		local route = Model.PlanRoute(candidate)
+		local route = planner.Changes(service, picked) and planner.Route(service) or baseline
 		local savings = baseline.expectedCost - (route.expectedCost + service.fee)
 		local helps = route.reachedSkill > baseline.reachedSkill
 			or (route.reachedSkill == baseline.reachedSkill and savings > 0)
@@ -317,6 +486,14 @@ function Model.RecommendTraining(snapshot, services)
 	return best
 end
 
+-- The one service worth training next on the learned route.
+---@param snapshot SkillUpSnapshot
+---@param services SkillUpService[]
+---@return {recipeID: integer, savings: number, reachedSkill: number}?
+function Model.RecommendTraining(snapshot, services)
+	return Recommend(Planner(snapshot), services)
+end
+
 -- The learned route plus whatever training pays for itself: keep adding the
 -- service RecommendTraining picks (reach first, then savings net of its fee),
 -- then drop any a later addition made unnecessary. Greedy, so not guaranteed
@@ -325,30 +502,27 @@ end
 ---@param services SkillUpService[]
 ---@return SkillUpTrainedRoute
 function Model.PlanWithTraining(snapshot, services)
-	local recipes, remaining = {}, {}
-	for index, recipe in ipairs(snapshot.recipes) do
-		recipes[index] = recipe
-	end
+	local remaining = {}
 	for index, service in ipairs(services) do
 		remaining[index] = service
 	end
-	local current = { skill = snapshot.skill, target = snapshot.target, recipes = recipes }
+	local planner = Planner(snapshot)
 	local chosen = {}
 	while true do
-		local best = Model.RecommendTraining(current, remaining)
+		local best = Recommend(planner, remaining)
 		if not best then
 			break
 		end
 		for index, service in ipairs(remaining) do
 			if service.recipeID == best.recipeID then
-				recipes[#recipes + 1] = service
+				planner.Add(service)
 				chosen[service.recipeID] = service
 				table.remove(remaining, index)
 				break
 			end
 		end
 	end
-	local route = Model.PlanRoute(current)
+	local route = planner.Route()
 	---@cast route SkillUpTrainedRoute
 	local firstUse = {}
 	for _, segment in ipairs(route.segments) do

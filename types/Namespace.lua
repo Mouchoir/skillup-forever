@@ -334,6 +334,12 @@ SkillUpForeverDB = nil
 ---@field training SkillUpTraining[]
 ---@field trainingCost number
 
+-- One training search's list of recipes and what Core/Model.lua works out from it, kept between its re-plans.
+---@class SkillUpPlanner
+---@field Add fun(recipe: SkillUpCandidate) A recipe joins the end of the list.
+---@field Route fun(extra?: SkillUpCandidate): SkillUpRoute, number[] The route, and each skill it picked at.
+---@field Changes fun(extra: SkillUpCandidate, picked: number[]): boolean Whether `extra` changes the route.
+
 -- What Core/Plan.lua returns: the levelling plan as a player reads it.
 ---@class SkillUpPlan
 ---@field profession SkillUpProfession

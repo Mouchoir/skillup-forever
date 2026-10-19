@@ -228,3 +228,65 @@ end)
 print(string.format("COLD used-in index: %.4f ms", reagentIndexCold * 1000))
 print(string.format("COLD plan rebuild avg: %.4f ms", planCold * 1000 / 5))
 print(string.format("COLD API rebuild avg: %.4f ms", apiCold * 1000 / 5))
+
+print("== a full replan: five professions half-way to 300, every reagent priced ==")
+-- What a dropped plan cache costs in game: every trainer recipe up to each rank known, an auction and a sell
+-- price for every reagent and product, and each route run to 300 through the ranks and the training on the way.
+-- Mining makes its ores free to the others (collect mode "gather", the default). Time and the Lua memory one
+-- replan of the five allocates, with the collector held for the measure.
+local HALFWAY = {
+	{ name = "Blacksmithing", id = 164, rank = 150, max = 225 },
+	{ name = "Engineering", id = 202, rank = 120, max = 150 },
+	{ name = "Cooking", id = 185, rank = 160, max = 225 },
+	{ name = "First Aid", id = 129, rank = 110, max = 150 },
+	{ name = "Mining", id = 186, rank = 140, max = 150 },
+}
+local halfwaySaved = { routeTargets = {} }
+for _, profession in ipairs(HALFWAY) do
+	halfwaySaved.routeTargets[profession.id] = 300
+end
+local h = Client.load({ boot = false, saved = halfwaySaved })
+for _, profession in ipairs(HALFWAY) do
+	h.professions[#h.professions + 1] =
+		{ name = profession.name, rank = profession.rank, max = profession.max, id = profession.id }
+	for recipeID, training in pairs(h.ns.TrainerFees) do
+		local recipe = h.ns.RecipeData[recipeID]
+		if recipe and recipe.skillLine == profession.id and training[2] <= profession.rank then
+			h.known[recipeID] = true
+		end
+	end
+end
+local priced = {}
+for _, recipe in pairs(h.ns.RecipeData) do
+	for _, reagent in ipairs(recipe.reagents) do
+		priced[reagent.itemID] = true
+	end
+	if recipe.output then
+		priced[recipe.output.itemID] = true
+	end
+end
+local pricedIDs = {}
+for itemID in pairs(priced) do
+	pricedIDs[#pricedIDs + 1] = itemID
+end
+table.sort(pricedIDs)
+for index, itemID in ipairs(pricedIDs) do
+	h.auction[itemID] = 100 + index * 7919 % 20000
+	h.items[itemID] = { name = "Item " .. itemID, sell = h.ns.ItemSellPrices[itemID] or index * 104729 % 500 }
+end
+h.Boot()
+local halfwayProfessions = h.ns.RouteProfessions()
+local replanTime, replanMemory = 0, 0
+for _ = 1, 5 do
+	h.ns.Changed("prices")
+	collectgarbage("collect")
+	collectgarbage("stop")
+	local memory, started = collectgarbage("count"), os.clock()
+	for _, profession in pairs(halfwayProfessions) do
+		h.ns.PlanRoute(profession)
+	end
+	replanTime = replanTime + os.clock() - started
+	replanMemory = replanMemory + collectgarbage("count") - memory
+	collectgarbage("restart")
+end
+print(string.format("COLD full replan avg (5 professions): %.1f ms, %.2f MB", replanTime * 200, replanMemory / 5120))
